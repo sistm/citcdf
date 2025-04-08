@@ -344,8 +344,8 @@ cit_gsa <- function(M,
     }
     
     n_cpus <- min(length(geneset), n_cpus)
-    
-    
+   
+
     res <- pbapply::pblapply(1:length(geneset), function(k){ # 1 -- each list of gene set ----
       
       # Initialisation for each gene in the gene set
@@ -360,7 +360,8 @@ cit_gsa <- function(M,
       if(length(measured_genes)<1){ # check 1 : none genes of the current geneset are in M
         warning("0 genes from geneset ", k, " observed in expression data")
         pval <- NA
-        test_stat_list <- NA
+        test_stat_gs <- NA
+        #test_stat_list <- NA
       }else{ 
         
         test_stat_gs <- numeric(length(measured_genes))
@@ -410,42 +411,41 @@ cit_gsa <- function(M,
           
           
         } 
+        #ccdf_list[[k]] <- ccdf_gs
+        #names(ccdf_list[[k]]) <- measured_genes # not geneset, if some genes are not in the data
+        # utile comme le refait plus tard ???  
+        
+        
+        indi_pi_gs_tab <- do.call(cbind, indi_pi_gs)
+        prop_gs_vec <- unlist(prop_gs)
+        n_g_t <- length(prop_gs_vec)
+        
+        # 3) Sigma matrix creation ----
+        Sigma2 <- matrix(NA, n_g_t*nrow(H), n_g_t*nrow(H)) 
+        
+        n_gs_vec <- nrow(indi_pi_gs_tab)
+        temp <- indi_pi_gs_tab - matrix(prop_gs_vec, nrow=n_gs_vec, ncol=n_g_t, byrow=TRUE)
+        
+        # new prop/new pi computation = the one of the gene set, here it's a matrix
+        new_prop <- crossprod(temp)/n_gs_vec + 
+          sapply(prop_gs_vec, function(s){s*prop_gs_vec})
+        
+        Sigma2 <- 1/n * tcrossprod(H) %x%  (new_prop - prop_gs_vec %x%  t(prop_gs_vec))
+        
+        
+        
+        decomp <- eigen(Sigma2, symmetric=TRUE, only.values=TRUE)
+        
+        pval <- survey::pchisqsum(sum(test_stat_gs), lower.tail = FALSE, 
+                                  df = rep(1, ncol(Sigma2)), 
+                                  a =decomp$values , method = "saddlepoint")
+        
+        
+
         
       }
       
-      #ccdf_list[[k]] <- ccdf_gs
-      #names(ccdf_list[[k]]) <- measured_genes # not geneset, if some genes are not in the data
-      # utile comme le refait plus tard ???  
-      
-      
-      indi_pi_gs_tab <- do.call(cbind, indi_pi_gs)
-      prop_gs_vec <- unlist(prop_gs)
-      n_g_t <- length(prop_gs_vec)
-      
-      # 3) Sigma matrix creation ----
-      Sigma2 <- matrix(NA, n_g_t*nrow(H), n_g_t*nrow(H)) 
-      
-      n_gs_vec <- nrow(indi_pi_gs_tab)
-      temp <- indi_pi_gs_tab - matrix(prop_gs_vec, nrow=n_gs_vec, ncol=n_g_t, byrow=TRUE)
-      
-      # new prop/new pi computation = the one of the gene set, here it's a matrix
-      new_prop <- crossprod(temp)/n_gs_vec + 
-        sapply(prop_gs_vec, function(s){s*prop_gs_vec})
-      
-      Sigma2 <- 1/n * tcrossprod(H) %x%  (new_prop - prop_gs_vec %x%  t(prop_gs_vec))
-      
-      
-      
-      decomp <- eigen(Sigma2, symmetric=TRUE, only.values=TRUE)
-      
-      pval <- survey::pchisqsum(sum(test_stat_gs), lower.tail = FALSE, 
-                                df = rep(1, ncol(Sigma2)), 
-                                a =decomp$values , method = "saddlepoint")
-      
-      
-      
       return(list("pval" = pval, "test_stat_gs" = test_stat_gs)) #,"ccdf" = ccdf_list
-      
       
       
     },
