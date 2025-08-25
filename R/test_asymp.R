@@ -92,7 +92,7 @@ test_asymp <- function(Y, X, Z = NULL, sample_group = NULL,
           indi_Y <- 1*(Y<=y[i])
           indi_pi[,i] <- indi_Y
           mod_mixed <- lmer(indi_Y ~ 1 + modelmat[, -1] + (1 | sample_group))
-          beta[i,] <- lme4::fixef(mod_mixed)[ind_X]
+          beta[i,] <- lme4::fixef(mod_mixed)[indexes_X]
 
         }
         beta <- as.vector(beta)
