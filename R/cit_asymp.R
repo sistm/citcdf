@@ -20,6 +20,17 @@
 #'@param number_y an integer value indicating the number of y thresholds (and therefore
 #'the number of regressions) to perform the test. Default is \code{n_Y_all}.
 #'
+#'#' @param sample_group a vector of length \code{n} indicating whether the samples
+#'should be grouped (e.g. paired samples or longitudinal data). Coerced
+#'to be a \code{factor}. Default is \code{NULL} in which case no grouping is
+#'performed.
+#'
+#'@param method 
+#'
+#'@importFrom lme4 glmer fixef
+#' @export
+#' 
+#'
 #'@importFrom survey pchisqsum
 #'
 #' @export
@@ -49,7 +60,8 @@
 #'hist(pvals_sim)
 
 
-cit_asymp <- function(Y, X, Z = NULL, space_y = FALSE, number_y = length(unique(Y))){
+cit_asymp <- function(Y, X, Z = NULL, space_y = FALSE, number_y = length(unique(Y)), sample_group = NULL,
+                      method = c("linear regression", "mixed model")){
   
   # computations independent of Y: should be computed only once before the pbapply loop ----
   
@@ -82,15 +94,37 @@ cit_asymp <- function(Y, X, Z = NULL, space_y = FALSE, number_y = length(unique(
   }
   p <- length(y) #number of thresholds used
   
-  index_jumps <- sapply(y[-p], function(i){sum(Y <= i)})
-  beta <- c(apply(X = H[, order(Y), drop=FALSE], MARGIN = 1, FUN = cumsum)[index_jumps, ]) / n_Y_all
-  test_stat <- sum(beta^2) * n_Y_all
+  if(method == "linear regression"){
+    
+    index_jumps <- sapply(y[-p], function(i){sum(Y <= i)})
+    beta <- c(apply(X = H[, order(Y), drop=FALSE], MARGIN = 1, FUN = cumsum)[index_jumps, ]) / n_Y_all
+    test_stat <- sum(beta^2) * n_Y_all
+    
+  }else if(method == "mixed model"){
+    mycontrol <- lme4::lmerControl(optimizer = "bobyqa")
+    if(is.null(sample_group)) {
+      warning("sample_group is null",
+              "No random effects terms specified in formula")
+    }else {
+      p_X <- length(indexes_X)
+      beta <- matrix(NA, (n_y_unique-1), p_X)
+      for (i in 1:p-1){ # varying threshold
+        indi_Y <- as.numeric(Y<=y[i])
+        mod_mixed <- lme4::glmer(indi_Y ~ 1 + modelmat[, -1] + (1 | sample_group), family=binomial)
+        beta[i,] <- lme4::fixef(mod_mixed)[indexes_X]
+        
+      }
+      beta <- as.vector(beta)
+      z <- (sqrt(n_Y_all))*beta
+      test_stat <- sum(t(z)*z)
+    }
+  }
   
   # Computing the variance ----  
   
   indi_pi <- matrix(NA, n_Y_all, (p-1))
   for (j in 1:(p-1)){ # on fait varier le seuil
-    indi_Y <- 1*(Y<=y[j])
+    indi_Y <- as.numeric(Y<=y[j])
     indi_pi[,j] <- indi_Y
   }
   prop <- colMeans(indi_pi)
