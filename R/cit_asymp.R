@@ -110,7 +110,7 @@ cit_asymp <- function(Y, X, Z = NULL, space_y = FALSE, number_y = length(unique(
       beta <- matrix(NA, (n_y_unique-1), p_X)
       for (i in 1:p-1){ # varying threshold
         indi_Y <- as.numeric(Y<=y[i])
-        mod_mixed <- lme4::glmer(indi_Y ~ 1 + modelmat[, -1] + (1 | sample_group), family=binomial)
+        mod_mixed <- lme4::glmer(indi_Y ~ 1 + modelmat[, -1] + (1 | sample_group), family=binomial, control = mycontrol)
         beta[i,] <- lme4::fixef(mod_mixed)[indexes_X]
         
       }
