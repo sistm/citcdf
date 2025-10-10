@@ -294,7 +294,7 @@ cit_gsa <- function(M,
     ## asymptotic ----
     n_perm <- NA
     
-    
+   
     
     # Data formatting in list format +  check column names
     if (inherits(geneset,"GSA.genesets")) { 

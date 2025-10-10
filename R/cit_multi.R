@@ -213,6 +213,8 @@ cit_multi <- function(M,
     stopifnot(ncol(X) < 2)
     stopifnot(ncol(Z) < 2 | is.null(Z))
     
+    X_star <- X_perm(X,Z,n_perm=n_perm)
+    
     if (adaptive==TRUE){ 
       #### adaptive ----
       message(paste("Computing", n_perm_adaptive[1], "permutations..."))
@@ -223,6 +225,7 @@ cit_multi <- function(M,
                                    Y = M[, j],
                                    X = X,
                                    Z = Z,
+                                   X_star = X_star, 
                                    n_perm = n_perm_adaptive[1],
                                    space_y = space_y, 
                                    number_y = number_y)$score
@@ -233,7 +236,7 @@ cit_multi <- function(M,
       k <- 2
       index <- which((res+1)/(perm+1) <= thresholds[k-1])
       
-      while (length(index)!=0 & k<=length(n_perm_adaptive)){
+      while (length(index)!=0 & k<=length(n_perm_adaptive)){# adaptive part
         
         index <- which(((res+1)/(perm+1)) < thresholds[k-1])
         
@@ -245,6 +248,7 @@ cit_multi <- function(M,
                                               cit_perm(Y = M[, index[i]],
                                                        X = X,
                                                        Z = Z,
+                                                       X_star = X_star, 
                                                        n_perm = n_perm_adaptive[k],
                                                        space_y = space_y, 
                                                        number_y = number_y)$score
@@ -256,6 +260,7 @@ cit_multi <- function(M,
                                               cit_perm(Y = M[, index[i]],
                                                        X = X,
                                                        Z = Z,
+                                                       X_star = X_star, 
                                                        n_perm = n_perm_adaptive[k],
                                                        space_y = space_y, 
                                                        number_y = number_y)$score
@@ -285,6 +290,7 @@ cit_multi <- function(M,
                                                           cit_perm(Y = M[, j],
                                                                    X = X,
                                                                    Z = Z,
+                                                                   X_star = X_star, 
                                                                    n_perm = n_perm,
                                                                    space_y = space_y, 
                                                                    number_y = number_y)
@@ -296,6 +302,7 @@ cit_multi <- function(M,
                                                           cit_perm(Y = M[, j],
                                                                    X = X,
                                                                    Z = Z,
+                                                                   X_star = X_star, 
                                                                    n_perm = n_perm,
                                                                    space_y = space_y, 
                                                                    number_y = number_y)
