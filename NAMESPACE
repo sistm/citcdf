@@ -2,6 +2,7 @@
 
 S3method(plot,cit_multi)
 S3method(plot,citcdf)
+export(X_perm)
 export(ccdf)
 export(cit_asymp)
 export(cit_gsa)

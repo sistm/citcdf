@@ -4,7 +4,15 @@
 \alias{cit_perm}
 \title{Permutation test for conditional independence}
 \usage{
-cit_perm(Y, X, Z = NULL, n_perm = 100, space_y = FALSE, number_y = length(Y))
+cit_perm(
+  Y,
+  X,
+  Z = NULL,
+  X_star,
+  n_perm = 100,
+  space_y = FALSE,
+  number_y = length(Y)
+)
 }
 \arguments{
 \item{Y}{a numeric vector of length \code{n} to test for conditional independence 
@@ -18,6 +26,8 @@ for permutation.}
 \item{Z}{a data.frame of size \code{n x 1} of numeric or factor vector 
 containing the covariate to condition the independence 
 test upon. Multiple covariates are not supported for permutation.}
+
+\item{X_star}{a list of permuted vectors from the function \code{X_perm}}
 
 \item{n_perm}{the number of permutations. Default is \code{100}.}
 

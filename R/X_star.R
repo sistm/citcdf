@@ -11,6 +11,25 @@
 # 
 
 
+#' Compute the conditionnal permutation 
+#'
+#' @param X a numeric or factor vector of length \code{n}
+#'containing the variable to be tested (the condition to be tested). 
+#'
+#' @param Z a numeric vector of length \code{n}
+#'containing the covariate. Multiple variables are not allowed.
+#'
+#' @param n_perm the number of permutations. Default is \code{100}.
+#'
+#' @returns a list whith the permuted label vector for each permutation
+#' 
+#' @export
+#'
+#' @examples
+#'X <- rbinom(n=100, size = 1, prob = 0.5)
+#'Z <- rnorm(100,0,1)
+#'X_perm(data.frame(X),data.frame(Z),100)
+#'
 X_perm <- function(X,Z,n_perm=100){
   
   stopifnot(is.data.frame(X))

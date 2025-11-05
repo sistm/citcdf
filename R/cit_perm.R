@@ -12,6 +12,8 @@
 #'containing the covariate to condition the independence 
 #'test upon. Multiple covariates are not supported for permutation.
 #'
+#'@param X_star a list of permuted vectors from the function \code{X_perm}
+
 #'@param n_perm the number of permutations. Default is \code{100}.
 #'
 #'@param space_y a logical flag indicating whether the y thresholds are spaced out. 
