@@ -1,16 +1,3 @@
-
-# Compute X_star 
-# Input : X data frame, Z data frame, n_perm
-# Output : list of X_star for each permutations
-
-# 
-# X <- as.factor(rbinom(n=100, size = 1, prob = 0.5))
-# Z <- as.factor(rbinom(n=100, size = 1, prob = 0.5))
-# 
-# res_Xstar <- X_perm(data.frame(X=X),data.frame(Z=Z),n_perm=10)
-# 
-
-
 #' Compute the conditionnal permutation 
 #'
 #' @param X a numeric or factor vector of length \code{n}
