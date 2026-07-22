@@ -31,7 +31,7 @@
 #'
 plot.cit_multi <- function(x, ..., nominal_level = 0.05){
   
-  stopifnot(isa(x, "cit_multi"))
+  stopifnot(inherits(x, "cit_multi"))
   
   pvals <- x$pvals$raw_pval
   

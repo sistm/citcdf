@@ -75,15 +75,16 @@ the number of regressions) to perform the test. Default is 10.}
 \value{
 A list with the following elements:\itemize{
   \item \code{which_test}: a character string carrying forward the value of
-  the '\code{which_test}' argument indicating which test was performed (either
+  the '\code{test}' argument indicating which test was performed (either
   'asymptotic' or 'permutation').
   \item \code{n_perm}: an integer carrying forward the value of the
   '\code{n_perm}' argument or '\code{n_perm_adaptive}' indicating the number of permutations performed
   (\code{NA} if asymptotic test was performed).
-  \item \code{pval}: computed p-values. A data frame with one raw for
+  \item \code{pvals}: computed p-values. A data frame with one row for
   each gene, and with 2 columns: the first one '\code{raw_pval}' contains
   the raw p-values, the second one '\code{adj_pval}' contains the FDR adjusted p-values
-  using Benjamini-Hochberg correction.
+  using Benjamini-Hochberg correction. When '\code{test == "asymptotic"}', a
+  third column '\code{test_statistic}' contains the gene-wise test statistics.
 }
 }
 \description{

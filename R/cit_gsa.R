@@ -31,7 +31,7 @@
 #'\code{test == 'permutation'}.
 #'
 #'@param adaptive a logical flag indicating whether adaptive permutations
-#'should be performed. Default is \code{TRUE}. Only used if
+#'should be performed. Default is \code{FALSE}. Only used if
 #'\code{test == 'permutation'}.
 #'
 #'@param n_perm_adaptive a vector of the increasing numbers of 
@@ -64,15 +64,18 @@
 #'   
 #'@return A list with the following elements:\itemize{
 #'   \item \code{which_test}: a character string carrying forward the value of
-#'   the '\code{which_test}' argument indicating which test was performed (either
+#'   the '\code{test}' argument indicating which test was performed (either
 #'   'asymptotic' or 'permutation').
 #'   \item \code{n_perm}: an integer carrying forward the value of the
 #'   '\code{n_perm}' argument or '\code{n_perm_adaptive}' indicating the number of permutations performed
 #'   (\code{NA} if asymptotic test was performed).
-#'   \item \code{pval}: computed p-values. A data frame with one raw for
+#'   \item \code{pvals}: computed p-values. A data frame with one row for
 #'   each gene set, and with 2 columns: the first one '\code{raw_pval}' contains
 #'   the raw p-values, the second one '\code{adj_pval}' contains the FDR adjusted p-values
-#'   using Benjamini-Hochberg correction.
+#'   using Benjamini-Hochberg correction. When '\code{test == "asymptotic"}', a
+#'   third column '\code{test_statistic}' contains the gene set test statistics.
+#'   \item \code{type}: a character string equal to \code{"gsa"}, identifying
+#'   the object as the result of a gene set analysis.
 #' }
 #' 
 #' @export
@@ -93,7 +96,18 @@
 #'                            X = data.frame(X2=X1), 
 #'                            geneset = paste0("Y.", 1:50),
 #'                            test="asymptotic", parallel=FALSE)
-#'res_asymp_unadj$pvals   
+#'res_asymp_unadj$pvals
+#'
+#' # permutation test on a small example
+#' set.seed(123)
+#' n <- 60
+#' X <- data.frame(X = as.factor(rbinom(n, size = 1, prob = 0.5)))
+#' M <- matrix(rnorm(n * 8), nrow = n,
+#'             dimnames = list(NULL, paste0("g", 1:8)))
+#' geneset <- list(set1 = paste0("g", 1:4), set2 = paste0("g", 5:8))
+#' res_perm <- cit_gsa(M = M, X = X, geneset = geneset,
+#'                     test = "permutation", n_perm = 50, parallel = FALSE)
+#' res_perm$pvals
 cit_gsa <- function(M,
                     X,
                     Z = NULL,
@@ -192,6 +206,10 @@ cit_gsa <- function(M,
     stopifnot(ncol(X) < 2)
     stopifnot(ncol(Z) < 2 | is.null(Z))
     
+    # permuted designs (pool sized to the largest number of permutations any stage needs)
+    n_perm_pool <- if (isTRUE(adaptive)) max(n_perm_adaptive) else n_perm
+    X_star <- X_perm(X, Z, n_perm = n_perm_pool)
+    
     if (adaptive==TRUE){ 
       #### adaptive ----
       message(paste("Computing", n_perm_adaptive[1], "permutations..."))
@@ -202,6 +220,7 @@ cit_gsa <- function(M,
                                    Y = M[, j],
                                    X = X,
                                    Z = Z,
+                                   X_star = X_star,
                                    n_perm = n_perm_adaptive[1],
                                    space_y = space_y, 
                                    number_y = number_y)$score
@@ -224,6 +243,7 @@ cit_gsa <- function(M,
                                           cit_perm(Y = M[, index[i]],
                                                    X = X,
                                                    Z = Z,
+                                                   X_star = X_star,
                                                    n_perm = n_perm_adaptive[k],
                                                    space_y = space_y, 
                                                    number_y = number_y)$score
@@ -235,6 +255,7 @@ cit_gsa <- function(M,
                                           cit_perm(Y = M[, index[i]],
                                                    X = X,
                                                    Z = Z,
+                                                   X_star = X_star,
                                                    n_perm = n_perm_adaptive[k],
                                                    space_y = space_y, 
                                                    number_y = number_y)$score
@@ -264,6 +285,7 @@ cit_gsa <- function(M,
                                                     cit_perm(Y = M[, j],
                                                              X = X,
                                                              Z = Z,
+                                                             X_star = X_star,
                                                              n_perm = n_perm,
                                                              space_y = space_y, 
                                                              number_y = number_y)
@@ -275,6 +297,7 @@ cit_gsa <- function(M,
                                                     cit_perm(Y = M[, j],
                                                              X = X,
                                                              Z = Z,
+                                                             X_star = X_star,
                                                              n_perm = n_perm,
                                                              space_y = space_y, 
                                                              number_y = number_y)
@@ -300,6 +323,9 @@ cit_gsa <- function(M,
     if (inherits(geneset,"GSA.genesets")) { 
       geneset <- geneset$genesets
     } else if (inherits(geneset,"BiocSet")){
+      if (!requireNamespace("BiocSet", quietly = TRUE)) {
+        stop("Package 'BiocSet' is required for BiocSet input. Please install it from Bioconductor.")
+      }
       geneset<- BiocSet::es_elementset(geneset)
       geneset <- lapply(X  = unique(geneset$set),
                         FUN = function(x){
@@ -458,6 +484,10 @@ cit_gsa <- function(M,
     
     test_stat_list <- lapply(res, "[[", "test_stat_gs")
     
+    df <- data.frame(raw_pval = pvals,
+                     adj_pval = p.adjust(pvals, method = "BH"),
+                     test_statistic = sapply(test_stat_list, sum))
+    
   
     
     #ccdf <- lapply(res, "[[", "ccdf")
@@ -478,10 +508,6 @@ cit_gsa <- function(M,
     
    # récup genes dans measured gene sinon ??
   }
-  
-  df <- data.frame(raw_pval = pvals,
-                   adj_pval = p.adjust(pvals, method="BH"),
-                   test_statistic = sapply(test_stat_list, sum))
   
   #rownames(df) <- M_colnames
   

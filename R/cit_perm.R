@@ -32,11 +32,20 @@
 #' }
 #' 
 #' @examples
-#' 
-#'if(interactive()){
-#'X <- as.factor(rbinom(n=100, size = 1, prob = 0.5))
-#'Y <- ((X==1)*rnorm(n = 50,0,1)) + ((X==0)*rnorm(n = 50,0.5,1))
-#'res_perm <- cit_perm(Y,data.frame(X=X),n_perm=10)}
+#'
+#'X <- data.frame(X = as.factor(rbinom(n = 100, size = 1, prob = 0.5)))
+#'Y <- (X$X == 1) * rnorm(100) + (X$X == 0) * rnorm(100, mean = 0.5)
+#'
+#'# X_star holds the permuted designs and is produced by X_perm()
+#'X_star <- X_perm(X, Z = NULL, n_perm = 10)
+#'res_perm <- cit_perm(Y, X, X_star = X_star, n_perm = 10)
+#'res_perm
+#'
+#'# adjusting for a covariate Z
+#'Z <- data.frame(Z = rnorm(100))
+#'X_star_z <- X_perm(X, Z, n_perm = 10)
+#'res_perm_adj <- cit_perm(Y, X, Z = Z, X_star = X_star_z, n_perm = 10)
+#'res_perm_adj
 
 cit_perm <- function(Y, X, Z = NULL, X_star, n_perm = 100, space_y = FALSE, number_y = length(Y)){
   
