@@ -91,27 +91,47 @@ Multiple conditional independence testing
 }
 \examples{
 
-set.seed(123)
+
+Z <- as.factor(rbinom(n=100, size = 1, prob = 0.5))
+X <- as.numeric(Z)-1  + rnorm(n=100, sd=1)
+r <- 1000
+Y <- replicate(r, as.numeric(Z)-1)
+Y <- (Y==1)*rnorm(n = 100*r,0,1) + (Y==0)*rnorm(n = 100*r,0.5,1)
+res_asymp_unadj <- cit_multi(M = data.frame(Y=Y), 
+                X = data.frame(X=X),
+                test="asymptotic", parallel=FALSE)
+mean(res_asymp_unadj$pvals$raw_pval<0.05)
+hist(res_asymp_unadj$pvals$raw_pval)
+
+res_asymp_adj <- cit_multi(M = data.frame(Y=Y), 
+                X = data.frame(X=X), 
+                Z = data.frame(Z=Z),
+                test="asymptotic", parallel=FALSE)
+mean(res_asymp_adj$pvals$raw_pval<0.05)
+hist(res_asymp_adj$pvals$raw_pval)
+
 n <- 100
 r <- 200
-Z1 <- rnorm(n)
+Z1 <- rbinom(n, size=1, prob=0.5)
 Z2 <- rnorm(n)#rbinom(n, size=1, prob=0.5) + rnorm(n, sd=0.05)
 X1 <- Z2 + rnorm(n, sd=0.2)
 X2 <- rnorm(n)
 cor(X1, Z2)
-Y <- replicate(r, Z2) + rnorm(n*r, 0, 0.5)
+Y <- replicate(r, Z2) + rnorm(n*r, 0, 3)
 range(cor(Y, Z2))
 range(cor(Y, X2))
 res_asymp_unadj <- cit_multi(M = data.frame(Y=Y), 
                 X = data.frame(X1=X1, X2=X2),
                 test="asymptotic", parallel=FALSE)
 mean(res_asymp_unadj$pvals$raw_pval<0.05)
+hist(res_asymp_unadj$pvals$raw_pval)
 
 res_asymp_adj <- cit_multi(M = data.frame(Y=Y), 
                 X = data.frame(X1=X1, X2=X2), 
                 Z = data.frame(Z1=Z1, Z2=Z2),
                 test="asymptotic", parallel=FALSE)
 mean(res_asymp_adj$pvals$raw_pval<0.05)
+hist(res_asymp_adj$pvals$raw_pval)
 
 if(interactive()){
 res_perm_unadj <- cit_multi(M = data.frame(Y=Y), 
