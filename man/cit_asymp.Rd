@@ -7,19 +7,19 @@
 cit_asymp(Y, X, Z = NULL, space_y = FALSE, number_y = length(unique(Y)))
 }
 \arguments{
-\item{Y}{a numeric vector of length \code{n} to test for conditional independence 
+\item{Y}{a numeric vector of length \code{n} to test for conditional independence
 with \code{X} adjusted on \code{Z}}
 
-\item{X}{a data frame of size \code{n x p} of numeric or factor vector(s) 
-containing the variable(s) to be tested for conditional independence 
+\item{X}{a data frame of size \code{n x p} of numeric or factor vector(s)
+containing the variable(s) to be tested for conditional independence
 against \code{X} adjusted on \code{Z}.}
 
-\item{Z}{a data frame of size \code{n x q} of numeric or factor vector(s) 
-containing the covariate(s) to condition the independence 
+\item{Z}{a data frame of size \code{n x q} of numeric or factor vector(s)
+containing the covariate(s) to condition the independence
 test upon.}
 
-\item{space_y}{a logical flag indicating whether the y thresholds are spaced. 
-When \code{space_y} is \code{TRUE}, a regular sequence between the minimum and 
+\item{space_y}{a logical flag indicating whether the y thresholds are spaced.
+When \code{space_y} is \code{TRUE}, a regular sequence between the minimum and
 the maximum of the observations is used. Default is \code{FALSE}.}
 
 \item{number_y}{an integer value indicating the number of y thresholds (and therefore
@@ -37,19 +37,21 @@ Test the conditional independence of Y and X given Z.
 }
 \examples{
 
-X <- as.factor(rbinom(n=100, size = 1, prob = 0.5))
-Y <- ((X==1)*rnorm(n = 100,0,1)) + ((X==0)*rnorm(n = 100,0.5,1))
-res_asymp <- cit_asymp(Y,data.frame(X=X))
+X <- as.factor(rbinom(n = 100, size = 1, prob = 0.5))
+Y <- ((X == 1) * rnorm(n = 100, 0, 1)) + ((X == 0) * rnorm(n = 100, 0.5, 1))
+res_asymp <- cit_asymp(Y, data.frame(X = X))
 
 
-Z <- as.factor(rbinom(n=100, size = 1, prob = 0.5))
-X <- as.numeric(Z)-1  + rnorm(n=100, sd=1)
+Z <- as.factor(rbinom(n = 100, size = 1, prob = 0.5))
+X <- as.numeric(Z) - 1  + rnorm(n = 100, sd = 1)
 r <- 1000
-Y <- replicate(r, as.numeric(Z)-1)
-YY <- (Y==1)*rnorm(n = 100*r,0,1) + (Y==0)*rnorm(n = 100*r,0.5,1)
-pvals_sim <- pbapply::pbsapply(1:1000, function(i){
-res_asymp <- cit_asymp(YY[,i],data.frame(X=X), data.frame(Z=Z))
-return(res_asymp$raw_pval)
+Y <- replicate(r, as.numeric(Z) - 1)
+YY <- (Y == 1) * rnorm(n = 100 * r, 0, 1) + (Y == 0) * rnorm(n = 100 * r, 0.5, 1)
+pvals_sim <- pbapply::pbsapply(1:1000, function(i) {
+  res_asymp <- cit_asymp(YY[, i], data.frame(X = X), data.frame(Z = Z))
+  return(res_asymp$raw_pval)
 })
 hist(pvals_sim)
+quantile(pvals_sim)
+
 }

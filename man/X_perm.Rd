@@ -2,7 +2,7 @@
 % Please edit documentation in R/X_star.R
 \name{X_perm}
 \alias{X_perm}
-\title{Compute the conditionnal permutation}
+\title{Compute the conditional permutations}
 \usage{
 X_perm(X, Z, n_perm = 100)
 }
@@ -19,7 +19,7 @@ containing the covariate. Multiple variables are not allowed.}
 a list with the permuted label vector for each permutation
 }
 \description{
-Compute the conditionnal permutation
+Compute the conditional permutations
 }
 \examples{
 X <- rbinom(n = 100, size = 1, prob = 0.5)

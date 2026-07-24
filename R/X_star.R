@@ -1,4 +1,4 @@
-#' Compute the conditionnal permutation
+#' Compute the conditional permutations
 #'
 #' @param X a numeric or factor vector of length \code{n}
 #' containing the variable to be tested (the condition to be tested).
