@@ -183,13 +183,14 @@ cit_gsa <- function(M,
   # parallel
 
   if (parallel) {
-
+    if (test == "asymptotic") {
+      n_cpus <- min(length(geneset), n_cpus)
+    }
     if (.Platform$OS.type == "unix") {
       par_clust <- n_cpus
     } else {
       par_clust <- parallel::makeCluster(n_cpus)
     }
-
   } else {
     par_clust <- 1L
   }
@@ -373,8 +374,6 @@ cit_gsa <- function(M,
       pboptions(type = "none")
     }
 
-    n_cpus <- min(length(geneset), n_cpus)
-
 
     res <- pbapply::pblapply(1:length(geneset), function(k) { # 1 -- each list of gene set ----
 
@@ -464,6 +463,7 @@ cit_gsa <- function(M,
             s * prop_gs_vec
           })
 
+        browser()
         Sigma2 <- 1 / n * tcrossprod(H) %x%  (new_prop - prop_gs_vec %x%  t(prop_gs_vec))
 
 
@@ -483,7 +483,7 @@ cit_gsa <- function(M,
 
 
     },
-    cl = n_cpus)
+    cl = par_clust)
     pboptions(type = "timer")
 
 
