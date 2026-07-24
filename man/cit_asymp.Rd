@@ -2,7 +2,7 @@
 % Please edit documentation in R/cit_asymp.R
 \name{cit_asymp}
 \alias{cit_asymp}
-\title{Asymptotic test for conditional independance}
+\title{Asymptotic test for conditional independence}
 \usage{
 cit_asymp(Y, X, Z = NULL, space_y = FALSE, number_y = length(unique(Y)))
 }

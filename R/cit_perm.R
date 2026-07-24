@@ -12,6 +12,8 @@
 #'containing the covariate to condition the independence 
 #'test upon. Multiple covariates are not supported for permutation.
 #'
+#'@param X_star a list of permuted vectors from the function \code{X_perm}
+
 #'@param n_perm the number of permutations. Default is \code{100}.
 #'
 #'@param space_y a logical flag indicating whether the y thresholds are spaced out. 
@@ -30,26 +32,37 @@
 #' }
 #' 
 #' @examples
-#' 
-#'if(interactive()){
-#'X <- as.factor(rbinom(n=100, size = 1, prob = 0.5))
-#'Y <- ((X==1)*rnorm(n = 50,0,1)) + ((X==0)*rnorm(n = 50,0.5,1))
-#'res_perm <- cit_perm(Y,data.frame(X=X),n_perm=10)}
+#'
+#'X <- data.frame(X = as.factor(rbinom(n = 100, size = 1, prob = 0.5)))
+#'Y <- (X$X == 1) * rnorm(100) + (X$X == 0) * rnorm(100, mean = 0.5)
+#'
+#'# X_star holds the permuted designs and is produced by X_perm()
+#'X_star <- X_perm(X, Z = NULL, n_perm = 10)
+#'res_perm <- cit_perm(Y, X, X_star = X_star, n_perm = 10)
+#'res_perm
+#'
+#'# adjusting for a covariate Z
+#'Z <- data.frame(Z = rnorm(100))
+#'X_star_z <- X_perm(X, Z, n_perm = 10)
+#'res_perm_adj <- cit_perm(Y, X, Z = Z, X_star = X_star_z, n_perm = 10)
+#'res_perm_adj
 
-cit_perm <- function(Y, X, Z = NULL, n_perm = 100, space_y = FALSE, number_y = length(Y)){
+cit_perm <- function(Y, X, Z = NULL, X_star, n_perm = 100, space_y = FALSE, number_y = length(Y)){
   
   stopifnot(is.vector(Y))
   stopifnot(is.data.frame(X))
   stopifnot(is.data.frame(Z) | is.null(Z))
   stopifnot(ncol(X) < 2)
   stopifnot(ncol(Z) < 2 | is.null(Z))
+  stopifnot(is.list(X_star))
+  
   
   n <- length(Y)
   stopifnot(nrow(X) == n)
   stopifnot(nrow(Z) == n | is.null(Z))
   
   
-
+  
   if (is.null(Z)){ 
     colnames(X) <- sapply(1:ncol(X), function(i){paste0('X',i)})
     modelmat <- model.matrix(~.,data=X)
@@ -79,14 +92,15 @@ cit_perm <- function(Y, X, Z = NULL, n_perm = 100, space_y = FALSE, number_y = l
   index_jumps <- sapply(y[-p], function(i){sum(Y <= i)})
   beta <- c(apply(X = H[, oY, drop=FALSE], MARGIN = 1, FUN = cumsum)[index_jumps, ]) / n_Y_all
   test_stat_obs <- sum(beta^2) * n_Y_all
-
+  
   
   test_stat_perm <- rep(NA,n_perm)
+  
   if (is.null(Z)){
     for (k in 1:n_perm){
-      X_star <- data.frame(X=X[sample(1:nrow(X)),])
+      X_star_perm <- X_star[[k]]
       #colnames(X_star) <- sapply(1:ncol(X), function(i){paste0('X',i)})
-      modelmat_perm <- model.matrix(~.,data=X_star)
+      modelmat_perm <- model.matrix(~.,data=X_star_perm)
       
       H_perm <- n_Y_all*(solve(crossprod(modelmat_perm)) %*% t(modelmat_perm))[indexes_X, , drop=FALSE]
       beta_perm <- c(apply(X = H_perm[, oY, drop=FALSE], MARGIN = 1, FUN = cumsum)[index_jumps, ]) / n_Y_all
@@ -94,28 +108,11 @@ cit_perm <- function(Y, X, Z = NULL, n_perm = 100, space_y = FALSE, number_y = l
       test_stat_perm[k] <- sum(beta_perm^2) * n_Y_all
     }
   }else{
-    sample_X <- function(X,Z,z){
-      X_sampled <- rep(NA,length(Z))
-      for (zj in unique(z)){
-        X_sampled[Z==zj] <- sample(X[Z==zj])
-      }
-      return(X_sampled)
-    }
     
-    #browser()
     for(k in 1:n_perm){
-      X_star <- switch(class(Z[,1]),
-                       "factor" = sample_X(X[,1], as.numeric(Z[,1]), unique(as.numeric(Z[,1]))), # vérifier
-                       "integer" = sample_X(X[,1], as.numeric(Z[,1]), unique(as.numeric(Z[,1]))), # vérifier
-                       "numeric" = perm_cont(Y = Y, X = if(is.factor(X[,1])){as.numeric(levels(X[,1]))[X[,1]]}else{as.numeric(X[,1])}, Z=Z[,1])
-      )
-      if (is.factor(X[,1])){
-        X_star <- data.frame(X=as.factor(X_star))
-      }
-      
-      
+      X_star_perm <- X_star[[k]]
       #colnames(X_star) <- sapply(1:ncol(X), function(i){paste0('X',i)})
-      modelmat_perm <- model.matrix(~.,data=cbind(X_star,Z))
+      modelmat_perm <- model.matrix(~.,data=cbind(X_star_perm,Z))
       
       H_perm <- n_Y_all*(solve(crossprod(modelmat_perm)) %*% t(modelmat_perm))[indexes_X, , drop=FALSE]
       beta_perm <- c(apply(X = H_perm[, oY, drop=FALSE], MARGIN = 1, FUN = cumsum)[index_jumps, ]) / n_Y_all
@@ -129,5 +126,8 @@ cit_perm <- function(Y, X, Z = NULL, n_perm = 100, space_y = FALSE, number_y = l
   return(data.frame(score=score, raw_pval=pval))
   
 }
+
+
+
 
 

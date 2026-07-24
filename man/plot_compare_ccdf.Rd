@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot_compare_ccdf.R
 \name{plot_compare_ccdf}
 \alias{plot_compare_ccdf}
-\title{Function to plot the CCDF according to the type of X et Z}
+\title{Function to plot the CCDF according to the type of X and Z}
 \usage{
 plot_compare_ccdf(
   Y,
@@ -11,18 +11,23 @@ plot_compare_ccdf(
   method = c("OLS", "logistic"),
   fast = TRUE,
   space_y = FALSE,
-  number_y = length(Y)
+  number_y = length(unique(Y[, 1])),
+  discretize = !is.factor(X[, 1]) || (!is.null(Z) && !is.factor(Z[, 1])),
+  probs = c(0, 0.25, 0.5, 0.75, 1),
+  bin_labels = c("Q1", "Q2", "Q3", "Q4")
 )
 }
 \arguments{
-\item{Y}{a numeric vector of size \code{n} containing the
-preprocessed expressions from \code{n} samples (or cells).}
+\item{Y}{a data frame whose first column contains the preprocessed
+expressions from \code{n} samples (or cells). Its column name is used as the
+x-axis label.}
 
-\item{X}{a numeric or factor vector of size \code{n}
-containing the variable to be tested (the condition to be tested).}
+\item{X}{a data frame whose first column is a numeric or factor vector of
+size \code{n} containing the variable to be tested (the condition to be
+tested).}
 
-\item{Z}{a numeric or factor vector of size \code{n}
-containing the covariate. Multiple variables are not allowed.}
+\item{Z}{a data frame whose first column is a numeric or factor vector of
+size \code{n} containing the covariate. Multiple variables are not allowed.}
 
 \item{method}{a character string indicating which method to use to
 compute the CCDF, either \code{'OLS'} or \code{'logistic'}.
@@ -32,22 +37,103 @@ Default is \code{'OLS'} for computational speed.}
 logistic regression should be used. Only if \code{method == 'logistic'}.
 Default is \code{TRUE}.}
 
-\item{space_y}{a logical flag indicating whether the y thresholds are spaced. 
-When \code{space_y} is \code{TRUE}, a regular sequence between the minimum and 
+\item{space_y}{a logical flag indicating whether the y thresholds are spaced.
+When \code{space_y} is \code{TRUE}, a regular sequence between the minimum and
 the maximum of the observations is used. Default is \code{FALSE}.}
 
-\item{number_y}{an integer value indicating the number of y thresholds (and therefore
-the number of regressions) to perform the test. Default is \code{length(Y)}.}
+\item{number_y}{an integer value indicating the number of y thresholds (and
+therefore the number of regressions) used to compute the CCDF. Default is
+\code{length(unique(Y[, 1]))}, i.e. one threshold per distinct observed value.}
+
+\item{discretize}{a logical flag.
+When \code{TRUE}, any continuous variable
+among \code{X} and \code{Z} is cut at \code{probs} into ordered bins. If
+\code{Z} is not \code{NULL}, \code{X} and \code{Z} are combined into a single
+interaction factor before calling \code{\link{ccdf}}. Default is \code{FALSE}
+when \code{X} and \code{Z} are already factors, and \code{TRUE} otherwise.}
+
+\item{probs}{breakpoints (as quantile probabilities) used to bin a continuous
+\code{X} or \code{Z} when \code{discretize = TRUE}. Default is quartiles.
+Ignored for variables that are already factors.}
+
+\item{bin_labels}{labels for the bins produced by \code{probs}. Default is
+\code{c("Q1", "Q2", "Q3", "Q4")}. Ignored for variables that are already
+factors, and truncated if \code{probs} produces fewer bins (ties can collapse
+quantile breakpoints).}
 }
 \value{
-a \code{\link[ggplot2]{ggplot}} object
+a \code{\link[ggplot2]{ggplot}} object. When \code{Z} is supplied and
+at least one of \code{X} and \code{Z} is a factor, the returned object is a
+\code{\link[patchwork]{patchwork}} composition stacking the CCDF marginal on
+\code{Z} (panel A) above the CCDF given \code{X} and \code{Z} (panel B).
 }
 \description{
-Function to plot the CCDF according to the type of X et Z
+Function to plot the CCDF according to the type of X and Z
 }
-\examples{
+\section{Discretization of continuous \code{X} and \code{Z}}{
 
-X <- as.factor(rbinom(n=100, size = 1, prob = 0.5))
-Y <- ((X==1)*rnorm(n = 50,0,1)) + ((X==0)*rnorm(n = 50,0.5,1))
-plot_compare_ccdf(data.frame(Y=Y),data.frame(X=X),method="OLS")
+
+\code{ccdf()} fits a separate regression at every \code{y} threshold. With no
+constraint linking the the fits across thresholds, fitted
+\eqn{P(Y <= y | X, Z)} are not necessarily monotonic whenever \code{X} and/or
+\code{Z} are continuous variables: at each threshold the observed values for
+\code{X} and \code{Z} varies, making the empirical conditioning different.
+Such \code{ccdf} computations across varying covariate values at varying
+thresholds do not carry any monotonicity guarantee, and become hard to interpret graphically.
+For this reason, we provide the option to discretize \code{X} and
+\code{Z} for graphical representation, in order to ease the interpretation.
+}
+
+\section{A note on when \code{X} and \code{Z} are both factors}{
+
+
+When \code{X} and \code{Z} are already both factors, \code{ccdf()} fits
+an *additive* model without an interaction term. With more than a handful of
+levels in either variable this means that the fitted \code{ccdf_x} can sometimes
+display some mild non-monotonicity (in practice this happens only with enough
+levels on both sides to matter). Set \code{discretize = TRUE} to force the
+saturated interaction encoding.
+}
+
+\examples{
+set.seed(123)
+n <- 60
+Y  <- data.frame(Y = rnorm(n))
+Xf <- data.frame(X = as.factor(rbinom(n, size = 1, prob = 0.5)))
+Xc <- data.frame(X = rnorm(n))
+Zf <- data.frame(Z = as.factor(rbinom(n, size = 1, prob = 0.5)))
+Zc <- data.frame(Z = rnorm(n))
+
+# 1. Z absent, X factor         -- CDF plus one CCDF step per level of X
+plot_compare_ccdf(Y, Xf)
+
+# 2. Z absent, X continuous     -- CDF step plus CCDF points
+plot_compare_ccdf(Y, Xc)
+
+# 3. Z factor, X factor         -- panel B faceted by Z, steps
+plot_compare_ccdf(Y, Xf, Zf)
+
+# 4. Z factor, X continuous     -- panel B faceted by Z, points
+plot_compare_ccdf(Y, Xc, Zf)
+
+# 5. Z continuous, X factor     -- panel B not faceted
+plot_compare_ccdf(Y, Xf, Zc)
+
+# 6. Z continuous, X continuous -- a single panel, CDF plus both CCDFs
+plot_compare_ccdf(Y, Xc, Zc)
+
+# a factor with more than two levels gets one colour per level
+X3 <- data.frame(X = as.factor(sample(0:2, n, replace = TRUE)))
+plot_compare_ccdf(Y, X3, Zf)
+
+# the logistic method works for every case above
+plot_compare_ccdf(Y, Xf, Zf, method = "logistic")
+
+# continuous X/Z default to discretize = TRUE: quartile-binned, monotonic
+plot_compare_ccdf(Y, Xc, Zc, )
+
+# force the interaction encoding even when X and Z are already factors
+# (removes the rare additive-model artifact noted above)
+plot_compare_ccdf(Y, Xf, Zf, discretize = TRUE)
+
 }
