@@ -15,6 +15,7 @@
 #' # TO DO
 plot.cit_gsa <- function(x, ...) {
 
+  browser()
   stopifnot(inherits(x, "cit_gsa"))
 
   ccdf_all <- x$ccdf

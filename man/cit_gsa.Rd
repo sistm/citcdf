@@ -21,21 +21,21 @@ cit_gsa(
 )
 }
 \arguments{
-\item{M}{a \code{data.frame} or a \code{matrix} of size \code{n x r} 
-containing the different Y variables to test for conditional independence 
+\item{M}{a \code{data.frame} or a \code{matrix} of size \code{n x r}
+containing the different Y variables to test for conditional independence
 with \code{X} adjusted on \code{Z}.}
 
-\item{X}{a data frame of size \code{n x p} of numeric or factor vector(s) 
-containing the variable(s) to be tested for conditional independence 
-against \code{X} adjusted on \code{Z}. Multiple variables (\code{p>1}) 
+\item{X}{a data frame of size \code{n x p} of numeric or factor vector(s)
+containing the variable(s) to be tested for conditional independence
+against \code{X} adjusted on \code{Z}. Multiple variables (\code{p>1})
 are only supported by the asymptotic test.}
 
-\item{Z}{a data frame of size \code{n x q} of numeric or factor vector(s) 
-containing the covariate(s) to condition the independence 
-test upon. Multiple covariates (\code{q>1}) are only supported by the 
+\item{Z}{a data frame of size \code{n x q} of numeric or factor vector(s)
+containing the covariate(s) to condition the independence
+test upon. Multiple covariates (\code{q>1}) are only supported by the
 asymptotic test.}
 
-\item{geneset}{a vector, a list, a gmt file format or a BiocSet object. 
+\item{geneset}{a vector, a list, a gmt file format or a BiocSet object.
 If the parameter is \itemize{
  \item a vector : corresponds to the gene name of the gene set, must be the same as those of the columns of the matrix \code{M}
  \item a list : each elements of the list are a gene set with the names of the genes, must be the same as those of the columns of the matrix \code{M}
@@ -43,39 +43,39 @@ If the parameter is \itemize{
  \item a BiocSet object : the genes names of each genes set in the object, must be the same as those of the columns of the matrix \code{M}
 }}
 
-\item{test}{a character string indicating whether the \code{'asymptotic'} or 
+\item{test}{a character string indicating whether the \code{'asymptotic'} or
 the \code{'permutation'} test is computed.
 Default is \code{'asymptotic'}.}
 
 \item{n_perm}{the number of permutations. Default is \code{100}. Only used if
 \code{test == 'permutation'}.}
 
-\item{n_perm_adaptive}{a vector of the increasing numbers of 
-adaptive permutations when \code{adaptive} is \code{TRUE}. 
-\code{length(n_perm_adaptive)} should be equal to \code{length(thresholds)+1}. 
+\item{n_perm_adaptive}{a vector of the increasing numbers of
+adaptive permutations when \code{adaptive} is \code{TRUE}.
+\code{length(n_perm_adaptive)} should be equal to \code{length(thresholds)+1}.
 Default is \code{c(100, 150, 250, 500)}.}
 
 \item{thresholds}{a vector of the decreasing thresholds to compute
-adaptive permutations when \code{adaptive} is \code{TRUE}. 
+adaptive permutations when \code{adaptive} is \code{TRUE}.
 \code{length(thresholds)} should be equal to \code{length(n_perm_adaptive)-1}.
 Default is \code{c(0.1, 0.05, 0.01)}.}
 
 \item{parallel}{a logical flag indicating whether parallel computation
-should be enabled. Default is \code{TRUE} if \code{interactive()} is 
+should be enabled. Default is \code{TRUE} if \code{interactive()} is
 \code{TRUE}, else is \code{FALSE}.}
 
-\item{n_cpus}{an integer indicating the number of cores to be used for the 
-computations. Default is \code{parallel::detectCores() - 1}. If 
-\code{n_cpus = 1}, then sequential computations are used without any 
+\item{n_cpus}{an integer indicating the number of cores to be used for the
+computations. Default is \code{parallel::detectCores() - 1}. If
+\code{n_cpus = 1}, then sequential computations are used without any
 parallelization.}
 
 \item{adaptive}{a logical flag indicating whether adaptive permutations
 should be performed. Default is \code{FALSE}. Only used if
 \code{test == 'permutation'}.}
 
-\item{space_y}{a logical flag indicating whether the y thresholds are spaced out. 
-When \code{space_y} is \code{TRUE}, a regular sequence between the minimum and 
-the maximum of the observations is used. If \code{FALSE}, each unique 
+\item{space_y}{a logical flag indicating whether the y thresholds are spaced out.
+When \code{space_y} is \code{TRUE}, a regular sequence between the minimum and
+the maximum of the observations is used. If \code{FALSE}, each unique
 observed expression value is used as a distinct threshold. Default is \code{TRUE}.}
 
 \item{number_y}{an integer value indicating the number of y thresholds (and therefore
@@ -106,17 +106,17 @@ set.seed(123)
 n <- 500
 r <- 200
 Z1 <- rnorm(n)
-Z2 <- rnorm(n)#rbinom(n, size=1, prob=0.5) + rnorm(n, sd=0.05)
-X1 <- Z2 + rnorm(n, sd=0.2)
+Z2 <- rnorm(n) # rbinom(n, size=1, prob=0.5) + rnorm(n, sd=0.05)
+X1 <- Z2 + rnorm(n, sd = 0.2)
 X2 <- rnorm(n)
 cor(X1, Z2)
-Y <- replicate(r, Z2) + rnorm(n*r, 0, 0.5)
+Y <- replicate(r, Z2) + rnorm(n * r, 0, 0.5)
 range(cor(Y, Z2))
 range(cor(Y, X2))
-res_asymp_unadj <- cit_gsa(M = data.frame(Y=Y), 
-                           X = data.frame(X2=X1), 
-                           geneset = paste0("Y.", 1:50),
-                           test="asymptotic", parallel=FALSE)
+res_asymp_unadj <- cit_gsa(M = data.frame(Y = Y),
+  X = data.frame(X2 = X1),
+  geneset = paste0("Y.", 1:50),
+  test = "asymptotic", parallel = FALSE)
 res_asymp_unadj$pvals
 
 # permutation test on a small example
@@ -124,9 +124,9 @@ set.seed(123)
 n <- 60
 X <- data.frame(X = as.factor(rbinom(n, size = 1, prob = 0.5)))
 M <- matrix(rnorm(n * 8), nrow = n,
-            dimnames = list(NULL, paste0("g", 1:8)))
+  dimnames = list(NULL, paste0("g", 1:8)))
 geneset <- list(set1 = paste0("g", 1:4), set2 = paste0("g", 5:8))
 res_perm <- cit_gsa(M = M, X = X, geneset = geneset,
-                    test = "permutation", n_perm = 50, parallel = FALSE)
+  test = "permutation", n_perm = 50, parallel = FALSE)
 res_perm$pvals
 }
