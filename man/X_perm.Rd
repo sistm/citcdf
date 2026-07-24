@@ -16,14 +16,14 @@ containing the covariate. Multiple variables are not allowed.}
 \item{n_perm}{the number of permutations. Default is \code{100}.}
 }
 \value{
-a list whith the permuted label vector for each permutation
+a list with the permuted label vector for each permutation
 }
 \description{
 Compute the conditionnal permutation
 }
 \examples{
-X <- rbinom(n=100, size = 1, prob = 0.5)
-Z <- rnorm(100,0,1)
-X_perm(data.frame(X),data.frame(Z),100)
+X <- rbinom(n = 100, size = 1, prob = 0.5)
+Z <- rnorm(100, 0, 1)
+X_perm(data.frame(X), data.frame(Z), 100)
 
 }

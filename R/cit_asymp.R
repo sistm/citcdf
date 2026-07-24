@@ -1,4 +1,4 @@
-#' Asymptotic test for conditional independance
+#' Asymptotic test for conditional independence
 #' 
 #' Test the conditional independence of Y and X given Z.
 #'

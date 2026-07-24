@@ -96,7 +96,7 @@
       aes(y = .data$ccdf, color = .data$x,
         group = interaction(.data$gene, .data$x)),
       linewidth = 0.25, alpha = alpha, show.legend = FALSE) +
-    # gene-set summary: same colour, opaque and thicker
+    # gene-set summary: same color, opaque and thicker
     geom_step(data = summ,
       aes(y = .data$value, color = .data$x), linewidth = linewidth) +
     # reference curve, matching plot_compare_ccdf's gold dashed convention
@@ -129,7 +129,7 @@
 #'
 #' Draws, for one gene set, the conditional CDF of each gene given \code{X}
 #' (and \code{Z}) as a semi-transparent step function, overlaid with a bold
-#' gene-set summary curve per level of \code{X}. Layout, colours, reference
+#' gene-set summary curve per level of \code{X}. Layout, colors, reference
 #' curve and faceting follow \code{\link{plot_compare_ccdf}}, of which this is
 #' the many-genes counterpart.
 #'
@@ -158,7 +158,7 @@
 #' is \code{FALSE} when \code{X} (and \code{Z}) are already factors, and
 #' \code{TRUE} otherwise.
 #'
-#' @param summary_fun the function used to summarise across genes at each
+#' @param summary_fun the function used to summarize across genes at each
 #' expression value. Default is \code{\link[stats]{median}}.
 #'
 #' @param alpha opacity of the individual gene curves. Default \code{0.25}.

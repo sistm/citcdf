@@ -2,7 +2,7 @@
 % Please edit documentation in R/cit_gsa.R
 \name{cit_gsa}
 \alias{cit_gsa}
-\title{Conditional independance test for gene set analysis}
+\title{Conditional independence test for gene set analysis}
 \usage{
 cit_gsa(
   M,
@@ -99,7 +99,7 @@ A list with the following elements:\itemize{
 }
 }
 \description{
-Conditional independance test for gene set analysis
+Conditional independence test for gene set analysis
 }
 \examples{
 set.seed(123)

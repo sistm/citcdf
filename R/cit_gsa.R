@@ -1,5 +1,4 @@
-
-#' Conditional independance test for gene set analysis
+#' Conditional independence test for gene set analysis
 #'
 #' @param M a \code{data.frame} or a \code{matrix} of size \code{n x r}
 #' containing the different Y variables to test for conditional independence

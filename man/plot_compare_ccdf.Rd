@@ -74,12 +74,12 @@ Function to plot the CCDF according to the type of X and Z
 
 
 \code{ccdf()} fits a separate regression at every \code{y} threshold. With no
-constraint linking the the fits across thresholds, sfitted
+constraint linking the the fits across thresholds, fitted
 \eqn{P(Y <= y | X, Z)} are not necessarily monotonic whenever \code{X} and/or
 \code{Z} are continuous variables: at each threshold the observed values for
 \code{X} and \code{Z} varies, making the empirical conditioning different.
 Such \code{ccdf} computations across varying covariate values at varying
-thresholds do not carry any monotonicty garantee, and become hard to interpret graphically.
+thresholds do not carry any monotonicity guarantee, and become hard to interpret graphically.
 For this reason, we provide the option to discretize \code{X} and
 \code{Z} for graphical representation, in order to ease the interpretation.
 }
