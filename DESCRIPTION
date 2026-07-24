@@ -15,10 +15,10 @@ Authors@R: c(person("Denis", "Agniel", role = c("aut"),
 	           person("Pierre", "Neuvial", role = c("ctb"),
 	                  email = "pierre.neuvial@math.univ-toulouse.fr"))
 Depends: R (>= 3.6)
-Imports: cowplot,
-         ggplot2,
+Imports: ggplot2,
          pbapply, 
          parallel, 
+         patchwork,
          RcppNumerical, 
          survey,
          viridisLite

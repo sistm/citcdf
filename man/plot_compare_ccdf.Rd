@@ -64,8 +64,8 @@ quantile breakpoints).}
 \value{
 a \code{\link[ggplot2]{ggplot}} object. When \code{Z} is supplied and
 at least one of \code{X} and \code{Z} is a factor, the returned object is a
-\code{\link[cowplot]{ggdraw}} canvas stacking the CCDF marginal on \code{Z}
-(panel A) above the CCDF given \code{X} and \code{Z} (panel B).
+\code{\link[patchwork]{patchwork}} composition stacking the CCDF marginal on
+\code{Z} (panel A) above the CCDF given \code{X} and \code{Z} (panel B).
 }
 \description{
 Function to plot the CCDF according to the type of X and Z
@@ -124,16 +124,16 @@ plot_compare_ccdf(Y, Xc, Zc)
 
 # a factor with more than two levels gets one colour per level
 X3 <- data.frame(X = as.factor(sample(0:2, n, replace = TRUE)))
-plot_compare_ccdf(Y, X3, Zf, number_y = 12)
+plot_compare_ccdf(Y, X3, Zf)
 
 # the logistic method works for every case above
-plot_compare_ccdf(Y, Xf, Zf, method = "logistic", number_y = 12)
+plot_compare_ccdf(Y, Xf, Zf, method = "logistic")
 
 # continuous X/Z default to discretize = TRUE: quartile-binned, monotonic
-plot_compare_ccdf(Y, Xc, Zc, number_y = 12)
+plot_compare_ccdf(Y, Xc, Zc, )
 
 # force the interaction encoding even when X and Z are already factors
 # (removes the rare additive-model artifact noted above)
-plot_compare_ccdf(Y, Xf, Zf, discretize = TRUE, number_y = 12)
+plot_compare_ccdf(Y, Xf, Zf, discretize = TRUE)
 
 }
