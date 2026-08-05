@@ -1,133 +1,135 @@
 #' Permutation test for conditional independence
 #'
-#'@param Y a numeric vector of length \code{n} to test for conditional independence 
-#'with \code{X} adjusted on \code{Z}
+#' @param Y a numeric vector of length \code{n} to test for conditional independence
+#' with \code{X} adjusted on \code{Z}
 #'
-#'@param X a data frame of size \code{n x p} of numeric or factor vector(s) 
-#'containing the variable(s) to be tested for conditional independence 
-#'against \code{X} adjusted on \code{Z}. Multiple variables are not supported 
-#'for permutation.
-#' 
-#'@param Z a data.frame of size \code{n x 1} of numeric or factor vector 
-#'containing the covariate to condition the independence 
-#'test upon. Multiple covariates are not supported for permutation.
+#' @param X a data frame of size \code{n x p} of numeric or factor vector(s)
+#' containing the variable(s) to be tested for conditional independence
+#' against \code{X} adjusted on \code{Z}. Multiple variables are not supported
+#' for permutation.
 #'
-#'@param X_star a list of permuted vectors from the function \code{X_perm}
+#' @param Z a data.frame of size \code{n x 1} of numeric or factor vector
+#' containing the covariate to condition the independence
+#' test upon. Multiple covariates are not supported for permutation.
+#'
+#' @param X_star a list of permuted vectors from the function \code{X_perm}
 
-#'@param n_perm the number of permutations. Default is \code{100}.
+#' @param n_perm the number of permutations. Default is \code{100}.
 #'
-#'@param space_y a logical flag indicating whether the y thresholds are spaced out. 
-#'When \code{space_y} is \code{TRUE}, a regular sequence between the minimum and 
-#'the maximum of the observations is used. Default is \code{FALSE}.
+#' @param space_y a logical flag indicating whether the y thresholds are spaced out.
+#' When \code{space_y} is \code{TRUE}, a regular sequence between the minimum and
+#' the maximum of the observations is used. Default is \code{FALSE}.
 #'
-#'@param number_y an integer value indicating the number of y thresholds (and therefore
-#'the number of regressions) to perform the test. Default is \code{length(Y)}.
+#' @param number_y an integer value indicating the number of y thresholds (and therefore
+#' the number of regressions) to perform the test. Default is \code{length(Y)}.
 #'
 #' @export
-#' 
-#'@return A data frame with the following elements:
-#'\itemize{
+#'
+#' @return A data frame with the following elements:
+#' \itemize{
 #'   \item \code{score} contains the test statistic for a given gene.
 #'   \item \code{raw_pval} contains the raw p-values for a given gene computed from \code{n_perm} permutations.
 #' }
-#' 
+#'
 #' @examples
 #'
-#'X <- data.frame(X = as.factor(rbinom(n = 100, size = 1, prob = 0.5)))
-#'Y <- (X$X == 1) * rnorm(100) + (X$X == 0) * rnorm(100, mean = 0.5)
+#' X <- data.frame(X = as.factor(rbinom(n = 100, size = 1, prob = 0.5)))
+#' Y <- (X$X == 1) * rnorm(100) + (X$X == 0) * rnorm(100, mean = 0.5)
 #'
-#'# X_star holds the permuted designs and is produced by X_perm()
-#'X_star <- X_perm(X, Z = NULL, n_perm = 10)
-#'res_perm <- cit_perm(Y, X, X_star = X_star, n_perm = 10)
-#'res_perm
+#' # X_star holds the permuted designs and is produced by X_perm()
+#' X_star <- X_perm(X, Z = NULL, n_perm = 10)
+#' res_perm <- cit_perm(Y, X, X_star = X_star, n_perm = 10)
+#' res_perm
 #'
-#'# adjusting for a covariate Z
-#'Z <- data.frame(Z = rnorm(100))
-#'X_star_z <- X_perm(X, Z, n_perm = 10)
-#'res_perm_adj <- cit_perm(Y, X, Z = Z, X_star = X_star_z, n_perm = 10)
-#'res_perm_adj
+#' # adjusting for a covariate Z
+#' Z <- data.frame(Z = rnorm(100))
+#' X_star_z <- X_perm(X, Z, n_perm = 10)
+#' res_perm_adj <- cit_perm(Y, X, Z = Z, X_star = X_star_z, n_perm = 10)
+#' res_perm_adj
+cit_perm <- function(Y, X, Z = NULL, X_star, n_perm = 100, space_y = FALSE, number_y = length(Y)) {
 
-cit_perm <- function(Y, X, Z = NULL, X_star, n_perm = 100, space_y = FALSE, number_y = length(Y)){
-  
   stopifnot(is.vector(Y))
   stopifnot(is.data.frame(X))
   stopifnot(is.data.frame(Z) | is.null(Z))
-  stopifnot(ncol(X) < 2)
+  stopifnot(ncol(X) < 2 & is.null(Z))
   stopifnot(ncol(Z) < 2 | is.null(Z))
   stopifnot(is.list(X_star))
-  
-  
+
+
   n <- length(Y)
   stopifnot(nrow(X) == n)
   stopifnot(nrow(Z) == n | is.null(Z))
-  
-  
-  
-  if (is.null(Z)){ 
-    colnames(X) <- sapply(1:ncol(X), function(i){paste0('X',i)})
-    modelmat <- model.matrix(~.,data=X)
-  }else{# with covariates Z
-    colnames(X) <- sapply(1:ncol(X), function(i){paste0('X',i)})
-    colnames(Z) <- sapply(1:ncol(Z), function(i){paste0('Z',i)})
-    modelmat <- model.matrix(~.,data=cbind(X,Z))
+
+
+
+  if (is.null(Z)) {
+    colnames(X) <- sapply(1:ncol(X), function(i) {
+      paste0("X", i)
+    })
+    modelmat <- model.matrix(~., data = X)
+  } else { # with covariates Z
+    colnames(X) <- sapply(1:ncol(X), function(i) {
+      paste0("X", i)
+    })
+    colnames(Z) <- sapply(1:ncol(Z), function(i) {
+      paste0("Z", i)
+    })
+    modelmat <- model.matrix(~., data = cbind(X, Z))
   }
-  
+
   indexes_X <- which(substring(colnames(modelmat), 1, 1) == "X")
-  
+
   n_Y_all <- length(Y)
-  H <- n_Y_all*(solve(crossprod(modelmat)) %*% t(modelmat))[indexes_X, , drop=FALSE]
-  
+  H <- n_Y_all * (solve(crossprod(modelmat)) %*% t(modelmat))[indexes_X, , drop = FALSE]
+
   Y <- as.numeric(Y)
   oY <- order(Y)
-  
-  if (space_y){
-    y <- seq(from = ifelse(length(which(Y==0))==0, min(Y), min(Y[-which(Y==0)])),
-             to = max(Y), length.out = number_y)
-  }else{
+
+  if (space_y) {
+    y <- seq(from = ifelse(length(which(Y == 0)) == 0, min(Y), min(Y[-which(Y == 0)])),
+      to = max(Y), length.out = number_y)
+  } else {
     y <- sort(unique(Y))
   }
-  
-  p <- length(y) #number of thresholds used
-  
-  index_jumps <- sapply(y[-p], function(i){sum(Y <= i)})
-  beta <- c(apply(X = H[, oY, drop=FALSE], MARGIN = 1, FUN = cumsum)[index_jumps, ]) / n_Y_all
+
+  p <- length(y) # number of thresholds used
+
+  index_jumps <- sapply(y[-p], function(i) {
+    sum(Y <= i)
+  })
+  beta <- c(apply(X = H[, oY, drop = FALSE], MARGIN = 1, FUN = cumsum)[index_jumps, ]) / n_Y_all
   test_stat_obs <- sum(beta^2) * n_Y_all
-  
-  
-  test_stat_perm <- rep(NA,n_perm)
-  
-  if (is.null(Z)){
-    for (k in 1:n_perm){
+
+
+  test_stat_perm <- rep(NA, n_perm)
+
+  if (is.null(Z)) {
+    for (k in 1:n_perm) {
       X_star_perm <- X_star[[k]]
-      #colnames(X_star) <- sapply(1:ncol(X), function(i){paste0('X',i)})
-      modelmat_perm <- model.matrix(~.,data=X_star_perm)
-      
-      H_perm <- n_Y_all*(solve(crossprod(modelmat_perm)) %*% t(modelmat_perm))[indexes_X, , drop=FALSE]
-      beta_perm <- c(apply(X = H_perm[, oY, drop=FALSE], MARGIN = 1, FUN = cumsum)[index_jumps, ]) / n_Y_all
-      
+      # colnames(X_star) <- sapply(1:ncol(X), function(i){paste0('X',i)})
+      modelmat_perm <- model.matrix(~., data = X_star_perm)
+
+      H_perm <- n_Y_all * (solve(crossprod(modelmat_perm)) %*% t(modelmat_perm))[indexes_X, , drop = FALSE]
+      beta_perm <- c(apply(X = H_perm[, oY, drop = FALSE], MARGIN = 1, FUN = cumsum)[index_jumps, ]) / n_Y_all
+
       test_stat_perm[k] <- sum(beta_perm^2) * n_Y_all
     }
-  }else{
-    
-    for(k in 1:n_perm){
+  } else {
+
+    for (k in 1:n_perm) {
       X_star_perm <- X_star[[k]]
-      #colnames(X_star) <- sapply(1:ncol(X), function(i){paste0('X',i)})
-      modelmat_perm <- model.matrix(~.,data=cbind(X_star_perm,Z))
-      
-      H_perm <- n_Y_all*(solve(crossprod(modelmat_perm)) %*% t(modelmat_perm))[indexes_X, , drop=FALSE]
-      beta_perm <- c(apply(X = H_perm[, oY, drop=FALSE], MARGIN = 1, FUN = cumsum)[index_jumps, ]) / n_Y_all
-      
+      # colnames(X_star) <- sapply(1:ncol(X), function(i){paste0('X',i)})
+      modelmat_perm <- model.matrix(~., data = cbind(X_star_perm, Z))
+
+      H_perm <- n_Y_all * (solve(crossprod(modelmat_perm)) %*% t(modelmat_perm))[indexes_X, , drop = FALSE]
+      beta_perm <- c(apply(X = H_perm[, oY, drop = FALSE], MARGIN = 1, FUN = cumsum)[index_jumps, ]) / n_Y_all
+
       test_stat_perm[k] <- sum(beta_perm^2) * n_Y_all
     }
   }
-  
+
   score <- sum(test_stat_perm >= test_stat_obs)
   pval <- (score + 1) / (n_perm + 1)
-  return(data.frame(score=score, raw_pval=pval))
-  
+  return(data.frame(score = score, raw_pval = pval))
+
 }
-
-
-
-
-

@@ -21,7 +21,7 @@ X_perm <- function(X, Z, n_perm = 100) {
 
   stopifnot(is.data.frame(X))
   stopifnot(is.data.frame(Z) | is.null(Z))
-  stopifnot(ncol(X) < 2)
+  stopifnot(ncol(X) < 2 & is.null(Z))
   stopifnot(ncol(Z) < 2 | is.null(Z))
 
 
@@ -47,8 +47,8 @@ X_perm <- function(X, Z, n_perm = 100) {
 
   if (is.null(Z)) {
     for (k in 1:n_perm) {
-      X_star[[k]] <- data.frame(X = X[sample(1:nrow(X)), ])
-      # colnames(X_star) <- sapply(1:ncol(X), function(i){paste0('X',i)})
+      X_star[[k]] <- X[sample(nrow(X)), , drop = FALSE]
+      rownames(X_star[[k]]) <- NULL
     }
 
   } else {
