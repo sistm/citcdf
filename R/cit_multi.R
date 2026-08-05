@@ -231,7 +231,7 @@ cit_multi <- function(M,
     stopifnot(ncol(Z) < 2 | is.null(Z))
 
     # pool sized to the largest number of permutations any adaptive stage needs
-    n_perm_pool <- if (isTRUE(adaptive)) max(n_perm_adaptive) else n_perm
+    n_perm_pool <- ifelse(isTRUE(adaptive), sum(n_perm_adaptive), n_perm)
     X_star <- X_perm(X, Z, n_perm = n_perm_pool)
 
     if (adaptive == TRUE) {
@@ -251,6 +251,7 @@ cit_multi <- function(M,
         },
         cl = par_clust)
       perm <- rep(n_perm_adaptive[1], r)
+      used_perms <- n_perm_adaptive[1]
 
       k <- 2
       index <- which((res + 1) / (perm + 1) <= thresholds[k - 1])
@@ -267,7 +268,7 @@ cit_multi <- function(M,
               cit_perm(Y = M[, index[i]],
                 X = X,
                 Z = Z,
-                X_star = X_star,
+                X_star = X_star[(used_perms + 1):(used_perms + n_perm_adaptive[k])],
                 n_perm = n_perm_adaptive[k],
                 space_y = space_y,
                 number_y = number_y)$score
@@ -279,7 +280,7 @@ cit_multi <- function(M,
               cit_perm(Y = M[, index[i]],
                 X = X,
                 Z = Z,
-                X_star = X_star,
+                X_star = X_star[(used_perms + 1):(used_perms + n_perm_adaptive[k])],
                 n_perm = n_perm_adaptive[k],
                 space_y = space_y,
                 number_y = number_y)$score
@@ -289,6 +290,7 @@ cit_multi <- function(M,
 
         res[index] <- res[index] + res_perm
         perm[index] <- perm[index] + rep(n_perm_adaptive[k], length(index))
+        used_perms <- used_perms + n_perm_adaptive[k]
         k <- k + 1
 
       }
