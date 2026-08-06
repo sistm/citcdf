@@ -8,7 +8,8 @@ X_perm(X, Z, n_perm = 100)
 }
 \arguments{
 \item{X}{a numeric or factor vector of length \code{n}
-containing the variable to be tested (the condition to be tested).}
+containing the variable to be tested (the condition to be tested).
+Multi-variables \code{X} are supported if \code{Z} is \code{NULL}.}
 
 \item{Z}{a numeric vector of length \code{n}
 containing the covariate. Multiple variables are not allowed.}

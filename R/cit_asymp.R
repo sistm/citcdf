@@ -27,7 +27,7 @@
 #' @return A data frame with the following elements:
 #' \itemize{
 #'   \item \code{raw_pval} contains the raw p-values for a given gene.
-#'   \item \code{Stat} contains the test statistic for a given gene.
+#'   \item \code{test_statistic} contains the test statistic for a given gene.
 #' }
 #'
 #' @examples
@@ -121,6 +121,6 @@ cit_asymp <- function(Y, X, Z = NULL, space_y = FALSE, number_y = length(unique(
     }
   }
 
-  return(data.frame("raw_pval" = pval, "Stat" = test_stat))
+  return(data.frame("raw_pval" = pval, "test_statistic" = test_stat))
 
 }

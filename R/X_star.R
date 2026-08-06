@@ -2,6 +2,7 @@
 #'
 #' @param X a numeric or factor vector of length \code{n}
 #' containing the variable to be tested (the condition to be tested).
+#' Multi-variables \code{X} are supported if \code{Z} is \code{NULL}.
 #'
 #' @param Z a numeric vector of length \code{n}
 #' containing the covariate. Multiple variables are not allowed.

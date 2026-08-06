@@ -5,8 +5,8 @@
 #'
 #' @param X a data frame of size \code{n x p} of numeric or factor vector(s)
 #' containing the variable(s) to be tested for conditional independence
-#' against \code{X} adjusted on \code{Z}. Multiple variables are not supported
-#' for permutation.
+#' against \code{X} adjusted on \code{Z}. Multi-variables \code{X} are
+#' supported if \code{Z} is \code{NULL}.
 #'
 #' @param Z a data.frame of size \code{n x 1} of numeric or factor vector
 #' containing the covariate to condition the independence
@@ -27,8 +27,12 @@
 #'
 #' @return A data frame with the following elements:
 #' \itemize{
-#'   \item \code{score} contains the test statistic for a given gene.
-#'   \item \code{raw_pval} contains the raw p-values for a given gene computed from \code{n_perm} permutations.
+#'   \item \code{score} contains the number of permutations whose test
+#'   statistic is greater than or equal to the observed one.
+#'   \item \code{raw_pval} contains the raw p-values for a given gene computed
+#'   from \code{n_perm} permutations.
+#'   \item \code{test_statistic} contains the observed test statistic for a given
+#'   gene. It is the same quantity returned by \code{\link{cit_asymp}}.
 #' }
 #'
 #' @examples
@@ -132,6 +136,7 @@ cit_perm <- function(Y, X, Z = NULL, X_star, n_perm = 100, space_y = FALSE, numb
 
   score <- sum(test_stat_perm >= test_stat_obs)
   pval <- (score + 1) / (n_perm + 1)
-  return(data.frame(score = score, raw_pval = pval))
+  return(data.frame(score = score, raw_pval = pval,
+    test_statistic = test_stat_obs))
 
 }

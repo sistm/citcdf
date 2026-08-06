@@ -1,16 +1,6 @@
 # Regression tests for cit_gsa: the asymptotic path plus the permutation path
 # that R CMD check's examples did not previously exercise.
 
-make_data <- function(n = 60, r = 8, seed = 1) {
-  set.seed(seed)
-  X <- data.frame(X = as.factor(rbinom(n, size = 1, prob = 0.5)))
-  M <- matrix(rnorm(n * r), nrow = n,
-    dimnames = list(NULL, paste0("g", seq_len(r))))
-  # make g1 genuinely associated with X (so it survives adaptive thresholds)
-  M[, 1] <- M[, 1] + 2 * (as.numeric(X$X) - 1)
-  list(M = M, X = X, geneset = list(set1 = paste0("g", 1:4),
-    set2 = paste0("g", 5:8)))
-}
 
 test_that("asymptotic cit_gsa returns a well-formed citcdf object", {
   d <- make_data()
@@ -62,8 +52,43 @@ test_that("returned object matches its documented contract (@return)", {
   expect_identical(res_a$which_test, "asymptotic")
   expect_true(is.na(res_a$n_perm))
 
-  # permutation: 2 columns only (no test_statistic)
+  # permutation exports the aggregated observed statistic as documented
   res_p <- cit_gsa(M = d$M, X = d$X, geneset = d$geneset,
     test = "permutation", n_perm = 20, parallel = FALSE)
-  expect_named(res_p$pvals, c("raw_pval", "adj_pval"))
+  expect_named(res_p$pvals, c("raw_pval", "adj_pval", "test_statistic"))
+  expect_true(all(is.finite(res_p$pvals$test_statistic)))
+  expect_true(all(res_p$pvals$test_statistic >= 0))
+})
+
+test_that("permutation cit_gsa returns one row per gene SET", {
+  d <- make_data()
+  res <- cit_gsa(d$M, d$X, geneset = d$geneset, test = "permutation",
+    n_perm = 100, parallel = FALSE)
+  expect_equal(nrow(res$pvals), length(d$geneset))
+  expect_true("test_statistic" %in% colnames(res$pvals))
+})
+
+test_that("permutation and asymptotic flag the same gene set", {
+  d <- make_data()                                   # set1 associated, set2 null
+  ap <- cit_gsa(d$M, d$X, geneset = d$geneset, test = "asymptotic",
+    parallel = FALSE)$pvals$raw_pval
+  pp <- cit_gsa(d$M, d$X, geneset = d$geneset, test = "permutation",
+    n_perm = 500, parallel = FALSE)$pvals$raw_pval
+  expect_lt(pp[1], pp[2])
+  expect_equal(which.min(ap), which.min(pp))
+})
+
+test_that("multi-column X works on the permutation path when Z is NULL", {
+  set.seed(3)
+  n <- 80
+  X <- data.frame(X1 = rnorm(n), X2 = as.factor(rbinom(n, 1, .5)))
+  M <- as.data.frame(replicate(4, rnorm(n)) + 0.8 * X$X1)
+  colnames(M) <- paste0("g", 1:4)
+  res <- cit_gsa(M, X, Z = NULL, geneset = list(s1 = colnames(M)),
+    test = "permutation", n_perm = 50, parallel = FALSE)
+  expect_equal(nrow(res$pvals), 1L)
+  # and still refused when Z is present
+  Z <- data.frame(Z = as.factor(rbinom(n, 1, .5)))
+  expect_error(cit_gsa(M, X, Z = Z, geneset = list(s1 = colnames(M)),
+    test = "permutation", n_perm = 20, parallel = FALSE))
 })

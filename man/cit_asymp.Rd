@@ -29,7 +29,7 @@ the number of regressions) to perform the test. Default is \code{n_Y_all}.}
 A data frame with the following elements:
 \itemize{
   \item \code{raw_pval} contains the raw p-values for a given gene.
-  \item \code{Stat} contains the test statistic for a given gene.
+  \item \code{test_statistic} contains the test statistic for a given gene.
 }
 }
 \description{

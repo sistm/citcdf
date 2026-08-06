@@ -7,7 +7,8 @@
 #' @param X a data frame of size \code{n x p} of numeric or factor vector(s)
 #' containing the variable(s) to be tested for conditional independence
 #' against \code{X} adjusted on \code{Z}. Multiple variables (\code{p>1})
-#' are only supported by the asymptotic test.
+#' are supported by the asymptotic test, and also by the permutation when
+#' \code{Z} is \code{NULL}.
 #'
 #' @param Z a data frame of size \code{n x q} of numeric or factor vector(s)
 #' containing the covariate(s) to condition the independence
@@ -21,14 +22,15 @@
 #' @param n_perm the number of permutations. Default is \code{100}. Only used if
 #' \code{test == 'permutation'}.
 #'
-#' @param adaptive a logical flag indicating whether adaptive permutations
+#' @param adaptive a logical flag indicating whether adaptive additional permutations
 #' should be performed. Default is \code{TRUE}. Only used if
 #' \code{test == 'permutation'}.
 #'
 #' @param n_perm_adaptive a vector of the increasing numbers of
-#' adaptive permutations when \code{adaptive} is \code{TRUE}.
+#' adaptive permutations to be performed when \code{adaptive} is \code{TRUE}
+#' if p-values are below \code{thresholds}.
 #' \code{length(n_perm_adaptive)} should be equal to \code{length(thresholds)+1}.
-#' Default is \code{c(100, 150, 250, 500)}.
+#' Default is \code{c(n_perm, n_perm, n_perm*3, n_perm*5)}.
 #'
 #' @param thresholds a vector of the decreasing thresholds to compute
 #' adaptive permutations when \code{adaptive} is \code{TRUE}.
@@ -238,7 +240,7 @@ cit_multi <- function(M,
       #### adaptive ----
       message(paste("Computing", n_perm_adaptive[1], "permutations..."))
 
-      res <- pbapply::pbsapply(1:r,
+      res0 <- pbapply::pblapply(1:r,
         function(j) {
           cit_perm(
             Y = M[, j],
@@ -247,9 +249,18 @@ cit_multi <- function(M,
             X_star = X_star,
             n_perm = n_perm_adaptive[1],
             space_y = space_y,
-            number_y = number_y)$score
+            number_y = number_y)[c("score", "test_statistic")]
         },
         cl = par_clust)
+
+      res  <- vapply(X = res0, FUN = function(u) {
+        u$score
+      },
+      FUN.VALUE = numeric(1))
+      stat <- vapply(X = res0, FUN = function(u) {
+        u$test_statistic
+      },
+      FUN.VALUE = numeric(1))
       perm <- rep(n_perm_adaptive[1], r)
       used_perms <- n_perm_adaptive[1]
 
@@ -297,7 +308,8 @@ cit_multi <- function(M,
 
       pvals <- (res + 1) / (perm + 1)
       df <- data.frame(raw_pval = pvals,
-        adj_pval = p.adjust(pvals, method = "BH"))
+        adj_pval = p.adjust(pvals, method = "BH"),
+        test_statistic = stat)
 
       n_perm <- cumsum(n_perm_adaptive)
 
@@ -334,7 +346,8 @@ cit_multi <- function(M,
       # res <- as.vector(unlist(res))
 
       df <- data.frame(raw_pval = res$raw_pval,
-        adj_pval = p.adjust(res$raw_pval, method = "BH"))
+        adj_pval = p.adjust(res$raw_pval, method = "BH"),
+        test_statistic = res$test_statistic)
 
     }
 
@@ -352,7 +365,7 @@ cit_multi <- function(M,
     )
     df <- data.frame(raw_pval = res$raw_pval,
       adj_pval = p.adjust(res$raw_pval, method = "BH"),
-      test_statistic = res$Stat)
+      test_statistic = res$test_statistic)
   }
 
   if (parallel && .Platform$OS.type != "unix") {

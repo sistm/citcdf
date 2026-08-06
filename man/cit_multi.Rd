@@ -27,7 +27,8 @@ with \code{X} adjusted on \code{Z}}
 \item{X}{a data frame of size \code{n x p} of numeric or factor vector(s)
 containing the variable(s) to be tested for conditional independence
 against \code{X} adjusted on \code{Z}. Multiple variables (\code{p>1})
-are only supported by the asymptotic test.}
+are supported by the asymptotic test, and also by the permutation when
+\code{Z} is \code{NULL}.}
 
 \item{Z}{a data frame of size \code{n x q} of numeric or factor vector(s)
 containing the covariate(s) to condition the independence
@@ -42,9 +43,10 @@ Default is \code{'asymptotic'}.}
 \code{test == 'permutation'}.}
 
 \item{n_perm_adaptive}{a vector of the increasing numbers of
-adaptive permutations when \code{adaptive} is \code{TRUE}.
+adaptive permutations to be performed when \code{adaptive} is \code{TRUE}
+if p-values are below \code{thresholds}.
 \code{length(n_perm_adaptive)} should be equal to \code{length(thresholds)+1}.
-Default is \code{c(100, 150, 250, 500)}.}
+Default is \code{c(n_perm, n_perm, n_perm*3, n_perm*5)}.}
 
 \item{thresholds}{a vector of the decreasing thresholds to compute
 adaptive permutations when \code{adaptive} is \code{TRUE}.
@@ -60,7 +62,7 @@ computations. Default is \code{parallel::detectCores() - 1}. If
 \code{n_cpus = 1}, then sequential computations are used without any
 parallelization.}
 
-\item{adaptive}{a logical flag indicating whether adaptive permutations
+\item{adaptive}{a logical flag indicating whether adaptive additional permutations
 should be performed. Default is \code{TRUE}. Only used if
 \code{test == 'permutation'}.}
 

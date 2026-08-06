@@ -1,3 +1,72 @@
+# Design quantities depending only on (X, Z): constant across genes and,
+# when Z is absent, across permutations of X.
+.cit_gsa_design <- function(X, Z = NULL, n) {
+  colnames(X) <- paste0("X", seq_len(ncol(X)))
+  if (is.null(Z)) {
+    modelmat <- model.matrix(~., data = X)
+  } else {
+    colnames(Z) <- paste0("Z", seq_len(ncol(Z)))
+    modelmat <- model.matrix(~., data = cbind(X, Z))
+  }
+  indexes_X <- which(substring(colnames(modelmat), 1, 1) == "X")
+  H <- n * (solve(crossprod(modelmat)) %*% t(modelmat))[indexes_X, , drop = FALSE]
+  # crossprod(modelmat) is invariant under row permutation when Z is absent,
+  # so its inverse (restricted to the X rows) is reusable for every permuted design.
+  XtXinv_X <- if (is.null(Z)) solve(crossprod(modelmat))[indexes_X, , drop = FALSE] else NULL
+  list(modelmat = modelmat, indexes_X = indexes_X, H = H, XtXinv_X = XtXinv_X)
+}
+
+# One gene: observed statistic + the n_perm permuted statistics, indexed by
+# permutation so that entry k across genes all come from the SAME X_star[[k]].
+.gene_perm_stats <- function(Y, Z, X_star, n_perm, space_y, number_y, design) {
+  n  <- length(Y)
+  Y  <- as.numeric(Y)
+  oY <- order(Y)
+  if (space_y) {
+    y <- seq(from = ifelse(length(which(Y == 0)) == 0, min(Y), min(Y[-which(Y == 0)])),
+      to = max(Y), length.out = number_y)
+  } else {
+    y <- sort(unique(Y))
+  }
+  p  <- length(y)
+  ij <- findInterval(y[-p], sort.int(Y))          # O(n log n); == sapply(sum(Y <= .))
+  stat <- function(Hm) {
+    b <- c(apply(Hm[, oY, drop = FALSE], MARGIN = 1, FUN = cumsum)[ij, ]) / n
+    sum(b^2) * n
+  }
+  obs  <- stat(design$H)
+  perm <- numeric(n_perm)
+  for (k in seq_len(n_perm)) {
+    mmk <- if (is.null(Z)) model.matrix(~., data = X_star[[k]])
+    else            model.matrix(~., data = cbind(X_star[[k]], Z))
+    Hk  <- if (is.null(Z)) n * tcrossprod(design$XtXinv_X, mmk)
+    else            n * (solve(crossprod(mmk)) %*% t(mmk))[design$indexes_X, , drop = FALSE]
+    perm[k] <- stat(Hk)
+  }
+  list(obs = obs, perm = perm)
+}
+
+# One gene set: sum the per-gene statistics, then count how often the
+# shared-permutation null sum meets or exceeds the observed sum.
+.gsa_perm_set <- function(M, genes, Z, X_star, n_perm, space_y, number_y, design,
+                          set_index = NA) {
+  measured <- intersect(colnames(M), genes)
+  if (length(measured) < 1L) {
+    warning("0 genes from geneset ", set_index, " observed in expression data")
+    return(list(score = NA_integer_, obs = NA_real_))
+  }
+  if (length(measured) < length(genes)) {
+    warning(" Some genes from geneset ", set_index, " are not observed in expression data")
+  }
+  pg  <- lapply(measured, function(g)
+    .gene_perm_stats(M[, g], Z, X_star, n_perm, space_y, number_y, design))
+  obs <- sum(vapply(pg, `[[`, numeric(1), "obs"))
+  # column j = gene j's null over the shared pool, so row k = the gene-set
+  # statistic under permutation k.
+  perm_sum <- rowSums(vapply(pg, `[[`, numeric(n_perm), "perm"))
+  list(score = sum(perm_sum >= obs), obs = obs)
+}
+
 #' Conditional independence test for gene set analysis
 #'
 #' @param M a \code{data.frame} or a \code{matrix} of size \code{n x r}
@@ -7,7 +76,8 @@
 #' @param X a data frame of size \code{n x p} of numeric or factor vector(s)
 #' containing the variable(s) to be tested for conditional independence
 #' against \code{X} adjusted on \code{Z}. Multiple variables (\code{p>1})
-#' are only supported by the asymptotic test.
+#' are supported by the asymptotic test, and also by the permutation when
+#' \code{Z} is \code{NULL}.
 #'
 #' @param Z a data frame of size \code{n x q} of numeric or factor vector(s)
 #' containing the covariate(s) to condition the independence
@@ -34,9 +104,10 @@
 #' \code{test == 'permutation'}.
 #'
 #' @param n_perm_adaptive a vector of the increasing numbers of
-#' adaptive permutations when \code{adaptive} is \code{TRUE}.
+#' adaptive permutations to be performed when \code{adaptive} is \code{TRUE}
+#' if p-values are below \code{thresholds}.
 #' \code{length(n_perm_adaptive)} should be equal to \code{length(thresholds)+1}.
-#' Default is \code{c(100, 150, 250, 500)}.
+#' Default is \code{c(n_perm, n_perm, n_perm*3, n_perm*5)}.
 #'
 #' @param thresholds a vector of the decreasing thresholds to compute
 #' adaptive permutations when \code{adaptive} is \code{TRUE}.
@@ -76,6 +147,10 @@
 #'   \item \code{type}: a character string equal to \code{"gsa"}, identifying
 #'   the object as the result of a gene set analysis.
 #' }
+#'
+#' @details The gene-set statistic is the sum of per-gene statistics. For the
+#' permutation test, it is computed with each single permutation of X shared and
+#' applied across all genes in a set (so inter-gene correlation is preserved).
 #'
 #' @export
 #'
@@ -202,114 +277,81 @@ cit_gsa <- function(M,
   ## permutations ----
   if (test == "permutation") {
 
-    stopifnot(ncol(X) < 2)
+    if (!is.null(Z)) stopifnot(ncol(X) < 2)      # multi-column X supported only without Z
     stopifnot(ncol(Z) < 2 | is.null(Z))
 
-    # permuted designs (pool sized to the largest number of permutations any stage needs)
-    n_perm_pool <- if (isTRUE(adaptive)) max(n_perm_adaptive) else n_perm
+    # normalise geneset
+    if (inherits(geneset, "GSA.genesets")) {
+      geneset <- geneset$genesets
+    } else if (inherits(geneset, "BiocSet")) {
+      if (!requireNamespace("BiocSet", quietly = TRUE)) {
+        stop("Package 'BiocSet' is required for BiocSet input. Please install it from Bioconductor.")
+      }
+      geneset <- BiocSet::es_elementset(geneset)
+      geneset <- lapply(unique(geneset$set), function(x) geneset[geneset$set == x, ]$element)
+    } else if (is.vector(geneset) & !is.list(geneset)) {
+      geneset <- list(geneset)
+    }
+
+    n_perm_pool <- if (isTRUE(adaptive)) sum(n_perm_adaptive) else n_perm
     X_star <- X_perm(X, Z, n_perm = n_perm_pool)
 
-    if (adaptive == TRUE) {
+    design <- .cit_gsa_design(X, Z, n)
+
+    if (isTRUE(adaptive)) {
       #### adaptive ----
       message(paste("Computing", n_perm_adaptive[1], "permutations..."))
 
-      res <- pbapply::pbsapply(1:r,
-        function(j) {
-          cit_perm(
-            Y = M[, j],
-            X = X,
-            Z = Z,
-            X_star = X_star,
-            n_perm = n_perm_adaptive[1],
-            space_y = space_y,
-            number_y = number_y)$score
-        },
-        cl = par_clust)
-      perm <- rep(n_perm_adaptive[1], r)
+      res0 <- pbapply::pblapply(seq_along(geneset), function(k)
+        .gsa_perm_set(M, geneset[[k]], Z, X_star[seq_len(n_perm_adaptive[1])],
+          n_perm_adaptive[1], space_y, number_y, design, set_index = k),
+      cl = par_clust)
+
+      score <- vapply(res0, `[[`, numeric(1), "score")
+      obs   <- vapply(res0, `[[`, numeric(1), "obs")
+      perm  <- rep(n_perm_adaptive[1], length(geneset))
+      used_perms  <- n_perm_adaptive[1]
 
       k <- 2
-      index <- which((res + 1) / (perm + 1) <= thresholds[k - 1])
+      while (k <= length(n_perm_adaptive)) {
+        index <- which(((score + 1) / (perm + 1)) < thresholds[k - 1])
+        if (length(index) == 0) break
+        message(paste("Computing", n_perm_adaptive[k], "additional permutations..."))
 
-      while (length(index) != 0 & k <= length(n_perm_adaptive)) {
+        slice <- X_star[(used_perms + 1):(used_perms + n_perm_adaptive[k])]   # disjoint
+        res_k <- pbapply::pblapply(index, function(i)
+          .gsa_perm_set(M, geneset[[i]], Z, slice,
+            n_perm_adaptive[k], space_y, number_y, design, set_index = i),
+        cl = par_clust)
 
-        index <- which(((res + 1) / (perm + 1)) < thresholds[k - 1])
-
-        message(paste("Computing", sum(n_perm_adaptive[k]), "additional permutations..."))
-
-        if (parallel & .Platform$OS.type == "unix") {
-          res_perm <- pbapply::pbsapply(1:length(index),
-            function(i) {
-              cit_perm(Y = M[, index[i]],
-                X = X,
-                Z = Z,
-                X_star = X_star,
-                n_perm = n_perm_adaptive[k],
-                space_y = space_y,
-                number_y = number_y)$score
-            },
-            cl = par_clust, mc.preschedule = TRUE)
-        } else {
-          res_perm <- pbapply::pbsapply(1:length(index),
-            function(i) {
-              cit_perm(Y = M[, index[i]],
-                X = X,
-                Z = Z,
-                X_star = X_star,
-                n_perm = n_perm_adaptive[k],
-                space_y = space_y,
-                number_y = number_y)$score
-            },
-            cl = par_clust)
-        }
-
-        res[index] <- res[index] + res_perm
-        perm[index] <- perm[index] + rep(n_perm_adaptive[k], length(index))
+        score[index] <- score[index] + vapply(res_k, `[[`, numeric(1), "score")
+        perm[index]  <- perm[index] + n_perm_adaptive[k]
+        used_perms <- used_perms + n_perm_adaptive[k]
         k <- k + 1
-
       }
 
-      pvals <- (res + 1) / (perm + 1)
+      pvals <- (score + 1) / (perm + 1)
       df <- data.frame(raw_pval = pvals,
-        adj_pval = p.adjust(pvals, method = "BH"))
-
+        adj_pval = p.adjust(pvals, method = "BH"),
+        test_statistic = obs)
       n_perm <- cumsum(n_perm_adaptive)
 
     } else {
       #### non-adaptive ----
       message(paste("Computing", n_perm, "permutations..."))
 
-      if (parallel & .Platform$OS.type == "unix") {
-        res <- do.call("rbind", pbapply::pblapply(1:r,
-          function(j) {
-            cit_perm(Y = M[, j],
-              X = X,
-              Z = Z,
-              X_star = X_star,
-              n_perm = n_perm,
-              space_y = space_y,
-              number_y = number_y)
-          },
-          cl = par_clust, mc.preschedule = TRUE))
-      } else {
-        res <- do.call("rbind", pbapply::pblapply(1:r,
-          function(j) {
-            cit_perm(Y = M[, j],
-              X = X,
-              Z = Z,
-              X_star = X_star,
-              n_perm = n_perm,
-              space_y = space_y,
-              number_y = number_y)
-          },
-          cl = par_clust))
-      }
+      res <- pbapply::pblapply(seq_along(geneset), function(k)
+        .gsa_perm_set(M, geneset[[k]], Z, X_star, n_perm,
+          space_y, number_y, design, set_index = k),
+      cl = par_clust)
 
-      # res <- as.vector(unlist(res))
-
-      df <- data.frame(raw_pval = res$raw_pval,
-        adj_pval = p.adjust(res$raw_pval, method = "BH"))
-
+      score <- vapply(res, `[[`, numeric(1), "score")
+      pvals <- (score + 1) / (n_perm + 1)
+      df <- data.frame(raw_pval = pvals,
+        adj_pval = p.adjust(pvals, method = "BH"),
+        test_statistic = vapply(res, `[[`, numeric(1), "obs"))
     }
+
 
 
   } else if (test == "asymptotic") {
@@ -463,7 +505,7 @@ cit_gsa <- function(M,
             s * prop_gs_vec
           })
 
-        browser()
+        # browser()
         Sigma2 <- 1 / n * tcrossprod(H) %x%  (new_prop - prop_gs_vec %x%  t(prop_gs_vec))
 
 
@@ -473,20 +515,13 @@ cit_gsa <- function(M,
         pval <- survey::pchisqsum(sum(test_stat_gs), lower.tail = FALSE,
           df = rep(1, ncol(Sigma2)),
           a = decomp$values, method = "saddlepoint")
-
-
-
-
       }
 
       return(list("pval" = pval, "test_stat_gs" = test_stat_gs)) # ,"ccdf" = ccdf_list
 
-
     },
     cl = par_clust)
     pboptions(type = "timer")
-
-
 
     pvals <- sapply(res, "[[", "pval")
 
@@ -495,34 +530,12 @@ cit_gsa <- function(M,
     df <- data.frame(raw_pval = pvals,
       adj_pval = p.adjust(pvals, method = "BH"),
       test_statistic = sapply(test_stat_list, sum))
-
-
-
-    # ccdf <- lapply(res, "[[", "ccdf")
-
-    # for (i in 1:length(ccdf)){
-    #   if(length(ccdf[[i]])>1){
-    #     ccdf[[i]] <- Filter(Negate(is.null), ccdf[[i]])
-    #   }
-    #   ccdf[[i]] <- lapply(seq_along(ccdf[[i]][[1]]), function(j) ccdf[[i]][[1]][[j]])
-    #   names(ccdf[[i]]) <- intersect(M_colnames,geneset[[i]])
-    #   }
-
-    # ccdf_new<- lapply(ccdf, function(x) {
-    #   if (length(x) > 1) {x <- Filter(Negate(is.null), x)}
-    #   lapply(seq_along(x[[1]]), function(j) x[[1]][[j]])
-    #
-    # })
-
-    # récup genes dans measured gene sinon ??
   }
-
-  # rownames(df) <- M_colnames
 
 
   output <- list(which_test = test,
     n_perm = n_perm,
-    pvals = df) # , ccdf = ccdf
+    pvals = df)
 
   class(output) <- "cit_gsa"
   output$type <- "gsa"

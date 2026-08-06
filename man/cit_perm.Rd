@@ -15,24 +15,24 @@ cit_perm(
 )
 }
 \arguments{
-\item{Y}{a numeric vector of length \code{n} to test for conditional independence 
+\item{Y}{a numeric vector of length \code{n} to test for conditional independence
 with \code{X} adjusted on \code{Z}}
 
-\item{X}{a data frame of size \code{n x p} of numeric or factor vector(s) 
-containing the variable(s) to be tested for conditional independence 
-against \code{X} adjusted on \code{Z}. Multiple variables are not supported 
-for permutation.}
+\item{X}{a data frame of size \code{n x p} of numeric or factor vector(s)
+containing the variable(s) to be tested for conditional independence
+against \code{X} adjusted on \code{Z}. Multi-variables \code{X} are
+supported if \code{Z} is \code{NULL}.}
 
-\item{Z}{a data.frame of size \code{n x 1} of numeric or factor vector 
-containing the covariate to condition the independence 
+\item{Z}{a data.frame of size \code{n x 1} of numeric or factor vector
+containing the covariate to condition the independence
 test upon. Multiple covariates are not supported for permutation.}
 
 \item{X_star}{a list of permuted vectors from the function \code{X_perm}}
 
 \item{n_perm}{the number of permutations. Default is \code{100}.}
 
-\item{space_y}{a logical flag indicating whether the y thresholds are spaced out. 
-When \code{space_y} is \code{TRUE}, a regular sequence between the minimum and 
+\item{space_y}{a logical flag indicating whether the y thresholds are spaced out.
+When \code{space_y} is \code{TRUE}, a regular sequence between the minimum and
 the maximum of the observations is used. Default is \code{FALSE}.}
 
 \item{number_y}{an integer value indicating the number of y thresholds (and therefore
@@ -41,8 +41,12 @@ the number of regressions) to perform the test. Default is \code{length(Y)}.}
 \value{
 A data frame with the following elements:
 \itemize{
-  \item \code{score} contains the test statistic for a given gene.
-  \item \code{raw_pval} contains the raw p-values for a given gene computed from \code{n_perm} permutations.
+  \item \code{score} contains the number of permutations whose test
+  statistic is greater than or equal to the observed one.
+  \item \code{raw_pval} contains the raw p-values for a given gene computed
+  from \code{n_perm} permutations.
+  \item \code{test_statistic} contains the observed test statistic for a given
+  gene. It is the same quantity returned by \code{\link{cit_asymp}}.
 }
 }
 \description{

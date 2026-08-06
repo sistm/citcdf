@@ -28,7 +28,8 @@ with \code{X} adjusted on \code{Z}.}
 \item{X}{a data frame of size \code{n x p} of numeric or factor vector(s)
 containing the variable(s) to be tested for conditional independence
 against \code{X} adjusted on \code{Z}. Multiple variables (\code{p>1})
-are only supported by the asymptotic test.}
+are supported by the asymptotic test, and also by the permutation when
+\code{Z} is \code{NULL}.}
 
 \item{Z}{a data frame of size \code{n x q} of numeric or factor vector(s)
 containing the covariate(s) to condition the independence
@@ -51,9 +52,10 @@ Default is \code{'asymptotic'}.}
 \code{test == 'permutation'}.}
 
 \item{n_perm_adaptive}{a vector of the increasing numbers of
-adaptive permutations when \code{adaptive} is \code{TRUE}.
+adaptive permutations to be performed when \code{adaptive} is \code{TRUE}
+if p-values are below \code{thresholds}.
 \code{length(n_perm_adaptive)} should be equal to \code{length(thresholds)+1}.
-Default is \code{c(100, 150, 250, 500)}.}
+Default is \code{c(n_perm, n_perm, n_perm*3, n_perm*5)}.}
 
 \item{thresholds}{a vector of the decreasing thresholds to compute
 adaptive permutations when \code{adaptive} is \code{TRUE}.
@@ -100,6 +102,11 @@ A list with the following elements:\itemize{
 }
 \description{
 Conditional independence test for gene set analysis
+}
+\details{
+The gene-set statistic is the sum of per-gene statistics. For the
+permutation test, it is computed with each single permutation of X shared and
+applied across all genes in a set (so inter-gene correlation is preserved).
 }
 \examples{
 set.seed(123)
