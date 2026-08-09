@@ -25,7 +25,6 @@
 #'   res <- perm_cont(Y, X, Z)
 #' }
 perm_cont <- function(Y, X, Z) {
-  prob <- matrix(0, length(Z), length(Z))
   modmat <- model.matrix(~Z)
   reg_coefs <- solve(crossprod(modmat)) %*% t(modmat) %*% X
   X_star <- rep(NA, length(X))
