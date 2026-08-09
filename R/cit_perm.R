@@ -93,9 +93,7 @@ cit_perm <- function(Y, X, Z = NULL, X_star, n_perm = 100, space_y = FALSE, numb
   y <- .cit_y_grid(Y, space_y, number_y)
   p <- length(y) # number of thresholds used
 
-  index_jumps <- sapply(y[-p], function(i) {
-    sum(Y <= i)
-  })
+  index_jumps <- findInterval(y[-p], Y[oY])
   beta <- c(apply(X = H[, oY, drop = FALSE], MARGIN = 1, FUN = cumsum)[index_jumps, ]) / n_Y_all
   test_stat_obs <- sum(beta^2) * n_Y_all
 

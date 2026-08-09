@@ -77,13 +77,12 @@ cit_asymp <- function(Y, X, Z = NULL, space_y = FALSE, number_y = length(unique(
   # computing the test statistic
   # depends on Y: has to be recomputed for each gene
   Y <- as.numeric(Y) # is this really necessary ??
+  oY <- order(Y)
   y <- .cit_y_grid(Y, space_y, number_y)
   p <- length(y) # number of thresholds used
 
-  index_jumps <- sapply(y[-p], function(i) {
-    sum(Y <= i)
-  })
-  beta <- c(apply(X = H[, order(Y), drop = FALSE], MARGIN = 1, FUN = cumsum)[index_jumps, ]) / n_Y_all
+  index_jumps <- findInterval(y[-p], Y[oY])
+  beta <- c(apply(X = H[, oY, drop = FALSE], MARGIN = 1, FUN = cumsum)[index_jumps, ]) / n_Y_all
   test_stat <- sum(beta^2) * n_Y_all
 
   # Computing the variance ----

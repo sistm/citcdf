@@ -453,16 +453,15 @@ cit_gsa <- function(M,
         for (i in 1:length(measured_genes)) { # 2 -- each genes in the gene set k ----
 
           Y <- M[, measured_genes[i]]
+          oY <- order(Y)
 
 
           # 1) Test statistic computation ----
           y <- .cit_y_grid(Y, space_y, number_y)
           p <- length(y)
 
-          index_jumps <- sapply(y[-p], function(i) {
-            sum(Y <= i)
-          })
-          beta <- c(apply(X = H[, order(Y), drop = FALSE], MARGIN = 1, FUN = cumsum)[index_jumps, ]) / n_Y_all # same number than thresholds
+          index_jumps <- findInterval(y[-p], Y[oY])
+          beta <- c(apply(X = H[, oY, drop = FALSE], MARGIN = 1, FUN = cumsum)[index_jumps, ]) / n_Y_all # same number than thresholds
           test_stat <- sum(beta^2) * n_Y_all
 
           test_stat_gs[i] <- test_stat # test statistic for each genes in the gene set
