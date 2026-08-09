@@ -74,7 +74,7 @@
 #'   third column '\code{test_statistic}' contains the gene-wise test statistics.
 #' }
 #'
-#' @references Gauthier M, Agniel D, Thiebaut R & Hejblum BP (2019).
+#' @references Gauthier M, Agniel D, Thiébaut R & Hejblum BP (2021).
 #' Distribution-free complex hypothesis testing for single-cell RNA-seq differential expression analysis, *bioRxiv* 445165.
 #' [DOI: 10.1101/2021.05.21.445165](https://doi.org/10.1101/2021.05.21.445165).
 #'
@@ -164,7 +164,7 @@ cit_multi <- function(M,
 
   M_colnames <- colnames(M)
 
-  if (sum(is.na(M)) > 1) {
+  if (sum(is.na(M)) > 0) {
     warning("'M' contains", sum(is.na(M)), "NA values. ",
       "\nCurrently they are ignored in the computations but ",
       "you should think carefully about where do those NA/NaN ",

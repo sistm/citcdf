@@ -215,7 +215,7 @@ cit_gsa <- function(M,
   M_colnames <- colnames(M)
 
 
-  if (sum(is.na(M)) > 1) {
+  if (sum(is.na(M)) > 0) {
     warning("'M' contains", sum(is.na(M)), "NA values. ",
       "\nCurrently they are ignored in the computations but ",
       "you should think carefully about where do those NA/NaN ",

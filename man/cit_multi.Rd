@@ -152,7 +152,7 @@ if (interactive()) {
 }
 }
 \references{
-Gauthier M, Agniel D, Thiebaut R & Hejblum BP (2019).
+Gauthier M, Agniel D, Thiébaut R & Hejblum BP (2021).
 Distribution-free complex hypothesis testing for single-cell RNA-seq differential expression analysis, *bioRxiv* 445165.
 [DOI: 10.1101/2021.05.21.445165](https://doi.org/10.1101/2021.05.21.445165).
 }
