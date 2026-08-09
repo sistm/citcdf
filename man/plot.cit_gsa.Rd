@@ -64,7 +64,7 @@ expression value. Default is \code{\link[stats]{median}}.}
 \item{linewidth}{width of the summary and reference curves. Default
 \code{0.9}.}
 
-\item{n_grid}{number of points on the shared grid used to summarise across
+\item{n_grid}{number of points on the shared grid used to summarize across
 genes. Genes in a set do not share expression values, so all curves are
 re-evaluated on a common grid first. Default \code{200}.}
 

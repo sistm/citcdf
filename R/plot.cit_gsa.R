@@ -10,7 +10,7 @@
 #
 # The CCDF of each gene is a right-continuous step function observed on that
 # gene's own expression values. Genes in a set do not share a grid, so every
-# curve is re-evaluated on a common one before they can be summarised. Grid
+# curve is re-evaluated on a common one before they can be summarized. Grid
 # Below a gene's first observation the value is 0 -- an empirical CDF is zero
 # below its support, so the curve IS defined there. Returning NA instead would
 # make the summary take a median over a changing subset of genes, which breaks
@@ -60,7 +60,7 @@
 
 # Pointwise summary across genes, on a shared grid.
 #
-# Each gene's step function is evaluated on `grid`, then summarised within every
+# Each gene's step function is evaluated on `grid`, then summarized within every
 # (x, z) cell. Because every input curve is monotonic (see .gsa_curves), a
 # pointwise median of them is monotonic too -- so the summary curve needs no
 # monotonicity correction, unlike the previous implementation.
@@ -166,7 +166,7 @@
 #' @param linewidth width of the summary and reference curves. Default
 #' \code{0.9}.
 #'
-#' @param n_grid number of points on the shared grid used to summarise across
+#' @param n_grid number of points on the shared grid used to summarize across
 #' genes. Genes in a set do not share expression values, so all curves are
 #' re-evaluated on a common grid first. Default \code{200}.
 #'
