@@ -89,9 +89,7 @@ ccdf <- function(Y, X, Z = NULL, method = c("OLS", "logistic"),
     # modelmat <- model.matrix(Y~X)
 
 
-    colnames(X) <- sapply(1:ncol(X), function(i) {
-      paste0("X", i)
-    })
+    colnames(X) <- paste0("X", seq_len(ncol(X)))
     modelmat <- model.matrix(~., data = X)
 
 
@@ -148,12 +146,8 @@ ccdf <- function(Y, X, Z = NULL, method = c("OLS", "logistic"),
   } else {
     n_Y <- length(Y)
 
-    colnames(X) <- sapply(1:ncol(X), function(i) {
-      paste0("X", i)
-    })
-    colnames(Z) <- sapply(1:ncol(Z), function(i) {
-      paste0("Z", i)
-    })
+    colnames(X) <- paste0("X", seq_len(ncol(X)))
+    colnames(Z) <- paste0("Z", seq_len(ncol(Z)))
     modelmat <- model.matrix(~., data = cbind.data.frame(X, Z))
 
     ind_X <- which(substring(colnames(modelmat), 1, 1) == "X")

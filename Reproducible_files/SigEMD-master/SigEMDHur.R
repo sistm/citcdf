@@ -95,9 +95,9 @@ calculate_emd_hur <- function(data, outcomes, binSize=0.2,
   # matrix to hold permuted emd values
   emd.perm <- matrix(nrow=ncol(data.df), ncol=nperm)
   rownames(emd.perm) <- colnames(data.df)
-  colnames(emd.perm) <- as.character(1:nperm)
+  colnames(emd.perm) <- as.character(seq_len(nperm))
   
-  for (i in 1:nperm) {
+  for (i in seq_len(nperm)) {
     
     msg <- paste("Calculating permuted emd #", i, " of ",
                  nperm, "...", sep="")
@@ -192,7 +192,7 @@ calculate_emd_gene <- function(vec, outcomes, sample_names, binSize=0.2) {
   colnames(q.tab) <- names
   rownames(q.tab) <- colnames(data.df)
 
-  for (p in 1:ncol(pairs)) {
+  for (p in seq_len(ncol(pairs))) {
 
     # ------------------ calculate permuted emd scores ---------------------
     sample_count <- length(outcomes)
@@ -200,13 +200,13 @@ calculate_emd_gene <- function(vec, outcomes, sample_names, binSize=0.2) {
     # matrix to hold permuted emd values
     emd.perm <- matrix(nrow=ncol(data.df), ncol=nperm)
     rownames(emd.perm) <- colnames(data.df)
-    colnames(emd.perm) <- as.character(1:nperm)
+    colnames(emd.perm) <- as.character(seq_len(nperm))
 
     msg <- paste("Beginning pairwise q-value computatiion for",names[p])
     if (verbose)
       message(msg)
 
-    for (i in 1:nperm) {
+    for (i in seq_len(nperm)) {
 
       msg <- paste("Calculating permuted emd #", i, " of ",
                    nperm, "...", sep="")

@@ -32,8 +32,8 @@ Default is \code{'OLS'} for greater computational speed.}
 logistic regression should be used. Only if \code{method == 'logistic'}.
 Default is \code{TRUE}.}
 
-\item{space_y}{a logical flag indicating whether the y thresholds are spaced. 
-When \code{space_y} is \code{TRUE}, a regular sequence between the minimum and 
+\item{space_y}{a logical flag indicating whether the y thresholds are spaced.
+When \code{space_y} is \code{TRUE}, a regular sequence between the minimum and
 the maximum of the observations is used. Default is \code{FALSE}.}
 
 \item{number_y}{an integer value indicating the number of y thresholds (and therefore
@@ -58,7 +58,7 @@ Estimate the empirical conditional cumulative distribution function
 }
 \examples{
 
-X <- as.factor(rbinom(n=1000, size = 1, prob = 0.5))
-Y <- ((X==1)*rnorm(n = 500,0,1)) + ((X==0)*rnorm(n = 500,0.5,1))
-res <- ccdf(Y,data.frame(X=X),method="OLS")
+X <- as.factor(rbinom(n = 1000, size = 1, prob = 0.5))
+Y <- ((X == 1) * rnorm(n = 500, 0, 1)) + ((X == 0) * rnorm(n = 500, 0.5, 1))
+res <- ccdf(Y, data.frame(X = X), method = "OLS")
 }

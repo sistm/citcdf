@@ -11,7 +11,7 @@
 
 \item{...}{further arguments to be passed}
 
-\item{nominal_level}{a nominal testing level between 0 and 1. 
+\item{nominal_level}{a nominal testing level between 0 and 1.
 Default is 5\%: \code{0.05}.}
 }
 \value{
@@ -24,13 +24,13 @@ limit and the nominal threshold
 \examples{
 n <- 100
 p <- 500
-X1 <- as.factor(rbinom(n=n, size = 1, prob = 0.5))
-Y <- replicate(p, ((X1==1)*rnorm(n = n,0,1)) + ((X1==0)*rnorm(n = n, 0.5, 1)))
+X1 <- as.factor(rbinom(n = n, size = 1, prob = 0.5))
+Y <- replicate(p, ((X1 == 1) * rnorm(n = n, 0, 1)) + ((X1 == 0) * rnorm(n = n, 0.5, 1)))
 
-res_asymp <- cit_multi(M=data.frame(Y=Y),
-                      X=data.frame(X = X1), 
-                      test="asymptotic",
-                      parallel=FALSE)
+res_asymp <- cit_multi(M = data.frame(Y = Y),
+  X = data.frame(X = X1),
+  test = "asymptotic",
+  parallel = FALSE)
 plot(res_asymp)
 
 }

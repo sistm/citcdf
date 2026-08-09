@@ -4,12 +4,9 @@
 \alias{perm_cont}
 \title{Permutation procedure when Z is continuous}
 \usage{
-perm_cont(Y, X, Z)
+perm_cont(X, Z)
 }
 \arguments{
-\item{Y}{a numeric vector of length \code{n} containing the
-preprocessed expressions from \code{n} samples (or cells).}
-
 \item{X}{a numeric or factor vector of length \code{n}
 containing the variable to be tested (the condition to be tested).}
 
@@ -24,9 +21,10 @@ Permutation procedure when Z is continuous
 }
 \examples{
 
-if(interactive()){
-X <- rbinom(n=100, size = 1, prob = 0.5)
-Z <- rnorm(100,0,1)
-Y <- ((X==1)*rnorm(n = 50,0,1)) + ((X==0)*rnorm(n = 50,0.5,1))
-res <- perm_cont(Y,X,Z)}
+if (interactive()) {
+  X <- rbinom(n = 100, size = 1, prob = 0.5)
+  Z <- rnorm(100, 0, 1)
+  Y <- ((X == 1) * rnorm(n = 50, 0, 1)) + ((X == 0) * rnorm(n = 50, 0.5, 1))
+  res <- perm_cont(X, Z)
+}
 }

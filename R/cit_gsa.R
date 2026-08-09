@@ -220,7 +220,7 @@ cit_gsa <- function(M,
       "\nCurrently they are ignored in the computations but ",
       "you should think carefully about where do those NA/NaN ",
       "come from...")
-    M <- M[, complete.cases(t(M))]
+    M <- M[, colSums(is.na(M)) == 0]
   }
 
   r <- ncol(M)
@@ -386,17 +386,11 @@ cit_gsa <- function(M,
 
 
     if (is.null(Z)) {
-      colnames(X) <- sapply(1:ncol(X), function(i) {
-        paste0("X", i)
-      })
+      colnames(X) <- paste0("X", seq_len(ncol(X)))
       modelmat <- as.matrix(model.matrix(~., data = X))
     } else {
-      colnames(X) <- sapply(1:ncol(X), function(i) {
-        paste0("X", i)
-      })
-      colnames(Z) <- sapply(1:ncol(Z), function(i) {
-        paste0("Z", i)
-      })
+      colnames(X) <- paste0("X", seq_len(ncol(X)))
+      colnames(Z) <- paste0("Z", seq_len(ncol(Z)))
       modelmat <- as.matrix(model.matrix(~., data = cbind(X, Z)))
     }
 
@@ -405,10 +399,7 @@ cit_gsa <- function(M,
 
     # Initialisation for each gene set
     test_stat_list <- list()
-    Sigma2_list <- list()
-    decomp_list <- list()
     pval <- NA
-    ccdf_list <- list()
 
 
     n_Y_all <- nrow(M)
@@ -529,6 +520,9 @@ cit_gsa <- function(M,
       test_statistic = sapply(test_stat_list, sum))
   }
 
+  if (parallel && .Platform$OS.type != "unix") {
+    parallel::stopCluster(par_clust)
+  }
 
   output <- list(which_test = test,
     n_perm = n_perm,

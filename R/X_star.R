@@ -9,7 +9,7 @@
 #'
 #' @param n_perm the number of permutations. Default is \code{100}.
 #'
-#' @returns a list with the permuted label vector for each permutation
+#' @return a list with the permuted label vector for each permutation
 #'
 #' @export
 #'
@@ -34,22 +34,16 @@ X_perm <- function(X, Z, n_perm = 100) {
 
 
   if (is.null(Z)) {
-    colnames(X) <- sapply(1:ncol(X), function(i) {
-      paste0("X", i)
-    })
+    colnames(X) <- paste0("X", seq_len(ncol(X)))
   } else { # with covariates Z
-    colnames(X) <- sapply(1:ncol(X), function(i) {
-      paste0("X", i)
-    })
-    colnames(Z) <- sapply(1:ncol(Z), function(i) {
-      paste0("Z", i)
-    })
+    colnames(X) <- paste0("X", seq_len(ncol(X)))
+    colnames(Z) <- paste0("Z", seq_len(ncol(Z)))
   }
 
   X_star <- list()
 
   if (is.null(Z)) {
-    for (k in 1:n_perm) {
+    for (k in seq_len(n_perm)) {
       X_star[[k]] <- X[sample(nrow(X)), , drop = FALSE]
       rownames(X_star[[k]]) <- NULL
     }
@@ -64,7 +58,7 @@ X_perm <- function(X, Z, n_perm = 100) {
       return(X_sampled)
     }
 
-    for (k in 1:n_perm) {
+    for (k in seq_len(n_perm)) {
       X_star[[k]] <- switch(class(Z[, 1]),
         "factor" = sample_X(X[, 1], as.numeric(Z[, 1]),
           unique(as.numeric(Z[, 1]))), # to be double-checked
@@ -80,7 +74,7 @@ X_perm <- function(X, Z, n_perm = 100) {
         X_star[[k]] <- data.frame(X = as.factor(X_star[[k]]))
       }
 
-      # colnames(X_star) <- sapply(1:ncol(X), function(i){paste0('X',i)})
+      # colnames(X_star) <- sapply(seq_len(ncol(X)), function(i){paste0('X',i)})
     }
   }
 

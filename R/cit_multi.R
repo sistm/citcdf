@@ -162,16 +162,15 @@ cit_multi <- function(M,
   stopifnot(is.logical(adaptive))
   stopifnot(is.numeric(n_perm))
 
-  M_colnames <- colnames(M)
-
   if (sum(is.na(M)) > 0) {
     warning("'M' contains", sum(is.na(M)), "NA values. ",
       "\nCurrently they are ignored in the computations but ",
       "you should think carefully about where do those NA/NaN ",
       "come from...")
-    M <- M[, complete.cases(t(M))]
+    M <- M[, colSums(is.na(M)) == 0, drop = FALSE]
   }
 
+  M_colnames <- colnames(M)
   r <- ncol(M)
   n <- nrow(M)
   stopifnot(nrow(X) == n)
@@ -372,7 +371,9 @@ cit_multi <- function(M,
     parallel::stopCluster(par_clust)
   }
 
-  # rownames(df) <- M_colnames
+  if (!is.null(M_colnames)) {
+    rownames(df) <- M_colnames
+  }
 
   output <- list(which_test = test,
     n_perm = n_perm,

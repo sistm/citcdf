@@ -18,7 +18,7 @@
 #' the maximum of the observations is used. Default is \code{FALSE}.
 #'
 #' @param number_y an integer value indicating the number of y thresholds (and therefore
-#' the number of regressions) to perform the test. Default is \code{n_Y_all}.
+#' the number of regressions) to perform the test. Default is \code{length(unique(Y))}.
 #'
 #' @importFrom survey pchisqsum
 #'
@@ -54,19 +54,13 @@ cit_asymp <- function(Y, X, Z = NULL, space_y = FALSE, number_y = length(unique(
 
   # no covariates Z
   if (is.null(Z)) {
-    colnames(X) <- sapply(1:ncol(X), function(i) {
-      paste0("X", i)
-    })
+    colnames(X) <- paste0("X", seq_len(ncol(X)))
     modelmat <- as.matrix(model.matrix(~., data = X))
   }
   # with covariates Z
   else {
-    colnames(X) <- sapply(1:ncol(X), function(i) {
-      paste0("X", i)
-    })
-    colnames(Z) <- sapply(1:ncol(Z), function(i) {
-      paste0("Z", i)
-    })
+    colnames(X) <- paste0("X", seq_len(ncol(X)))
+    colnames(Z) <- paste0("Z", seq_len(ncol(Z)))
     modelmat <- as.matrix(model.matrix(~., data = cbind(X, Z)))
   }
 

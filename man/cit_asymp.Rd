@@ -23,7 +23,7 @@ When \code{space_y} is \code{TRUE}, a regular sequence between the minimum and
 the maximum of the observations is used. Default is \code{FALSE}.}
 
 \item{number_y}{an integer value indicating the number of y thresholds (and therefore
-the number of regressions) to perform the test. Default is \code{n_Y_all}.}
+the number of regressions) to perform the test. Default is \code{length(unique(Y))}.}
 }
 \value{
 A data frame with the following elements:
