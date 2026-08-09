@@ -90,14 +90,7 @@ cit_perm <- function(Y, X, Z = NULL, X_star, n_perm = 100, space_y = FALSE, numb
 
   Y <- as.numeric(Y)
   oY <- order(Y)
-
-  if (space_y) {
-    y <- seq(from = ifelse(length(which(Y == 0)) == 0, min(Y), min(Y[-which(Y == 0)])),
-      to = max(Y), length.out = number_y)
-  } else {
-    y <- sort(unique(Y))
-  }
-
+  y <- .cit_y_grid(Y, space_y, number_y)
   p <- length(y) # number of thresholds used
 
   index_jumps <- sapply(y[-p], function(i) {

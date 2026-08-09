@@ -19,23 +19,23 @@
 # One gene: observed statistic + the n_perm permuted statistics, indexed by
 # permutation so that entry k across genes all come from the SAME X_star[[k]].
 .gene_perm_stats <- function(Y, Z, X_star, n_perm, space_y, number_y, design) {
+
   n  <- length(Y)
   Y  <- as.numeric(Y)
   oY <- order(Y)
-  if (space_y) {
-    y <- seq(from = ifelse(length(which(Y == 0)) == 0, min(Y), min(Y[-which(Y == 0)])),
-      to = max(Y), length.out = number_y)
-  } else {
-    y <- sort(unique(Y))
-  }
+  y <- .cit_y_grid(Y, space_y, number_y)
   p  <- length(y)
-  ij <- findInterval(y[-p], sort.int(Y))          # O(n log n); == sapply(sum(Y <= .))
+
+  ij <- findInterval(y[-p], sort.int(Y))    # O(n log n); == sapply(sum(Y <= .))
+
   stat <- function(Hm) {
     b <- c(apply(Hm[, oY, drop = FALSE], MARGIN = 1, FUN = cumsum)[ij, ]) / n
-    sum(b^2) * n
+    return(sum(b^2) * n)
   }
+
   obs  <- stat(design$H)
   perm <- numeric(n_perm)
+
   for (k in seq_len(n_perm)) {
     mmk <- if (is.null(Z)) model.matrix(~., data = X_star[[k]])
     else            model.matrix(~., data = cbind(X_star[[k]], Z))
@@ -43,28 +43,34 @@
     else            n * (solve(crossprod(mmk)) %*% t(mmk))[design$indexes_X, , drop = FALSE]
     perm[k] <- stat(Hk)
   }
-  list(obs = obs, perm = perm)
+
+  return(list(obs = obs, perm = perm))
 }
 
 # One gene set: sum the per-gene statistics, then count how often the
 # shared-permutation null sum meets or exceeds the observed sum.
 .gsa_perm_set <- function(M, genes, Z, X_star, n_perm, space_y, number_y, design,
                           set_index = NA) {
+
   measured <- intersect(colnames(M), genes)
+
   if (length(measured) < 1L) {
     warning("0 genes from geneset ", set_index, " observed in expression data")
     return(list(score = NA_integer_, obs = NA_real_))
   }
+
   if (length(measured) < length(genes)) {
     warning(" Some genes from geneset ", set_index, " are not observed in expression data")
   }
+
   pg  <- lapply(measured, function(g)
     .gene_perm_stats(M[, g], Z, X_star, n_perm, space_y, number_y, design))
   obs <- sum(vapply(pg, `[[`, numeric(1), "obs"))
   # column j = gene j's null over the shared pool, so row k = the gene-set
   # statistic under permutation k.
   perm_sum <- rowSums(vapply(pg, `[[`, numeric(n_perm), "perm"))
-  list(score = sum(perm_sum >= obs), obs = obs)
+
+  return(list(score = sum(perm_sum >= obs), obs = obs))
 }
 
 #' Conditional independence test for gene set analysis
@@ -450,12 +456,7 @@ cit_gsa <- function(M,
 
 
           # 1) Test statistic computation ----
-          if (space_y) {
-            y <- seq(from = ifelse(length(which(Y == 0)) == 0, min(Y), min(Y[-which(Y == 0)])),
-              to = max(Y[-which.max(as.matrix(Y))]), length.out = number_y)
-          } else {
-            y <- sort(unique(Y))
-          }
+          y <- .cit_y_grid(Y, space_y, number_y)
           p <- length(y)
 
           index_jumps <- sapply(y[-p], function(i) {

@@ -77,13 +77,7 @@ cit_asymp <- function(Y, X, Z = NULL, space_y = FALSE, number_y = length(unique(
   # computing the test statistic
   # depends on Y: has to be recomputed for each gene
   Y <- as.numeric(Y) # is this really necessary ??
-
-  if (space_y) {
-    y <- seq(from = ifelse(length(which(Y == 0)) == 0, min(Y), min(Y[-which(Y == 0)])),
-      to = max(Y[-which.max(Y)]), length.out = number_y)
-  } else {
-    y <- sort(unique(Y))
-  }
+  y <- .cit_y_grid(Y, space_y, number_y)
   p <- length(y) # number of thresholds used
 
   index_jumps <- sapply(y[-p], function(i) {
