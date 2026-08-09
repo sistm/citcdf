@@ -66,8 +66,10 @@ X_perm <- function(X, Z, n_perm = 100) {
 
     for (k in 1:n_perm) {
       X_star[[k]] <- switch(class(Z[, 1]),
-        "factor" = sample_X(X[, 1], as.numeric(Z[, 1]), unique(as.numeric(Z[, 1]))), # vérifier
-        "integer" = sample_X(X[, 1], as.numeric(Z[, 1]), unique(as.numeric(Z[, 1]))), # vérifier
+        "factor" = sample_X(X[, 1], as.numeric(Z[, 1]),
+          unique(as.numeric(Z[, 1]))), # to be double-checked
+        "integer" = sample_X(X[, 1], as.numeric(Z[, 1]),
+          unique(as.numeric(Z[, 1]))), # to be double-checked
         "numeric" = perm_cont(X = if (is.factor(X[, 1])) {
           as.numeric(levels(X[, 1]))[X[, 1]]
         } else {
