@@ -87,13 +87,7 @@ cit_asymp <- function(Y, X, Z = NULL, space_y = FALSE, number_y = length(unique(
   test_stat <- sum(beta^2) * n_Y_all
 
   # Computing the variance ----
-
-  indi_pi <- matrix(NA, n_Y_all, (p - 1))
-  for (j in 1:(p - 1)) { # on fait varier le seuil
-    indi_Y <- as.numeric(Y <= y[j])
-    indi_pi[, j] <- indi_Y
-  }
-  prop <- colMeans(indi_pi)
+  prop <- index_jumps / n_Y_all
 
   B <- prop - prop %x% t(prop)
   Bsym  <- B * upper.tri(B, diag = TRUE) + t(B * upper.tri(B, diag = FALSE))
