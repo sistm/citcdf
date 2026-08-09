@@ -494,8 +494,6 @@ cit_gsa <- function(M,
         n_g_t <- length(prop_gs_vec)
 
         # 3) Sigma matrix creation ----
-        Sigma2 <- matrix(NA, n_g_t * nrow(H), n_g_t * nrow(H))
-
         n_gs_vec <- nrow(indi_pi_gs_tab)
         temp <- indi_pi_gs_tab - matrix(prop_gs_vec, nrow = n_gs_vec, ncol = n_g_t, byrow = TRUE)
 
@@ -505,7 +503,6 @@ cit_gsa <- function(M,
             s * prop_gs_vec
           })
 
-        # browser()
         Sigma2 <- 1 / n * tcrossprod(H) %x%  (new_prop - prop_gs_vec %x%  t(prop_gs_vec))
 
 
