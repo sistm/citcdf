@@ -134,7 +134,7 @@ ccdf <- function(Y, X, Z = NULL, method = c("OLS", "logistic"),
           ccdf[[i]] <- 1 / (1 + exp_predlin) # exp_predlin/(1+exp_predlin)
         } else if (method == "OLS") {
           coefs_ols <- solve(crossprod(modelmat)) %*% t(modelmat) %*% indi_Y
-          ccdf[[i]] <- (modelmat[w, ] %*% coefs_ols)[, 1]
+          ccdf[[i]] <- (modelmat[w, , drop = FALSE] %*% coefs_ols)[, 1]
         }
       }
     }
@@ -209,9 +209,9 @@ ccdf <- function(Y, X, Z = NULL, method = c("OLS", "logistic"),
 
       } else if (method == "OLS") {
         coefs_ols_x <- solve(crossprod(modelmat)) %*% t(modelmat) %*% indi_Y
-        ccdf_x[[i]] <- (modelmat[w, ] %*% coefs_ols_x)[, 1]
+        ccdf_x[[i]] <- (modelmat[w, , drop = FALSE] %*% coefs_ols_x)[, 1]
         coefs_ols_nox <- solve(crossprod(modelmat[, -ind_X])) %*% t(modelmat[, -ind_X]) %*% indi_Y
-        ccdf_nox[[i]] <- (modelmat[w, -ind_X] %*% coefs_ols_nox)[, 1]
+        ccdf_nox[[i]] <- (modelmat[w, -ind_X, drop = FALSE] %*% coefs_ols_nox)[, 1]
       }
     }
 
