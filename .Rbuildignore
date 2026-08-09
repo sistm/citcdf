@@ -4,5 +4,5 @@
 ^LICENSE\.md$
 ^cran-comments\.md$
 ^CRAN-RELEASE$
-^README.Rmd
+^README\.Rmd$
 ^Reproducible_files/

@@ -1,12 +1,12 @@
 Package: citcdf
 Type: Package
 Title: Conditional Independence Testing with Cumulative Distribution Functions
-Version: 1.0.2
+Version: 1.1.0
 Authors@R: c(person("Denis", "Agniel", role = c("aut"),
                     email = "denis.agniel@gmail.com"),
 	           person("Kalidou", "Ba", role = c("ctb"),
 	                  email = "kalidou.ba@u-bordeaux.fr"),
-	           person("Sara", "Fallet", role = c("ctb"),
+	           person("Sara", "Fallet", role = c("aut"),
 	                  email = "sara.fallet@u-bordeaux.fr"),
              person("Marine", "Gauthier", role = c("aut"),
 	                  email = "marine.gauthier@epoch-intelligence.fr"),
@@ -30,5 +30,6 @@ Description: Complex hypothesis testing through conditional cumulative distribut
              "Distribution-free complex hypothesis testing for single-cell RNA-seq differential expression analysis", bioRxiv <doi:10.1101/2021.05.21.445165>.
 License: GPL (>= 3)
 Encoding: UTF-8
+URL: https://github.com/sistm/citcdf
 BugReports: https://github.com/sistm/citcdf/issues
 Config/roxygen2/version: 8.0.0
