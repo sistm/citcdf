@@ -461,12 +461,7 @@ cit_gsa <- function(M,
 
 
           # 2) Pi computation ----
-          indi_pi <- matrix(NA, n_Y_all, (p - 1))
-
-          for (j in 1:(p - 1)) {
-            indi_Y <- 1 * (Y <= y[j])
-            indi_pi[, j] <- indi_Y
-          }
+          indi_pi <- outer(Y, y[-p], "<=") * 1
 
           indi_pi_gs[[i]] <- indi_pi
           prop <- colMeans(indi_pi)
