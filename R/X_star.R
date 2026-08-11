@@ -59,17 +59,20 @@ X_perm <- function(X, Z, n_perm = 100) {
     }
 
     for (k in seq_len(n_perm)) {
-      X_star[[k]] <- switch(class(Z[, 1]),
-        "factor" = sample_X(X[, 1], as.numeric(Z[, 1]),
-          unique(as.numeric(Z[, 1]))), # to be double-checked
-        "integer" = sample_X(X[, 1], as.numeric(Z[, 1]),
-          unique(as.numeric(Z[, 1]))), # to be double-checked
-        "numeric" = perm_cont(X = if (is.factor(X[, 1])) {
-          as.numeric(levels(X[, 1]))[X[, 1]]
-        } else {
-          as.numeric(X[, 1])
-        }, Z = Z[, 1])
-      )
+      z <- Z[, 1]
+      x <- if (is.factor(X[, 1])) as.numeric(levels(X[, 1]))[X[, 1]] else as.numeric(X[, 1])
+      X_star[[k]] <- if (is.factor(z) || is.integer(z) || is.logical(z) ||
+        is.character(z)) {
+        # discrete Z: permute X within each stratum of Z
+        zz <- as.numeric(as.factor(z))
+        sample_X(X[, 1], zz, unique(zz))
+      } else if (is.numeric(z)) {
+        # continuous Z: distance-weighted conditional permutation
+        perm_cont(X = x, Z = z)
+      } else {
+        stop("unsupported class for 'Z': ", paste(class(z), collapse = "/"),
+          ". 'Z' must be a factor, integer, logical, character or numeric column.")
+      }
       if (is.factor(X[, 1])) {
         X_star[[k]] <- data.frame(X = as.factor(X_star[[k]]))
       }
