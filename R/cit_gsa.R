@@ -492,7 +492,7 @@ cit_gsa <- function(M,
 
         # `temp` is already centred, so crossprod(temp)/n_gs_vec IS the geneset covariance
         covmat <- crossprod(temp) / n_gs_vec
-        Sigma2_new <- 1 / n * tcrossprod(H) %x% covmat
+        Sigma2 <- 1 / n * tcrossprod(H) %x% covmat
 
 
         decomp <- eigen(Sigma2, symmetric = TRUE, only.values = TRUE)
