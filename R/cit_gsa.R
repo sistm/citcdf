@@ -490,14 +490,9 @@ cit_gsa <- function(M,
         n_gs_vec <- nrow(indi_pi_gs_tab)
         temp <- indi_pi_gs_tab - matrix(prop_gs_vec, nrow = n_gs_vec, ncol = n_g_t, byrow = TRUE)
 
-        # new prop/new pi computation = the one of the gene set, here it's a matrix
-        new_prop <- crossprod(temp) / n_gs_vec +
-          sapply(prop_gs_vec, function(s) {
-            s * prop_gs_vec
-          })
-
-        Sigma2 <- 1 / n * tcrossprod(H) %x%  (new_prop - prop_gs_vec %x%  t(prop_gs_vec))
-
+        # `temp` is already centred, so crossprod(temp)/n_gs_vec IS the geneset covariance
+        covmat <- crossprod(temp) / n_gs_vec
+        Sigma2_new <- 1 / n * tcrossprod(H) %x% covmat
 
 
         decomp <- eigen(Sigma2, symmetric = TRUE, only.values = TRUE)
