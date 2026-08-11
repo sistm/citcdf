@@ -411,7 +411,8 @@ cit_gsa <- function(M,
 
 
     if (length(geneset) < 3) {
-      pboptions(type = "none")
+      op <- pbapply::pboptions(type = "none")
+      on.exit(pbapply::pboptions(op), add = TRUE)
     }
 
 
@@ -510,7 +511,6 @@ cit_gsa <- function(M,
 
     },
     cl = par_clust)
-    pboptions(type = "timer")
 
     pvals <- sapply(res, "[[", "pval")
 
