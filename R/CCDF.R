@@ -70,13 +70,7 @@ ccdf <- function(Y, X, Z = NULL, method = c("OLS", "logistic"),
     Y <- Y[stats::complete.cases(Y)]
   }
 
-  if (space_y) {
-    y <- seq(from = min(Y[-which(Y == min(Y))]),
-      to = max(Y),
-      length.out = number_y)
-  } else {
-    y <- sort(unique(Y))
-  }
+  y <- .cit_y_grid(Y, space_y, number_y)
 
   output <- NULL
 
