@@ -43,8 +43,9 @@
 #' \code{TRUE}, else is \code{FALSE}.
 #'
 #' @param n_cpus an integer indicating the number of cores to be used for the
-#' computations. Default is \code{parallel::detectCores() - 1}. If
-#' \code{n_cpus = 1}, then sequential computations are used without any
+#' computations. Default is
+#' \code{max(1L, paralleldetectCores(logical = FALSE) - 1L, na.rm = TRUE)}.
+#' If \code{n_cpus = 1}, then sequential computations are used without any
 #' parallelization.
 #'
 #' @param space_y a logical flag indicating whether the y thresholds are spaced out.
@@ -146,7 +147,7 @@ cit_multi <- function(M,
                       n_perm_adaptive = c(n_perm, n_perm, n_perm * 3, n_perm * 5),
                       thresholds = c(0.1, 0.05, 0.01),
                       parallel = interactive(),
-                      n_cpus = detectCores() - 1,
+                      n_cpus = max(1L, detectCores(logical = FALSE) - 1L, na.rm = TRUE),
                       adaptive = TRUE,
                       space_y = TRUE,
                       number_y = 10) {

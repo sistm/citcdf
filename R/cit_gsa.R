@@ -126,7 +126,8 @@
 #' \code{TRUE}, else is \code{FALSE}.
 #'
 #' @param n_cpus an integer indicating the number of cores to be used for the
-#' computations. Default is \code{parallel::detectCores() - 1}. If
+#' computations. Default is
+#' \code{max(1L, paralleldetectCores(logical = FALSE) - 1L, na.rm = TRUE)}. If
 #' \code{n_cpus = 1}, then sequential computations are used without any
 #' parallelization.
 #'
@@ -197,7 +198,7 @@ cit_gsa <- function(M,
                     n_perm_adaptive = c(n_perm, n_perm, n_perm * 3, n_perm * 5),
                     thresholds = c(0.1, 0.05, 0.01),
                     parallel = interactive(),
-                    n_cpus = detectCores() - 1,
+                    n_cpus = max(1L, detectCores(logical = FALSE) - 1L, na.rm = TRUE),
                     adaptive = FALSE,
                     space_y = TRUE,
                     number_y = 10) {
