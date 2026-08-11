@@ -492,14 +492,14 @@ cit_gsa <- function(M,
 
         # `temp` is already centred, so crossprod(temp)/n_gs_vec IS the geneset covariance
         covmat <- crossprod(temp) / n_gs_vec
-        Sigma2 <- 1 / n * tcrossprod(H) %x% covmat
 
-
-        decomp <- eigen(Sigma2, symmetric = TRUE, only.values = TRUE)
+        ev_H   <- eigen(tcrossprod(H), symmetric = TRUE, only.values = TRUE)$values
+        ev_cov <- eigen(covmat, symmetric = TRUE, only.values = TRUE)$values
+        ev     <- as.vector(outer(ev_H, ev_cov)) / n
 
         pval <- survey::pchisqsum(sum(test_stat_gs), lower.tail = FALSE,
-          df = rep(1, ncol(Sigma2)),
-          a = decomp$values, method = "saddlepoint")
+          df = rep(1, length(ev)),
+          a = ev, method = "saddlepoint")
       }
 
       return(list("pval" = pval, "test_stat_gs" = test_stat_gs)) # ,"ccdf" = ccdf_list
