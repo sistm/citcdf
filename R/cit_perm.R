@@ -88,7 +88,7 @@ cit_perm <- function(Y, X, Z = NULL, X_star, n_perm = 100, space_y = FALSE, numb
   p <- length(y) # number of thresholds used
 
   index_jumps <- findInterval(y[-p], Y[oY])
-  beta <- c(apply(X = H[, oY, drop = FALSE], MARGIN = 1, FUN = cumsum)[index_jumps, ]) / n_Y_all
+  beta <- c(apply(X = H[, oY, drop = FALSE], MARGIN = 1, FUN = cumsum)[index_jumps, , drop = FALSE]) / n_Y_all
   test_stat_obs <- sum(beta^2) * n_Y_all
 
 
@@ -100,7 +100,7 @@ cit_perm <- function(Y, X, Z = NULL, X_star, n_perm = 100, space_y = FALSE, numb
       modelmat_perm <- model.matrix(~., data = X_star[[k]])
 
       H_perm <- n_Y_all * n_Y_all * tcrossprod(XtXinv_X, modelmat_perm)
-      beta_perm <- c(apply(X = H_perm[, oY, drop = FALSE], MARGIN = 1, FUN = cumsum)[index_jumps, ]) / n_Y_all
+      beta_perm <- c(apply(X = H_perm[, oY, drop = FALSE], MARGIN = 1, FUN = cumsum)[index_jumps, , drop = FALSE]) / n_Y_all
 
       test_stat_perm[k] <- sum(beta_perm^2) * n_Y_all
     }
@@ -111,7 +111,7 @@ cit_perm <- function(Y, X, Z = NULL, X_star, n_perm = 100, space_y = FALSE, numb
       modelmat_perm <- model.matrix(~., data = cbind(X_star[[k]], Z))
 
       H_perm <- n_Y_all * (solve(crossprod(modelmat_perm)) %*% t(modelmat_perm))[indexes_X, , drop = FALSE]
-      beta_perm <- c(apply(X = H_perm[, oY, drop = FALSE], MARGIN = 1, FUN = cumsum)[index_jumps, ]) / n_Y_all
+      beta_perm <- c(apply(X = H_perm[, oY, drop = FALSE], MARGIN = 1, FUN = cumsum)[index_jumps, , drop = FALSE]) / n_Y_all
 
       test_stat_perm[k] <- sum(beta_perm^2) * n_Y_all
     }

@@ -29,7 +29,7 @@
   ij <- findInterval(y[-p], sort.int(Y))    # O(n log n); == sapply(sum(Y <= .))
 
   stat <- function(Hm) {
-    b <- c(apply(Hm[, oY, drop = FALSE], MARGIN = 1, FUN = cumsum)[ij, ]) / n
+    b <- c(apply(Hm[, oY, drop = FALSE], MARGIN = 1, FUN = cumsum)[ij, , drop = FALSE]) / n
     return(sum(b^2) * n)
   }
 
@@ -454,7 +454,7 @@ cit_gsa <- function(M,
           p <- length(y)
 
           index_jumps <- findInterval(y[-p], Y[oY])
-          beta <- c(apply(X = H[, oY, drop = FALSE], MARGIN = 1, FUN = cumsum)[index_jumps, ]) / n_Y_all # same number than thresholds
+          beta <- c(apply(X = H[, oY, drop = FALSE], MARGIN = 1, FUN = cumsum)[index_jumps, , drop = FALSE]) / n_Y_all # same number than thresholds
           test_stat <- sum(beta^2) * n_Y_all
 
           test_stat_gs[i] <- test_stat # test statistic for each genes in the gene set

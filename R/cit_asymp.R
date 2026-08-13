@@ -76,7 +76,7 @@ cit_asymp <- function(Y, X, Z = NULL, space_y = FALSE, number_y = length(unique(
   p <- length(y) # number of thresholds used
 
   index_jumps <- findInterval(y[-p], Y[oY])
-  beta <- c(apply(X = H[, oY, drop = FALSE], MARGIN = 1, FUN = cumsum)[index_jumps, ]) / n_Y_all
+  beta <- c(apply(X = H[, oY, drop = FALSE], MARGIN = 1, FUN = cumsum)[index_jumps, , drop = FALSE]) / n_Y_all
   test_stat <- sum(beta^2) * n_Y_all
 
   # Computing the variance ----
