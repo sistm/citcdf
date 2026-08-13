@@ -88,6 +88,7 @@ ccdf <- function(Y, X, Z = NULL, method = c("OLS", "logistic"),
 
 
     ind_X <- which(substring(colnames(modelmat), 1, 1) == "X")
+    P <- solve(crossprod(modelmat)) %*% t(modelmat)
 
     cdf <- list()
     ccdf <- list()
@@ -116,16 +117,16 @@ ccdf <- function(Y, X, Z = NULL, method = c("OLS", "logistic"),
           # CDF
           if (fast) {
             # fast
-            glm_coef <- RcppNumerical::fastLR(x = modelmat, y = indi_Y,
-              eps_f = 1e-08, eps_g = 1e-08)$coefficients
+            fit <- RcppNumerical::fastLR(x = modelmat, y = indi_Y,
+              eps_f = 1e-08, eps_g = 1e-08)
           } else {
-            # safe
-            glm_coef <- glm(indi_Y ~ ., data = cbind.data.frame(indi_Y, X), family = binomial(link = "logit"))$coefficients
+            fit <- glm(indi_Y ~ ., data = cbind.data.frame(indi_Y, X),
+              family = binomial(link = "logit"))
           }
-          exp_predlin <- exp(-apply(t(glm_coef * t(modelmat[w, , drop = FALSE])), 1, sum))
-          ccdf[[i]] <- 1 / (1 + exp_predlin) # exp_predlin/(1+exp_predlin)
+          # fastLR() and glm() both return the fitted probabilities on the full design
+          ccdf[[i]] <- fit$fitted.values[w]
         } else if (method == "OLS") {
-          coefs_ols <- solve(crossprod(modelmat)) %*% t(modelmat) %*% indi_Y
+          coefs_ols <- P %*% indi_Y
           ccdf[[i]] <- (modelmat[w, , drop = FALSE] %*% coefs_ols)[, 1]
         }
       }
@@ -145,6 +146,9 @@ ccdf <- function(Y, X, Z = NULL, method = c("OLS", "logistic"),
     modelmat <- model.matrix(~., data = cbind.data.frame(X, Z))
 
     ind_X <- which(substring(colnames(modelmat), 1, 1) == "X")
+    mm_nox <- modelmat[, -ind_X, drop = FALSE]
+    P <- solve(crossprod(modelmat)) %*% t(modelmat)
+    P_nox <- solve(crossprod(mm_nox)) %*% t(mm_nox)
 
     x_sort <- list()
     y_sort <- list()
@@ -181,25 +185,22 @@ ccdf <- function(Y, X, Z = NULL, method = c("OLS", "logistic"),
         ccdf_nox[[i]] <- rep(indi_Y[1], sum(w))
 
       } else if (method == "logistic") {
+        mm_nox <- modelmat[, -ind_X, drop = FALSE]
         if (fast) {
-          glm_coef_x <- RcppNumerical::fastLR(x = modelmat, y = indi_Y)$coefficients
-          glm_coef_nox <- RcppNumerical::fastLR(x = modelmat[, -ind_X], y = indi_Y)$coefficients
-
+          fit_x   <- RcppNumerical::fastLR(x = modelmat, y = indi_Y)
+          fit_nox <- RcppNumerical::fastLR(x = mm_nox,   y = indi_Y)
         } else {
-          glm_coef_x <- glm.fit(x = modelmat, y = indi_Y, family = binomial())$coefficients
-          glm_coef_nox <- glm.fit(x = modelmat[, -ind_X], y = indi_Y, family = binomial())$coefficients
+          fit_x   <- glm.fit(x = modelmat, y = indi_Y, family = binomial())
+          fit_nox <- glm.fit(x = mm_nox,   y = indi_Y, family = binomial())
         }
-        exp_predlin_x <- exp(-apply(t(glm_coef_x * t(modelmat[w, , drop = FALSE])), 1, sum))
-        exp_predlin_nox <- exp(-apply(t(glm_coef_nox * t(modelmat[w, -ind_X, drop = FALSE])), 1, sum))
-
-        ccdf_x[[i]] <- 1 / (1 + exp_predlin_x) # exp_predlin_x/(1+exp_predlin_x)
-        ccdf_nox[[i]] <- 1 / (1 + exp_predlin_nox) # exp_predlin_nox/(1+exp_predlin_nox)
+        ccdf_x[[i]]   <- fit_x$fitted.values[w]
+        ccdf_nox[[i]] <- fit_nox$fitted.values[w]
 
       } else if (method == "OLS") {
-        coefs_ols_x <- solve(crossprod(modelmat)) %*% t(modelmat) %*% indi_Y
+        coefs_ols_x <- P %*% t(modelmat) %*% indi_Y
         ccdf_x[[i]] <- (modelmat[w, , drop = FALSE] %*% coefs_ols_x)[, 1]
-        coefs_ols_nox <- solve(crossprod(modelmat[, -ind_X])) %*% t(modelmat[, -ind_X]) %*% indi_Y
-        ccdf_nox[[i]] <- (modelmat[w, -ind_X, drop = FALSE] %*% coefs_ols_nox)[, 1]
+        coefs_ols_nox <- P_nox %*% indi_Y
+        ccdf_nox[[i]] <- (mm_nox[w, , drop = FALSE] %*% coefs_ols_nox)[, 1]
       }
     }
 
