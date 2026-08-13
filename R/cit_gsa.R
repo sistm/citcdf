@@ -150,21 +150,22 @@
 #'
 #' @examples
 #' set.seed(123)
-#' n <- 500
-#' r <- 200
-#' Z1 <- rnorm(n)
-#' Z2 <- rnorm(n) # rbinom(n, size=1, prob=0.5) + rnorm(n, sd=0.05)
+#' n <- 200
+#' r <- 60
+#' Z2 <- rnorm(n)
 #' X1 <- Z2 + rnorm(n, sd = 0.2)
-#' X2 <- rnorm(n)
-#' cor(X1, Z2)
 #' Y <- replicate(r, Z2) + rnorm(n * r, 0, 0.5)
-#' range(cor(Y, Z2))
-#' range(cor(Y, X2))
 #' res_asymp_unadj <- cit_gsa(M = data.frame(Y = Y),
-#'   X = data.frame(X2 = X1),
+#'   X = data.frame(X1 = X1),
 #'   geneset = paste0("Y.", 1:50),
 #'   test = "asymptotic", parallel = FALSE)
 #' res_asymp_unadj$pvals
+#' res_asymp_adj <- cit_gsa(M = data.frame(Y = Y),
+#'   X = data.frame(X1 = X1),
+#'   Z = data.frame(Z2 = Z2),
+#'   geneset = paste0("Y.", 1:50),
+#'   test = "asymptotic", parallel = FALSE)
+#' res_asymp_adj$pvals
 #'
 #' # permutation test on a small example
 #' set.seed(123)

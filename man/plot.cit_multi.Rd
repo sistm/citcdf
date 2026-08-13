@@ -23,7 +23,7 @@ limit and the nominal threshold
 }
 \examples{
 n <- 100
-p <- 500
+p <- 50
 X1 <- as.factor(rbinom(n = n, size = 1, prob = 0.5))
 Y <- replicate(p, ((X1 == 1) * rnorm(n = n, 0, 1)) + ((X1 == 0) * rnorm(n = n, 0.5, 1)))
 
