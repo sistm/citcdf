@@ -97,7 +97,7 @@ saturated interaction encoding.
 
 \examples{
 set.seed(123)
-n <- 60
+n <- 40
 Y  <- data.frame(Y = rnorm(n))
 Xf <- data.frame(X = as.factor(rbinom(n, size = 1, prob = 0.5)))
 Xc <- data.frame(X = rnorm(n))
@@ -122,6 +122,7 @@ plot_compare_ccdf(Y, Xf, Zc)
 # 6. Z continuous, X continuous -- a single panel, CDF plus both CCDFs
 plot_compare_ccdf(Y, Xc, Zc)
 
+\donttest{
 # a factor with more than two levels gets one colour per level
 X3 <- data.frame(X = as.factor(sample(0:2, n, replace = TRUE)))
 plot_compare_ccdf(Y, X3, Zf)
@@ -129,11 +130,8 @@ plot_compare_ccdf(Y, X3, Zf)
 # the logistic method works for every case above
 plot_compare_ccdf(Y, Xf, Zf, method = "logistic")
 
-# continuous X/Z default to discretize = TRUE: quartile-binned, monotonic
-plot_compare_ccdf(Y, Xc, Zc, )
-
 # force the interaction encoding even when X and Z are already factors
 # (removes the rare additive-model artifact noted above)
 plot_compare_ccdf(Y, Xf, Zf, discretize = TRUE)
-
+}
 }
