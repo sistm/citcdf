@@ -235,7 +235,7 @@ ccdf <- function(Y, X, Z = NULL, method = c("OLS", "logistic"),
         ccdf_nox[[i]] <- fit_nox$fitted.values[w]
 
       } else if (method == "OLS") {
-        coefs_ols_x <- P %*% t(modelmat) %*% indi_Y
+        coefs_ols_x <- P %*% indi_Y
         ccdf_x[[i]] <- (modelmat[w, , drop = FALSE] %*% coefs_ols_x)[, 1]
         coefs_ols_nox <- P_nox %*% indi_Y
         ccdf_nox[[i]] <- (mm_nox[w, , drop = FALSE] %*% coefs_ols_nox)[, 1]

@@ -99,7 +99,7 @@ cit_perm <- function(Y, X, Z = NULL, X_star, n_perm = 100, space_y = FALSE, numb
     for (k in seq_len(n_perm)) {
       modelmat_perm <- model.matrix(~., data = X_star[[k]])
 
-      H_perm <- n_Y_all * n_Y_all * tcrossprod(XtXinv_X, modelmat_perm)
+      H_perm <- n_Y_all * tcrossprod(XtXinv_X, modelmat_perm)
       beta_perm <- c(apply(X = H_perm[, oY, drop = FALSE], MARGIN = 1, FUN = cumsum)[index_jumps, , drop = FALSE]) / n_Y_all
 
       test_stat_perm[k] <- sum(beta_perm^2) * n_Y_all
