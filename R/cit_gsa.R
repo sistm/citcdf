@@ -389,30 +389,13 @@ cit_gsa <- function(M,
       geneset <- list(geneset)
     }
 
-
-
-    if (is.null(Z)) {
-      colnames(X) <- paste0("X", seq_len(ncol(X)))
-      modelmat <- as.matrix(model.matrix(~., data = X))
-    } else {
-      colnames(X) <- paste0("X", seq_len(ncol(X)))
-      colnames(Z) <- paste0("Z", seq_len(ncol(Z)))
-      modelmat <- as.matrix(model.matrix(~., data = cbind(X, Z)))
-    }
-
-    indexes_X <- which(substring(colnames(modelmat), 1, 1) == "X")
-
-
     # Initialisation for each gene set
     test_stat_list <- list()
     pval <- NA
 
-
+    # design depends only on X and Z, and is not gene specific: compute it only once !
     n_Y_all <- nrow(M)
-    H <- n_Y_all * (solve(crossprod(modelmat)) %*% t(modelmat))[indexes_X, , drop = FALSE]
-    # length of Y, same for each genes because X and Y are the same
-
-
+    H <- .cit_gsa_design(X, Z, n_Y_all)$H
 
 
     if (length(geneset) < 3) {
