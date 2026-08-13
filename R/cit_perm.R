@@ -95,12 +95,11 @@ cit_perm <- function(Y, X, Z = NULL, X_star, n_perm = 100, space_y = FALSE, numb
   test_stat_perm <- rep(NA, n_perm)
 
   if (is.null(Z)) {
+    XtXinv_X <- solve(crossprod(modelmat))[indexes_X, , drop = FALSE]
     for (k in seq_len(n_perm)) {
-      X_star_perm <- X_star[[k]]
-      # colnames(X_star) <- sapply(seq_len(ncol(X)), function(i){paste0('X',i)})
-      modelmat_perm <- model.matrix(~., data = X_star_perm)
+      modelmat_perm <- model.matrix(~., data = X_star[[k]])
 
-      H_perm <- n_Y_all * (solve(crossprod(modelmat_perm)) %*% t(modelmat_perm))[indexes_X, , drop = FALSE]
+      H_perm <- n_Y_all * n_Y_all * tcrossprod(XtXinv_X, modelmat_perm)
       beta_perm <- c(apply(X = H_perm[, oY, drop = FALSE], MARGIN = 1, FUN = cumsum)[index_jumps, ]) / n_Y_all
 
       test_stat_perm[k] <- sum(beta_perm^2) * n_Y_all
@@ -108,9 +107,8 @@ cit_perm <- function(Y, X, Z = NULL, X_star, n_perm = 100, space_y = FALSE, numb
   } else {
 
     for (k in seq_len(n_perm)) {
-      X_star_perm <- X_star[[k]]
       # colnames(X_star) <- sapply(seq_len(ncol(X)), function(i){paste0('X',i)})
-      modelmat_perm <- model.matrix(~., data = cbind(X_star_perm, Z))
+      modelmat_perm <- model.matrix(~., data = cbind(X_star[[k]], Z))
 
       H_perm <- n_Y_all * (solve(crossprod(modelmat_perm)) %*% t(modelmat_perm))[indexes_X, , drop = FALSE]
       beta_perm <- c(apply(X = H_perm[, oY, drop = FALSE], MARGIN = 1, FUN = cumsum)[index_jumps, ]) / n_Y_all
