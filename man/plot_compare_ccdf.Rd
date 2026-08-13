@@ -134,4 +134,5 @@ plot_compare_ccdf(Y, Xf, Zf, method = "logistic")
 # (removes the rare additive-model artifact noted above)
 plot_compare_ccdf(Y, Xf, Zf, discretize = TRUE)
 }
+
 }

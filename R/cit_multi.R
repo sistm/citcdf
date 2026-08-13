@@ -125,19 +125,21 @@
 #' mean(res_asymp_adj$pvals$raw_pval < 0.05)
 #' hist(res_asymp_adj$pvals$raw_pval)
 #'
-#' if (interactive()) {
-#'   res_perm_unadj <- cit_multi(M = data.frame(Y = Y),
-#'     X = data.frame(X1 = X1),
-#'     test = "permutation", parallel = TRUE)
-#'   mean(res_perm_unadj$pvals$raw_pval < 0.05)
+#' # permutation test, on a subset of the genes to keep the example short
+#' res_perm_unadj <- cit_multi(M = data.frame(Y = Y[, 1:20]),
+#'   X = data.frame(X1 = X1),
+#'   test = "permutation", adaptive = FALSE, n_perm = 50,
+#'   parallel = FALSE)
+#' mean(res_perm_unadj$pvals$raw_pval < 0.05)
 #'
-#'   res_perm_adj <- cit_multi(M = data.frame(Y = Y),
-#'     X = data.frame(X1 = X1),
-#'     Z = data.frame(Z2 = Z2),
-#'     test = "permutation",
-#'     parallel = TRUE,
-#'     n_perm = 100)
-#'   mean(res_perm_adj$pvals$raw_pval < 0.05)
+#' \donttest{
+#' # adaptive permutations spend extra stages only on the smallest p-values
+#' res_perm_adj <- cit_multi(M = data.frame(Y = Y[, 1:20]),
+#'   X = data.frame(X1 = X1),
+#'   Z = data.frame(Z2 = Z2),
+#'   test = "permutation", n_perm = 50,
+#'   parallel = FALSE)
+#' mean(res_perm_adj$pvals$raw_pval < 0.05)
 #' }
 cit_multi <- function(M,
                       X,
