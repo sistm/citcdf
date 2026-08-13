@@ -28,3 +28,6 @@ Z <- rnorm(100, 0, 1)
 X_perm(data.frame(X), data.frame(Z), 100)
 
 }
+\seealso{
+\code{\link{perm_cont}}, \code{\link{cit_perm}}
+}

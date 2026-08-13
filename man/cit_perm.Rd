@@ -68,3 +68,6 @@ X_star_z <- X_perm(X, Z, n_perm = 10)
 res_perm_adj <- cit_perm(Y, X, Z = Z, X_star = X_star_z, n_perm = 10)
 res_perm_adj
 }
+\seealso{
+\code{\link{cit_asymp}}, \code{\link{X_perm}}, \code{\link{cit_multi}}
+}

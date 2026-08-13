@@ -26,6 +26,8 @@
 #'
 #' @importFrom stats model.matrix
 #'
+#' @seealso \code{\link{plot_compare_ccdf}}, \code{\link{cit_asymp}}
+#'
 #' @export
 #'
 

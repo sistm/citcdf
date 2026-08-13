@@ -62,3 +62,6 @@ X <- as.factor(rbinom(n = 1000, size = 1, prob = 0.5))
 Y <- ((X == 1) * rnorm(n = 500, 0, 1)) + ((X == 0) * rnorm(n = 500, 0.5, 1))
 res <- ccdf(Y, data.frame(X = X), method = "OLS")
 }
+\seealso{
+\code{\link{plot_compare_ccdf}}, \code{\link{cit_asymp}}
+}

@@ -159,6 +159,8 @@
 #' permutation test, it is computed with each single permutation of X shared and
 #' applied across all genes in a set (so inter-gene correlation is preserved).
 #'
+#' @seealso \code{\link{cit_multi}}, \code{\link{plot.cit_gsa}}
+#'
 #' @export
 #'
 #' @examples

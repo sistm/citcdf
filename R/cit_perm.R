@@ -23,6 +23,8 @@
 #' @param number_y an integer value indicating the number of y thresholds (and therefore
 #' the number of regressions) to perform the test. Default is \code{length(Y)}.
 #'
+#' @seealso \code{\link{cit_asymp}}, \code{\link{X_perm}}, \code{\link{cit_multi}}
+#'
 #' @export
 #'
 #' @return A data frame with the following elements:

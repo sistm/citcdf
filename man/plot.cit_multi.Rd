@@ -34,3 +34,7 @@ res_asymp <- cit_multi(M = data.frame(Y = Y),
 plot(res_asymp)
 
 }
+\seealso{
+\code{\link{cit_gsa}}, \code{\link{cit_asymp}},
+\code{\link{cit_perm}}, \code{\link{plot.cit_multi}}
+}

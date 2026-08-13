@@ -6,6 +6,8 @@
 #' @param Z a numeric vector of length \code{n}
 #' containing the covariate. Multiple variables are not allowed.
 #'
+#' @seealso \code{\link{X_perm}}
+#'
 #' @export
 #'
 #' @import stats

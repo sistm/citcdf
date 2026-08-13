@@ -138,3 +138,6 @@ res_perm <- cit_gsa(M = M, X = X, geneset = geneset,
   test = "permutation", n_perm = 50, parallel = FALSE)
 res_perm$pvals
 }
+\seealso{
+\code{\link{cit_multi}}, \code{\link{plot.cit_gsa}}
+}

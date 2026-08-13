@@ -28,3 +28,6 @@ if (interactive()) {
   res <- perm_cont(X, Z)
 }
 }
+\seealso{
+\code{\link{X_perm}}
+}

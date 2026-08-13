@@ -22,6 +22,8 @@
 #'
 #' @importFrom survey pchisqsum
 #'
+#' @seealso \code{\link{cit_perm}}, \code{\link{cit_multi}}, \code{\link{ccdf}}
+#'
 #' @export
 #'
 #' @return A data frame with the following elements:

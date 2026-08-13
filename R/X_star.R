@@ -11,6 +11,8 @@
 #'
 #' @return a list with the permuted label vector for each permutation
 #'
+#' @seealso \code{\link{perm_cont}}, \code{\link{cit_perm}}
+#'
 #' @export
 #'
 #' @examples

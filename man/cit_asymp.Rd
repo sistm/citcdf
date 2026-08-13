@@ -55,3 +55,6 @@ hist(pvals_sim)
 quantile(pvals_sim)
 
 }
+\seealso{
+\code{\link{cit_perm}}, \code{\link{cit_multi}}, \code{\link{ccdf}}
+}
