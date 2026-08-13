@@ -1,21 +1,3 @@
-# Design quantities depending only on (X, Z): constant across genes and,
-# when Z is absent, across permutations of X.
-.cit_gsa_design <- function(X, Z = NULL, n) {
-  colnames(X) <- paste0("X", seq_len(ncol(X)))
-  if (is.null(Z)) {
-    modelmat <- model.matrix(~., data = X)
-  } else {
-    colnames(Z) <- paste0("Z", seq_len(ncol(Z)))
-    modelmat <- model.matrix(~., data = cbind(X, Z))
-  }
-  indexes_X <- which(substring(colnames(modelmat), 1, 1) == "X")
-  H <- n * (solve(crossprod(modelmat)) %*% t(modelmat))[indexes_X, , drop = FALSE]
-  # crossprod(modelmat) is invariant under row permutation when Z is absent,
-  # so its inverse (restricted to the X rows) is reusable for every permuted design.
-  XtXinv_X <- if (is.null(Z)) solve(crossprod(modelmat))[indexes_X, , drop = FALSE] else NULL
-  list(modelmat = modelmat, indexes_X = indexes_X, H = H, XtXinv_X = XtXinv_X)
-}
-
 # One gene: observed statistic + the n_perm permuted statistics, indexed by
 # permutation so that entry k across genes all come from the SAME X_star[[k]].
 .gene_perm_stats <- function(Y, Z, X_star, n_perm, space_y, number_y, design) {
@@ -308,7 +290,7 @@ cit_gsa <- function(M,
     n_perm_pool <- if (isTRUE(adaptive)) sum(n_perm_adaptive) else n_perm
     X_star <- X_perm(X, Z, n_perm = n_perm_pool)
 
-    design <- .cit_gsa_design(X, Z, n)
+    design <- .cit_design(X, Z, n)
 
     if (isTRUE(adaptive)) {
       #### adaptive ----
@@ -395,7 +377,7 @@ cit_gsa <- function(M,
 
     # design depends only on X and Z, and is not gene specific: compute it only once !
     n_Y_all <- nrow(M)
-    H <- .cit_gsa_design(X, Z, n_Y_all)$H
+    H <- .cit_design(X, Z, n_Y_all)$H
 
 
     if (length(geneset) < 3) {

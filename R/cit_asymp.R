@@ -20,6 +20,13 @@
 #' @param number_y an integer value indicating the number of y thresholds (and therefore
 #' the number of regressions) to perform the test. Default is \code{length(unique(Y))}.
 #'
+#' @param design an optional (and technical) list of design quantities, as returned by the
+#' internal \code{.cit_design(X, Z, n)}. This is used by \code{cit_multi()},
+#' to loop-call over many genes while building the model matrix, and computing its
+#' cross-product and its inverse only once.
+#' Default is \code{NULL}, in which case they are computed from \code{X} and
+#' \code{Z}. Users should not be using this argument
+#'
 #' @importFrom survey pchisqsum
 #'
 #' @seealso \code{\link{cit_perm}}, \code{\link{cit_multi}}, \code{\link{ccdf}}
@@ -51,27 +58,18 @@
 #' hist(pvals_sim)
 #' quantile(pvals_sim)
 #'
-cit_asymp <- function(Y, X, Z = NULL, space_y = FALSE, number_y = length(unique(Y))) {
-  # computations independent of Y: should be computed only once before the pbapply loop ----
-
-  # no covariates Z
-  if (is.null(Z)) {
-    colnames(X) <- paste0("X", seq_len(ncol(X)))
-    modelmat <- as.matrix(model.matrix(~., data = X))
-  }
-  # with covariates Z
-  else {
-    colnames(X) <- paste0("X", seq_len(ncol(X)))
-    colnames(Z) <- paste0("Z", seq_len(ncol(Z)))
-    modelmat <- as.matrix(model.matrix(~., data = cbind(X, Z)))
-  }
-
-  indexes_X <- which(substring(colnames(modelmat), 1, 1) == "X")
-
+cit_asymp <- function(Y, X, Z = NULL, space_y = FALSE, number_y = length(unique(Y)),
+                      design = NULL) {
+  # Quantities that depend only on (X, Z), not on Y. Callers looping over many
+  # genes (cit_multi) build this once and pass it in; a direct call computes it
+  # on demand, so the public behaviour is unchanged.
   n_Y_all <- length(Y)
   stopifnot(nrow(X) == n_Y_all)
   stopifnot(is.null(Z) || nrow(Z) == n_Y_all)
-  H <- n_Y_all * (solve(crossprod(modelmat)) %*% t(modelmat))[indexes_X, , drop = FALSE]
+  if (is.null(design)) {
+    design <- .cit_design(X, Z, n_Y_all)
+  }
+  H <- design$H
   # computing the test statistic
   # depends on Y: has to be recomputed for each gene
   Y <- as.numeric(Y) # is this really necessary ??

@@ -4,7 +4,14 @@
 \alias{cit_asymp}
 \title{Asymptotic test for conditional independence}
 \usage{
-cit_asymp(Y, X, Z = NULL, space_y = FALSE, number_y = length(unique(Y)))
+cit_asymp(
+  Y,
+  X,
+  Z = NULL,
+  space_y = FALSE,
+  number_y = length(unique(Y)),
+  design = NULL
+)
 }
 \arguments{
 \item{Y}{a numeric vector of length \code{n} to test for conditional independence
@@ -24,6 +31,13 @@ the maximum of the observations is used. Default is \code{FALSE}.}
 
 \item{number_y}{an integer value indicating the number of y thresholds (and therefore
 the number of regressions) to perform the test. Default is \code{length(unique(Y))}.}
+
+\item{design}{an optional (and technical) list of design quantities, as returned by the
+internal \code{.cit_design(X, Z, n)}. This is used by \code{cit_multi()},
+to loop-call over many genes while building the model matrix, and computing its
+cross-product and its inverse only once.
+Default is \code{NULL}, in which case they are computed from \code{X} and
+\code{Z}. Users should not be using this argument}
 }
 \value{
 A data frame with the following elements:

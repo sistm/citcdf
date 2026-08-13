@@ -355,11 +355,15 @@ cit_multi <- function(M,
   } else if (test == "asymptotic") {
     ## asymptotic ----
     n_perm <- NA
+    # model.matrix / crossprod / solve / H depend only on (X, Z): build once,
+    # not once per gene.
+    design <- .cit_design(X, Z, n)
     res <- do.call("rbind", pbapply::pblapply(seq_len(r),
       function(j) {
         cit_asymp(M[, j], X, Z,
           space_y = space_y,
-          number_y = number_y)
+          number_y = number_y,
+          design = design)
       },
       cl = par_clust)
     )
