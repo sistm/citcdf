@@ -67,6 +67,8 @@ cit_asymp <- function(Y, X, Z = NULL, space_y = FALSE, number_y = length(unique(
   indexes_X <- which(substring(colnames(modelmat), 1, 1) == "X")
 
   n_Y_all <- length(Y)
+  stopifnot(nrow(X) == n_Y_all)
+  stopifnot(is.null(Z) || nrow(Z) == n_Y_all)
   H <- n_Y_all * (solve(crossprod(modelmat)) %*% t(modelmat))[indexes_X, , drop = FALSE]
   # computing the test statistic
   # depends on Y: has to be recomputed for each gene

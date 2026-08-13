@@ -163,7 +163,7 @@ cit_multi <- function(M,
   stopifnot(is.logical(adaptive))
   stopifnot(is.numeric(n_perm))
 
-  if (sum(is.na(M)) > 0) {
+  if (anyNA(M)) {
     warning("'M' contains", sum(is.na(M)), "NA values. ",
       "\nCurrently they are ignored in the computations but ",
       "you should think carefully about where do those NA/NaN ",

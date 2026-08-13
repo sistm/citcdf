@@ -15,7 +15,7 @@ ccdf_testing_Modif <- function(exprmat = NULL,
 
   genes_names <- rownames(exprmat)
 
-  if (sum(is.na(exprmat)) > 1) {
+  if (anyNA(exprmat)) {
     warning("'y' contains", sum(is.na(exprmat)), "NA values. ",
       "\nCurrently they are ignored in the computations but ",
       "you should think carefully about where do those NA/NaN ",

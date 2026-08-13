@@ -55,6 +55,40 @@ ccdf <- function(Y, X, Z = NULL, method = c("OLS", "logistic"),
   }
   stopifnot(method %in% c("OLS", "logistic"))
 
+  # --- structural checks on the inputs ----------------------------------------
+  # Y[i] is the response for row i of X (and of Z), so the three must line up.
+  # model.matrix() silently drops rows containing NA, which would shift X out of
+  # step with Y and produce a wrong answer rather than an error, so NAs in the
+  # design are refused up front.
+  if (!is.data.frame(X)) {
+    stop("'X' must be a data frame with one column per variable to condition on, ",
+      "not a ", class(X)[1], ". Did you mean data.frame(X = X)?")
+  }
+  if (!is.null(Z) && !is.data.frame(Z)) {
+    stop("'Z' must be a data frame or NULL, not a ", class(Z)[1],
+      ". Did you mean data.frame(Z = Z)?")
+  }
+
+  n_obs <- length(Y)
+  if (nrow(X) != n_obs) {
+    stop("'X' has ", nrow(X), " row(s) but 'Y' has ", n_obs, " observation(s). ",
+      "'Y[i]' is the response for row i of 'X', so the two must have the same length.")
+  }
+  if (!is.null(Z) && nrow(Z) != n_obs) {
+    stop("'Z' has ", nrow(Z), " row(s) but 'Y' has ", n_obs, " observation(s). ",
+      "'Y[i]' is the response for row i of 'Z', so the two must have the same length.")
+  }
+  if (anyNA(X)) {
+    stop("'X' contains ", sum(is.na(X)), " NA value(s). ",
+      "Rows with NA are silently dropped when the model matrix is built, which ",
+      "would misalign 'X' with 'Y'. Please remove or impute them before calling ccdf().")
+  }
+  if (!is.null(Z) && anyNA(Z)) {
+    stop("'Z' contains ", sum(is.na(Z)), " NA value(s). ",
+      "Rows with NA are silently dropped when the model matrix is built, which ",
+      "would misalign 'Z' with 'Y'. Please remove or impute them before calling ccdf().")
+  }
+
 
   if (!is.numeric(Y)) {
     warning("Converting Y to a numeric vector.\n",
@@ -62,12 +96,16 @@ ccdf <- function(Y, X, Z = NULL, method = c("OLS", "logistic"),
     Y <- as.numeric(Y)
   }
 
-  if (sum(is.na(Y)) > 0) {
-    warning("`Y` contains ", sum(is.na(Y)), " NA values. ",
-      "\nCurrently they are ignored in the computations but ",
+  if (anyNA(Y)) {
+    keep <- !is.na(Y)
+    warning("`Y` contains ", sum(!keep), " NA values. ",
+      "\nCurrently those are ignored in the computations ",
+      "(dropped from `Y`, `X` and `Z`), but ",
       "you should think carefully about where do those NA/NaN ",
       "come from...")
-    Y <- Y[stats::complete.cases(Y)]
+    Y <- Y[keep]
+    X <- X[keep, , drop = FALSE]
+    if (!is.null(Z)) Z <- Z[keep, , drop = FALSE]
   }
 
   y <- .cit_y_grid(Y, space_y, number_y)
