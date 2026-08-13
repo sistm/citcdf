@@ -416,7 +416,7 @@ cit_gsa <- function(M,
     }
 
 
-    res <- pbapply::pblapply(1:length(geneset), function(k) { # 1 -- each list of gene set ----
+    res <- pbapply::pblapply(seq_along(geneset), function(k) { # 1 -- each list of gene set ----
 
       # Initialisation for each gene in the gene set
       # test_stat_gs <- NULL
@@ -443,7 +443,7 @@ cit_gsa <- function(M,
 
         # code below if all the genes in the gene set k are in M, else pval + stat de test = NA
 
-        for (i in 1:length(measured_genes)) { # 2 -- each genes in the gene set k ----
+        for (i in seq_along(measured_genes)) { # 2 -- each genes in the gene set k ----
 
           Y <- M[, measured_genes[i]]
           oY <- order(Y)

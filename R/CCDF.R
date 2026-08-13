@@ -133,7 +133,7 @@ ccdf <- function(Y, X, Z = NULL, method = c("OLS", "logistic"),
     x_sort <- list()
     y_sort <- list()
 
-    for (i in 1:(length(y) - 1)) {
+    for (i in seq_len(length(y) - 1)) {
       Ylow <- Y <= y[i]
       if (i == 1) {
         w <- Ylow
@@ -196,7 +196,7 @@ ccdf <- function(Y, X, Z = NULL, method = c("OLS", "logistic"),
     ccdf_nox <- list()
     cdf <- list()
 
-    for (i in 1:(length(y) - 1)) {
+    for (i in seq_len(length(y) - 1)) {
       # new_data <- data.frame(X[w],Z[w])
       # names(new_data) <- c("X","Z")
 

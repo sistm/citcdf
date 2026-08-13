@@ -240,7 +240,7 @@ cit_multi <- function(M,
       #### adaptive ----
       message(paste("Computing", n_perm_adaptive[1], "permutations..."))
 
-      res0 <- pbapply::pblapply(1:r,
+      res0 <- pbapply::pblapply(seq_len(r),
         function(j) {
           cit_perm(
             Y = M[, j],
@@ -274,7 +274,7 @@ cit_multi <- function(M,
         message(paste("Computing", sum(n_perm_adaptive[k]), "additional permutations..."))
 
         if (parallel & .Platform$OS.type == "unix") {
-          res_perm <- pbapply::pbsapply(1:length(index),
+          res_perm <- pbapply::pbsapply(seq_along(index),
             function(i) {
               cit_perm(Y = M[, index[i]],
                 X = X,
@@ -286,7 +286,7 @@ cit_multi <- function(M,
             },
             cl = par_clust, mc.preschedule = TRUE)
         } else {
-          res_perm <- pbapply::pbsapply(1:length(index),
+          res_perm <- pbapply::pbsapply(seq_along(index),
             function(i) {
               cit_perm(Y = M[, index[i]],
                 X = X,
@@ -318,7 +318,7 @@ cit_multi <- function(M,
       message(paste("Computing", n_perm, "permutations..."))
 
       if (parallel & .Platform$OS.type == "unix") {
-        res <- do.call("rbind", pbapply::pblapply(1:r,
+        res <- do.call("rbind", pbapply::pblapply(seq_len(r),
           function(j) {
             cit_perm(Y = M[, j],
               X = X,
@@ -330,7 +330,7 @@ cit_multi <- function(M,
           },
           cl = par_clust, mc.preschedule = TRUE))
       } else {
-        res <- do.call("rbind", pbapply::pblapply(1:r,
+        res <- do.call("rbind", pbapply::pblapply(seq_len(r),
           function(j) {
             cit_perm(Y = M[, j],
               X = X,
@@ -355,7 +355,7 @@ cit_multi <- function(M,
   } else if (test == "asymptotic") {
     ## asymptotic ----
     n_perm <- NA
-    res <- do.call("rbind", pbapply::pblapply(1:r,
+    res <- do.call("rbind", pbapply::pblapply(seq_len(r),
       function(j) {
         cit_asymp(M[, j], X, Z,
           space_y = space_y,
