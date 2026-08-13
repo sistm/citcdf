@@ -21,7 +21,12 @@ knitr::opts_chunk$set(
 
 `citcdf` is a package to perform conditional independence testing using empirical conditional cumulative distribution function estimations.
 
-The main function of the package is `cit()`. It uses an asymptotic test (for large sample size , or a permutation test for small sample size with the argument `method`) to perform conditional independence testing.
+The package has two main entry points: `cit_multi()` for gene-wise conditional
+independence testing across many outcomes, and `cit_gsa()` for gene-set analysis.
+Both accept `test = "asymptotic"` (large samples) or `test = "permutation"`
+(small samples). The single-outcome workhorses `cit_asymp()` and `cit_perm()`,
+the CCDF estimator `ccdf()`, and the plotting functions `plot_compare_ccdf()`,
+`plot.cit_multi()` and `plot.cit_gsa()` are also exported.
 
 The approach implemented in this package is detailed in the following article:
 
@@ -45,15 +50,21 @@ Here is a basic example which shows how to use `citcdf` with simple generated da
 
 ```{r example, eval = FALSE}
 ## Data Generation
-X <- data.frame("X1" = as.factor(rbinom(n=100, size = 1, prob = 0.5)))
-Y <- data.frame("Y1" = t(replicate(10, ((X$X1==1)*rnorm(n = 50,0,1)) + ((X$X1==0)*rnorm(n = 50,0.5,1)))))
+n <- 100
+X <- data.frame(X1 = as.factor(rbinom(n = n, size = 1, prob = 0.5)))
+Y <- replicate(10, (X$X1 == 1) * rnorm(n) + (X$X1 == 0) * rnorm(n, mean = 0.5))
 ```
 
 ```{r estimation, eval = FALSE}
 # Hypothesis testing
-res_asymp <- cit(exprmat=Y, variable2test=X, test="asymptotic") # asymptotic test
-res_perm <- cit(exprmat=Y, variable2test=X, test="permutation",
-                         adaptive=TRUE) # adaptive permutation test
+res_asymp <- cit_multi(M = data.frame(Y = Y), X = X,
+                       test = "asymptotic", parallel = FALSE) # asymptotic test
+res_asymp$pvals
+
+res_perm <- cit_multi(M = data.frame(Y = Y), X = X,
+                      test = "permutation", adaptive = TRUE,
+                      parallel = FALSE) # adaptive permutation test
+res_perm$pvals
 ```
 
 
