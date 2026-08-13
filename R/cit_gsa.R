@@ -151,6 +151,9 @@
 #'   the raw p-values, the second one '\code{adj_pval}' contains the FDR adjusted p-values
 #'   using Benjamini-Hochberg correction. When '\code{test == "asymptotic"}', a
 #'   third column '\code{test_statistic}' contains the gene set test statistics.
+#'   Gene sets with no gene observed in \code{M} yield a warning and \code{NA} in
+#'   every column; gene sets only partially observed yield a warning and are
+#'   tested on the measured genes alone.
 #'   \item \code{type}: a character string equal to \code{"gsa"}, identifying
 #'   the object as the result of a gene set analysis.
 #' }
