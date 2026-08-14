@@ -43,6 +43,16 @@ conditional randomisation test (CRT) of Candes et al. (2018) does, preserves
 the empirical marginal distribution of \code{X} exactly regardless of the
 error in the fitted conditional law model (and never produces degenerate
 single-level designs).
+
+Permutation weights are Gaussian in the distance between fitted values, with
+bandwidth \code{sd(fit) * n^(-1/4)} (polynomial weights left too much mass on
+distant candidates, so the neighbourhood was not local and the
+\code{X}-\code{Z} relationship was not preserved). Of note, the bandwith
+exponent is larger than Silverman's \code{1/5} because his rate is
+optimized for density estimation but leaves a first-order bias that
+invalidates inference built on it (Hall, 1992; Armstrong and Kolesar, 2020);
+\code{o(n^(-1/4))} is the condition Kim et al. (2022) prove for the
+analogous local permutation test.
 }
 \examples{
 
@@ -68,6 +78,17 @@ Hemerik J, Goeman JJ (2018). Exact testing with random permutations.
 Rosenbaum PR, Rubin DB (1983). The central role of the propensity score in
 observational studies for causal effects. \emph{Biometrika}, \bold{70}(1),
 41-55.
+
+Kim I, Neykov M, Balakrishnan S, Wasserman L (2022).
+Local permutation tests for conditional independence.
+\emph{The Annals of Statistics}, \bold{50}(6), 3388-3414.
+
+Hall P (1992). Effect of bias estimation on coverage accuracy of bootstrap
+confidence intervals for a probability density.
+\emph{The Annals of Statistics}, \bold{20}(2), 675-694.
+
+Armstrong TB, Kolesar M (2020). Simple and honest confidence intervals in
+nonparametric regression. \emph{Quantitative Economics}, \bold{11}(1), 1-39.
 }
 \seealso{
 \code{\link{X_perm}}

@@ -45,3 +45,31 @@ test_that("perm_cont never returns a degenerate (single-level) design", {
   }, TRUE)
   expect_true(all(ok))
 })
+
+test_that("perm_cont copes with a degenerate fit", {
+  set.seed(4)
+  n <- 30
+  Z <- rnorm(n)
+  X <- rep(1, n)          # fitted values all identical -> all distances zero
+  xs <- perm_cont(X, Z)
+  expect_identical(sort(xs), sort(X))
+})
+
+test_that("perm_cont keeps conditioning when the Gaussian weights underflow", {
+  # exp(-d^2/(2h^2)) underflows to 0 once d/h > ~38.6. A leverage point in Z
+  # puts every donor beyond that, and a uniform fallback would hand exactly the
+  # most influential observation a completely unconditioned draw. It must take
+  # the nearest donor instead.
+  set.seed(6)
+  n <- 200
+  Z <- c(rnorm(n - 1), 40)                       # one far-out covariate value
+  X <- rbinom(n, 1, plogis(0.8 * pmin(Z, 3)))
+  mm <- model.matrix(~Z)
+  fit <- as.vector(mm %*% (solve(crossprod(mm)) %*% t(mm) %*% X))
+  h <- stats::sd(fit) * n^(-1/3)
+  expect_true(all(exp(-(fit[n] - fit[-n])^2 / (2 * h^2)) == 0))   # really underflowed
+  nearest <- order(abs(fit[n] - fit))[2]                          # [1] is itself
+  donors <- replicate(30, perm_cont(seq_len(n), Z)[n])
+  # a uniform draw would land on the nearest donor ~1/199 of the time
+  expect_true(mean(donors == nearest) > 0.5)
+})

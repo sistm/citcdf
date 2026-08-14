@@ -31,6 +31,16 @@
 #' error in the fitted conditional law model (and never produces degenerate
 #' single-level designs).
 #'
+#' Permutation weights are Gaussian in the distance between fitted values, with
+#' bandwidth \code{sd(fit) * n^(-1/4)} (polynomial weights left too much mass on
+#' distant candidates, so the neighbourhood was not local and the
+#' \code{X}-\code{Z} relationship was not preserved). Of note, the bandwith
+#' exponent is larger than Silverman's \code{1/5} because his rate is
+#' optimized for density estimation but leaves a first-order bias that
+#' invalidates inference built on it (Hall, 1992; Armstrong and Kolesar, 2020);
+#' \code{o(n^(-1/4))} is the condition Kim et al. (2022) prove for the
+#' analogous local permutation test.
+#'
 #' @references
 #' Berrett TB, Wang Y, Barber RF, Samworth RJ (2020).
 #' The conditional permutation test for independence while controlling for
@@ -47,6 +57,17 @@
 #' Rosenbaum PR, Rubin DB (1983). The central role of the propensity score in
 #' observational studies for causal effects. \emph{Biometrika}, \bold{70}(1),
 #' 41-55.
+#'
+#' Kim I, Neykov M, Balakrishnan S, Wasserman L (2022).
+#' Local permutation tests for conditional independence.
+#' \emph{The Annals of Statistics}, \bold{50}(6), 3388-3414.
+#'
+#' Hall P (1992). Effect of bias estimation on coverage accuracy of bootstrap
+#' confidence intervals for a probability density.
+#' \emph{The Annals of Statistics}, \bold{20}(2), 675-694.
+#'
+#' Armstrong TB, Kolesar M (2020). Simple and honest confidence intervals in
+#' nonparametric regression. \emph{Quantitative Economics}, \bold{11}(1), 1-39.
 #'
 #' @seealso \code{\link{X_perm}}
 #'
@@ -69,13 +90,15 @@ perm_cont <- function(X, Z) {
   n <- length(Z)
   fit <- as.vector(modmat %*% reg_coefs)
 
+  # Data driven bandwidth of the Gaussian kernel.
+  h <- stats::sd(fit) * n^(-1 / 4)
+
   # Draws are WITHOUT replacement, so X_star is a genuine permutation of
-  # X rather than a resample (drawing each i independently let two
-  # observations take the same replacements and then sum(X_star) drifted away
-  # from sum(X) leading to non exchangeable designs between the permuted and
-  # the observed ones.
-  # Of note: the visiting order is randomised (with a fixed order the last
-  # observations would systematically get the worst of the remaining donors...)
+  # X rather than a resample (drawing each i independently let 2 observations
+  # take the same replacements and then sum(X_star) drifted away from sum(X),
+  # leading to non exchangeable designs between the permuted and the observed ones.
+  # Of note: the visiting order is randomized (with a fixed order the last
+  # observations would systematically get the worst of the remaining candidates...)
   permut <- integer(n)
   available <- rep(TRUE, n)
   ord <- sample.int(n)
@@ -92,17 +115,31 @@ perm_cont <- function(X, Z) {
       available[i] <- FALSE
       next
     }
-    # Weights are proportional to 1/(difference in fitted values)^2.
-    w <- 1 / (fit[i] - fit[candidates])^2
-    ties <- !is.finite(w)
-    # Observations sharing i's fitted value then carry infinite weights.
-    # But actually, in the limit, all the mass sits on them, uniformly.
-    # Sample within the tied set only then.
-    if (any(ties)) {
-      w <- as.numeric(ties)
+    # Weights are Gaussian in the difference in fitted values. The tail is what
+    # matters as previous 1/d^2 (even with an added ridge penalty 1/(d^2 + h^2))
+    # left too much mass on distant observations and X-Z relationship was not
+    # preserved by the permutation.
+    d <- abs(fit[i] - fit[candidates])
+    w <- exp(-d^2 / (2 * h^2))
+    w[!is.finite(w)] <- 0
+
+    j <- if (length(candidates) == 1L) {
+      candidates
+    } else if (any(w > 0)) {
+      candidates[sample.int(length(candidates), 1L, prob = w)]
+    } else if (h > 0) {
+      # Every candidate is more than ~38 bandwidths away and the weights have all
+      # underflowed to 0: neighbourhood is EMPTY (not the same as all candidates
+      # being equally good).
+      # => take the nearest one.
+      # Of note: a uniform draw here would un-condition
+      # exactly the highest-leverage observations...
+      candidates[which.min(d)]
+    } else {
+      # h == 0: fitted values are constant (e.g. X is constant), so there
+      # really is nothing to condition on and a uniform draw is then correct.
+      candidates[sample.int(length(candidates), 1L)]
     }
-    j <- ifelse(length(candidates) == 1L,  candidates,
-      candidates[sample.int(length(candidates), 1L, prob = w)])
     permut[i] <- j
     available[j] <- FALSE
   }
