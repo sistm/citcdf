@@ -113,34 +113,46 @@ permutation test, it is computed with each single permutation of X shared and
 applied across all genes in a set (so inter-gene correlation is preserved).
 }
 \examples{
+# Two conditions and 30 genes, split into two sets: in "responder" every of 
+the 10 genes shifts slightly with X, in "null" none of the remaining 20 does.
 set.seed(123)
-n <- 200
-r <- 60
-Z2 <- rnorm(n)
-X1 <- Z2 + rnorm(n, sd = 0.2)
-Y <- replicate(r, Z2) + rnorm(n * r, 0, 0.5)
-res_asymp_unadj <- cit_gsa(M = data.frame(Y = Y),
-  X = data.frame(X1 = X1),
-  geneset = paste0("Y.", 1:50),
-  test = "asymptotic", parallel = FALSE)
-res_asymp_unadj$pvals
-res_asymp_adj <- cit_gsa(M = data.frame(Y = Y),
-  X = data.frame(X1 = X1),
-  Z = data.frame(Z2 = Z2),
-  geneset = paste0("Y.", 1:50),
-  test = "asymptotic", parallel = FALSE)
-res_asymp_adj$pvals
-
-# permutation test on a small example
-set.seed(123)
-n <- 60
+n <- 100
 X <- data.frame(X = as.factor(rbinom(n, size = 1, prob = 0.5)))
-M <- matrix(rnorm(n * 8), nrow = n,
-  dimnames = list(NULL, paste0("g", 1:8)))
-geneset <- list(set1 = paste0("g", 1:4), set2 = paste0("g", 5:8))
-res_perm <- cit_gsa(M = M, X = X, geneset = geneset,
-  test = "permutation", n_perm = 50, parallel = FALSE)
-res_perm$pvals
+M <- matrix(rnorm(n * 30), nrow = n, dimnames = list(NULL, paste0("g", 1:30)))
+M[, 1:10] <- M[, 1:10] + 0.3 * (as.numeric(X$X) - 1)
+geneset <- list(responder = paste0("g", 1:10), null = paste0("g", 11:30))
+
+res <- cit_gsa(M = M, X = X, geneset = geneset,
+  test = "asymptotic", parallel = FALSE)
+res$pvals
+
+# Single gene shifts are too small to be detected on their own,
+# but together the set is significant.
+per_gene <- cit_multi(M = as.data.frame(M[, 1:10]), X = X,
+  test = "asymptotic", parallel = FALSE)
+min(per_gene$pvals$adj_pval)  # no single gene survives the correction
+res$pvals["responder", ]      # the set does
+
+# a single gene set may be given as a plain character vector of M colnames
+cit_gsa(M = M, X = X, geneset = paste0("g", 1:10),
+  test = "asymptotic", parallel = FALSE)$pvals
+
+# adjusting for a covariate
+Z <- data.frame(Z = rnorm(n))
+cit_gsa(M = M, X = X, Z = Z, geneset = geneset,
+  test = "asymptotic", parallel = FALSE)$pvals
+
+\donttest{
+# The permutation test applies each single permutation of X to every gene of a
+# set at once, so the correlation between genes is carried into the null.
+cit_gsa(M = M, X = X, geneset = geneset,
+  test = "permutation", n_perm = 100, parallel = FALSE)$pvals
+
+# genes listed in a set but absent from M are dropped, with a warning
+cit_gsa(M = M, X = X,
+  geneset = list(partly_measured = c(paste0("g", 1:5), "absent1")),
+  test = "asymptotic", parallel = FALSE)$pvals
+}
 }
 \seealso{
 \code{\link{cit_multi}}, \code{\link{plot.cit_gsa}}

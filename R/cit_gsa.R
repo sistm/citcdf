@@ -149,34 +149,46 @@
 #' @export
 #'
 #' @examples
+#' # Two conditions and 30 genes, split into two sets: in "responder" every of 
+#' the 10 genes shifts slightly with X, in "null" none of the remaining 20 does.
 #' set.seed(123)
-#' n <- 200
-#' r <- 60
-#' Z2 <- rnorm(n)
-#' X1 <- Z2 + rnorm(n, sd = 0.2)
-#' Y <- replicate(r, Z2) + rnorm(n * r, 0, 0.5)
-#' res_asymp_unadj <- cit_gsa(M = data.frame(Y = Y),
-#'   X = data.frame(X1 = X1),
-#'   geneset = paste0("Y.", 1:50),
-#'   test = "asymptotic", parallel = FALSE)
-#' res_asymp_unadj$pvals
-#' res_asymp_adj <- cit_gsa(M = data.frame(Y = Y),
-#'   X = data.frame(X1 = X1),
-#'   Z = data.frame(Z2 = Z2),
-#'   geneset = paste0("Y.", 1:50),
-#'   test = "asymptotic", parallel = FALSE)
-#' res_asymp_adj$pvals
-#'
-#' # permutation test on a small example
-#' set.seed(123)
-#' n <- 60
+#' n <- 100
 #' X <- data.frame(X = as.factor(rbinom(n, size = 1, prob = 0.5)))
-#' M <- matrix(rnorm(n * 8), nrow = n,
-#'   dimnames = list(NULL, paste0("g", 1:8)))
-#' geneset <- list(set1 = paste0("g", 1:4), set2 = paste0("g", 5:8))
-#' res_perm <- cit_gsa(M = M, X = X, geneset = geneset,
-#'   test = "permutation", n_perm = 50, parallel = FALSE)
-#' res_perm$pvals
+#' M <- matrix(rnorm(n * 30), nrow = n, dimnames = list(NULL, paste0("g", 1:30)))
+#' M[, 1:10] <- M[, 1:10] + 0.3 * (as.numeric(X$X) - 1)
+#' geneset <- list(responder = paste0("g", 1:10), null = paste0("g", 11:30))
+#'
+#' res <- cit_gsa(M = M, X = X, geneset = geneset,
+#'   test = "asymptotic", parallel = FALSE)
+#' res$pvals
+#'
+#' # Single gene shifts are too small to be detected on their own,
+#' # but together the set is significant.
+#' per_gene <- cit_multi(M = as.data.frame(M[, 1:10]), X = X,
+#'   test = "asymptotic", parallel = FALSE)
+#' min(per_gene$pvals$adj_pval)  # no single gene survives the correction
+#' res$pvals["responder", ]      # the set does
+#'
+#' # a single gene set may be given as a plain character vector of M colnames
+#' cit_gsa(M = M, X = X, geneset = paste0("g", 1:10),
+#'   test = "asymptotic", parallel = FALSE)$pvals
+#'
+#' # adjusting for a covariate
+#' Z <- data.frame(Z = rnorm(n))
+#' cit_gsa(M = M, X = X, Z = Z, geneset = geneset,
+#'   test = "asymptotic", parallel = FALSE)$pvals
+#'
+#' \donttest{
+#' # The permutation test applies each single permutation of X to every gene of a
+#' # set at once, so the correlation between genes is carried into the null.
+#' cit_gsa(M = M, X = X, geneset = geneset,
+#'   test = "permutation", n_perm = 100, parallel = FALSE)$pvals
+#'
+#' # genes listed in a set but absent from M are dropped, with a warning
+#' cit_gsa(M = M, X = X,
+#'   geneset = list(partly_measured = c(paste0("g", 1:5), "absent1")),
+#'   test = "asymptotic", parallel = FALSE)$pvals
+#' }
 cit_gsa <- function(M,
                     X,
                     Z = NULL,
@@ -202,6 +214,7 @@ cit_gsa <- function(M,
 
 
   M_colnames <- colnames(M)
+  sets_id <- ifelse(!is.null(names(geneset)), names(geneset), seq_along(geneset))
 
 
   if (anyNA(M)) {
@@ -288,7 +301,7 @@ cit_gsa <- function(M,
       geneset <- list(geneset)
     }
 
-    n_perm_pool <- if (isTRUE(adaptive)) sum(n_perm_adaptive) else n_perm
+    n_perm_pool <- ifelse(isTRUE(adaptive), sum(n_perm_adaptive),  n_perm)
     X_star <- X_perm(X, Z, n_perm = n_perm_pool)
 
     design <- .cit_design(X, Z, n)
@@ -297,9 +310,10 @@ cit_gsa <- function(M,
       #### adaptive ----
       message(paste("Computing", n_perm_adaptive[1], "permutations..."))
 
-      res0 <- pbapply::pblapply(seq_along(geneset), function(k)
-        .gsa_perm_set(M, geneset[[k]], Z, X_star[seq_len(n_perm_adaptive[1])],
-          n_perm_adaptive[1], space_y, number_y, design, set_index = k),
+      res0 <- pbapply::pblapply(seq_along(geneset), function(k) {
+        return(.gsa_perm_set(M, geneset[[k]], Z, X_star[seq_len(n_perm_adaptive[1])],
+          n_perm_adaptive[1], space_y, number_y, design, set_index = sets_id[k]))
+      },
       cl = par_clust)
 
       score <- vapply(res0, `[[`, numeric(1), "score")
@@ -314,9 +328,10 @@ cit_gsa <- function(M,
         message(paste("Computing", n_perm_adaptive[k], "additional permutations..."))
 
         slice <- X_star[(used_perms + 1):(used_perms + n_perm_adaptive[k])]   # disjoint
-        res_k <- pbapply::pblapply(index, function(i)
-          .gsa_perm_set(M, geneset[[i]], Z, slice,
-            n_perm_adaptive[k], space_y, number_y, design, set_index = i),
+        res_k <- pbapply::pblapply(index, function(i) {
+          return(.gsa_perm_set(M, geneset[[i]], Z, slice,
+            n_perm_adaptive[k], space_y, number_y, design, set_index = sets_id[i]))
+        },
         cl = par_clust)
 
         score[index] <- score[index] + vapply(res_k, `[[`, numeric(1), "score")
@@ -335,9 +350,10 @@ cit_gsa <- function(M,
       #### non-adaptive ----
       message(paste("Computing", n_perm, "permutations..."))
 
-      res <- pbapply::pblapply(seq_along(geneset), function(k)
-        .gsa_perm_set(M, geneset[[k]], Z, X_star, n_perm,
-          space_y, number_y, design, set_index = k),
+      res <- pbapply::pblapply(seq_along(geneset), function(k) {
+        return(.gsa_perm_set(M, geneset[[k]], Z, X_star, n_perm,
+          space_y, number_y, design, set_index = sets_id[k]))
+      },
       cl = par_clust)
 
       score <- vapply(res, `[[`, numeric(1), "score")
@@ -399,7 +415,7 @@ cit_gsa <- function(M,
       measured_genes <- intersect(M_colnames, geneset[[k]])
 
       if (length(measured_genes) < 1) { # check 1 : none genes of the current geneset are in M
-        warning("0 genes from geneset ", k, " observed in expression data")
+        warning("0 genes from geneset ", sets_id[k], " observed in expression data")
         pval <- NA
         test_stat_gs <- NA
         # test_stat_list <- NA
@@ -408,7 +424,7 @@ cit_gsa <- function(M,
         test_stat_gs <- numeric(length(measured_genes))
 
         if (length(measured_genes) < length(geneset[[k]])) { # check 2 : some genes of the current geneset are not in M
-          warning(" Some genes from geneset ", k, " are not observed in expression data")
+          warning(" Some genes from geneset ", sets_id[k], " are not observed in expression data")
         }
 
 
@@ -484,6 +500,12 @@ cit_gsa <- function(M,
 
   if (parallel && .Platform$OS.type != "unix") {
     parallel::stopCluster(par_clust)
+  }
+
+  # carry the gene set names onto the rows, so the output is readable when
+  # 'geneset' was a named list (the usual case)
+  if (!is.null(names(geneset)) && length(names(geneset)) == nrow(df)) {
+    rownames(df) <- names(geneset)
   }
 
   output <- list(which_test = test,
