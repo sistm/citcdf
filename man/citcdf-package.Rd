@@ -22,7 +22,7 @@ conditional cumulative distribution function (CCDF).
 }
 
 \references{
-Gauthier M, Agniel D, Thiebaut R & Hejblum BP (2021).
+Gauthier M, Agniel D, Thiébaut R & Hejblum BP (2021).
 Distribution-free complex hypothesis testing for single-cell RNA-seq
 differential expression analysis, \emph{bioRxiv} 445165.
 \doi{10.1101/2021.05.21.445165}
