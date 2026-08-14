@@ -149,8 +149,8 @@
 #' @export
 #'
 #' @examples
-#' # Two conditions and 30 genes, split into two sets: in "responder" every of 
-#' the 10 genes shifts slightly with X, in "null" none of the remaining 20 does.
+#' # Two conditions and 30 genes, split into two sets: in "responder" every of
+#' # the 10 genes shifts slightly with X, in "null" none of the remaining 20 does.
 #' set.seed(123)
 #' n <- 100
 #' X <- data.frame(X = as.factor(rbinom(n, size = 1, prob = 0.5)))
