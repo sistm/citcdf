@@ -100,6 +100,7 @@ res <- cit_gsa(M = M, X = X, geneset = geneset,
 # set1: the two summary curves separate, and the individual genes with them
 plot(res, M = M, X = X, geneset = geneset, which_set = "set1")
 
+\donttest{
 # set2 is null: the two summary curves stay close to each other and to the
 # reference CDF
 plot(res, M = M, X = X, geneset = geneset, which_set = "set2")
@@ -108,6 +109,7 @@ plot(res, M = M, X = X, geneset = geneset, which_set = "set2")
 Z <- data.frame(Z = rnorm(n))
 plot(res, M = M, X = X, Z = Z, geneset = geneset, which_set = 1)
 plot(res, M = M, X = X, Z = Z, geneset = geneset, which_set = 2)
+}
 
 }
 \seealso{

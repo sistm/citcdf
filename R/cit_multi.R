@@ -84,9 +84,10 @@
 #' @examples
 #'
 #'
+#' set.seed(123)
 #' Z <- as.factor(rbinom(n = 100, size = 1, prob = 0.5))
 #' X <- as.numeric(Z) - 1  + rnorm(n = 100, sd = 1)
-#' r <- 1000
+#' r <- 500
 #' Y <- replicate(r, as.numeric(Z) - 1)
 #' Y <- (Y == 1) * rnorm(n = 100 * r, 0, 1) + (Y == 0) * rnorm(n = 100 * r, 0.5, 1)
 #' res_asymp_unadj <- cit_multi(M = data.frame(Y = Y),
@@ -103,7 +104,7 @@
 #' hist(res_asymp_adj$pvals$raw_pval)
 #'
 #' n <- 100
-#' r <- 200
+#' r <- 500
 #' Z1 <- rbinom(n, size = 1, prob = 0.5)
 #' Z2 <- rnorm(n) # rbinom(n, size=1, prob=0.5) + rnorm(n, sd=0.05)
 #' X1 <- Z2 + rnorm(n, sd = 0.2)

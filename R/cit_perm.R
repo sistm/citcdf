@@ -39,6 +39,7 @@
 #'
 #' @examples
 #'
+#' set.seed(123)
 #' X <- data.frame(X = as.factor(rbinom(n = 100, size = 1, prob = 0.5)))
 #' Y <- (X$X == 1) * rnorm(100) + (X$X == 0) * rnorm(100, mean = 0.5)
 #'

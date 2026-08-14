@@ -23,6 +23,7 @@ a list with the permuted label vector for each permutation
 Compute the conditional permutations
 }
 \examples{
+set.seed(123)
 X <- rbinom(n = 100, size = 1, prob = 0.5)
 Z <- rnorm(100, 0, 1)
 X_perm(data.frame(X), data.frame(Z), 100)

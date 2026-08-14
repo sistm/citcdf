@@ -46,8 +46,10 @@
 #'
 #' @examples
 #'
-#' X <- as.factor(rbinom(n = 1000, size = 1, prob = 0.5))
-#' Y <- ((X == 1) * rnorm(n = 500, 0, 1)) + ((X == 0) * rnorm(n = 500, 0.5, 1))
+#' set.seed(123)
+#' n <- 500
+#' X <- as.factor(rbinom(n = n, size = 1, prob = 0.5))
+#' Y <- ((X == 1) * rnorm(n = n, 0, 1)) + ((X == 0) * rnorm(n = n, 0.5, 1))
 #' res <- ccdf(Y, data.frame(X = X), method = "OLS")
 ccdf <- function(Y, X, Z = NULL, method = c("OLS", "logistic"),
                  fast = TRUE, space_y = FALSE, number_y = length(Y)) {

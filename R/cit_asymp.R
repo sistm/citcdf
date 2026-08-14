@@ -41,6 +41,7 @@
 #'
 #' @examples
 #'
+#' set.seed(123)
 #' X <- as.factor(rbinom(n = 100, size = 1, prob = 0.5))
 #' Y <- ((X == 1) * rnorm(n = 100, 0, 1)) + ((X == 0) * rnorm(n = 100, 0.5, 1))
 #' res_asymp <- cit_asymp(Y, data.frame(X = X))
@@ -48,14 +49,13 @@
 #'
 #' Z <- as.factor(rbinom(n = 100, size = 1, prob = 0.5))
 #' X <- as.numeric(Z) - 1  + rnorm(n = 100, sd = 1)
-#' r <- 1000
+#' r <- 500
 #' Y <- replicate(r, as.numeric(Z) - 1)
 #' YY <- (Y == 1) * rnorm(n = 100 * r, 0, 1) + (Y == 0) * rnorm(n = 100 * r, 0.5, 1)
-#' pvals_sim <- pbapply::pbsapply(1:1000, function(i) {
-#'   res_asymp <- cit_asymp(YY[, i], data.frame(X = X), data.frame(Z = Z))
-#'   return(res_asymp$raw_pval)
+#' pvals_sim <- sapply(seq_len(r), function(i) {
+#'   cit_asymp(YY[, i], data.frame(X = X), data.frame(Z = Z))$raw_pval
 #' })
-#' hist(pvals_sim)
+#' hist(pvals_sim) # well calibrated p-values are uniform under the null
 #' quantile(pvals_sim)
 #'
 cit_asymp <- function(Y, X, Z = NULL, space_y = FALSE, number_y = length(unique(Y)),

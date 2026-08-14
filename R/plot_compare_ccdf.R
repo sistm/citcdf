@@ -94,8 +94,8 @@
 #
 # `lv` are the levels actually used for grouping (eg "Q1".."Q4" when binned),
 # so they are replaced with the interval each bin actually spans, reusing the
-# bin names themselves as the interior breakpoints: "X<Q1", "Q1\u2264X<Q2",
-# ..., "Q(n-1)\u2264X".
+# bin names themselves as the interior breakpoints: "X<Q1", "Q1<=X<Q2",
+# ..., "Q(n-1)<=X".
 .ccdf_bin_labels <- function(lv, orig, var_name) {
   if (is.factor(orig) || length(lv) < 2) return(paste0(var_name, "=", lv))
   cuts <- lv[-length(lv)]
@@ -303,6 +303,17 @@
 #' For this reason, we provide the option to discretize \code{X} and
 #' \code{Z} for graphical representation, in order to ease the interpretation.
 #'
+#' When \code{X} or \code{Z} is continuous it is quartile-binned, the
+#' bin labels use the "less than or equal" sign (U+2264). The classic
+#' \code{\link[grDevices]{pdf}} device cannot encode that character: it will
+#' emits a \code{"conversion failure ... mbcsToSbcs"} warning and substitutes a
+#' dot. On-screen devices, \code{png()} and \code{svg()} are unaffected.
+#' To export to PDF, use the cairo device (if available, check with
+#' (\code{capabilities("cairo")}):
+#' \preformatted{
+#' ggsave("fig.pdf", p, device = cairo_pdf)
+#' }
+#'
 #' @section A note on when \code{X} and \code{Z} are both factors:
 #'
 #' When \code{X} and \code{Z} are already both factors, \code{ccdf()} fits
@@ -349,6 +360,7 @@
 #' # 3. Z factor, X factor         -- panel B faceted by Z, steps
 #' plot_compare_ccdf(Y, Xf, Zf)
 #'
+#' \donttest{
 #' # 4. Z factor, X continuous     -- panel B faceted by Z, points
 #' plot_compare_ccdf(Y, Xc, Zf)
 #'
@@ -358,7 +370,6 @@
 #' # 6. Z continuous, X continuous -- a single panel, CDF plus both CCDFs
 #' plot_compare_ccdf(Y, Xc, Zc)
 #'
-#' \donttest{
 #' # a factor with more than two levels gets one colour per level
 #' X3 <- data.frame(X = as.factor(sample(0:2, n, replace = TRUE)))
 #' plot_compare_ccdf(Y, X3, Zf)
