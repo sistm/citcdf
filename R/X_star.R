@@ -53,34 +53,37 @@ X_perm <- function(X, Z, n_perm = 100) {
 
   } else {
 
-    sample_X <- function(X, Z, z) {
-      X_sampled <- rep(NA, length(Z))
+    sample_X <- function(z) {
+      idx <- seq_along(z)
       for (zj in unique(z)) {
-        X_sampled[Z == zj] <- sample(X[Z == zj])
+        s <- which(z == zj)
+        idx[s] <- s[sample.int(length(s))]
       }
-      return(X_sampled)
+      return(idx)
     }
+
+    xcol <- X[, 1]
+    x <- as.numeric(xcol) # perm_cont() needs a numeric X
 
     for (k in seq_len(n_perm)) {
       z <- Z[, 1]
-      x <- if (is.factor(X[, 1])) as.numeric(levels(X[, 1]))[X[, 1]] else as.numeric(X[, 1])
-      X_star[[k]] <- if (is.factor(z) || is.integer(z) || is.logical(z) ||
-        is.character(z)) {
+      if (is.factor(z) || is.integer(z) || is.logical(z) || is.character(z)) {
         # discrete Z: permute X within each stratum of Z
         zz <- as.numeric(as.factor(z))
-        sample_X(X[, 1], zz, unique(zz))
+        xs <- xcol[sample_X(zz)]
       } else if (is.numeric(z)) {
         # continuous Z: distance-weighted conditional permutation
-        perm_cont(X = x, Z = z)
+        codes <- perm_cont(X = x, Z = z)
+        if (is.factor(xcol)) {
+          xs <- factor(levels(xcol)[codes], levels = levels(xcol))
+        } else {
+          xs <- codes
+        }
       } else {
         stop("unsupported class for 'Z': ", paste(class(z), collapse = "/"),
           ". 'Z' must be a factor, integer, logical, character or numeric column.")
       }
-      if (is.factor(X[, 1])) {
-        X_star[[k]] <- data.frame(X = as.factor(X_star[[k]]))
-      }
-
-      # colnames(X_star) <- sapply(seq_len(ncol(X)), function(i){paste0('X',i)})
+      X_star[[k]] <- if (is.factor(xcol)) data.frame(X = xs) else xs
     }
   }
 

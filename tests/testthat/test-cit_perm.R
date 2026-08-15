@@ -27,19 +27,46 @@ test_that("cit_perm returns the observed statistic alongside score and p-value",
 
   expect_named(res, c("score", "raw_pval", "test_statistic"))
   expect_true(is.finite(res$test_statistic) && res$test_statistic >= 0)
-  # score is a count bounded by n_perm -- NOT the statistic
+  # score is a count bounded by n_perm (not the statistic)
   expect_true(res$score >= 0 && res$score <= 30)
 })
 
 test_that("cit_asymp and cit_perm report the SAME observed statistic", {
-  set.seed(5); n <- 100
+  set.seed(5)
+  n <- 100
   X <- data.frame(X = as.factor(rbinom(n, 1, .5)))
   Y <- rnorm(n) + 0.6 * (as.numeric(X$X) - 1)
   Xs <- X_perm(X, NULL, n_perm = 30)
-  
-  # space_y = FALSE so both use sort(unique(Y)); see C5 before relaxing this
+
+  # space_y = FALSE so both use sort(unique(Y))
   a <- cit_asymp(Y, X, space_y = FALSE)
   p <- cit_perm(Y, X, NULL, X_star = Xs, n_perm = 30, space_y = FALSE)
-  
-  expect_identical(a$test_statistic, p$test_statistic)   # verified: diff exactly 0
+
+  expect_identical(a$test_statistic, p$test_statistic)
+})
+
+test_that("X_perm preserves X's type: class and levels for a factor, values for a numeric", {
+  set.seed(20)
+  n <- 60
+  Zs <- list(cont = data.frame(Z = rnorm(n)),
+    disc = data.frame(Z = factor(sample(c("a", "b"), n, TRUE))),
+    none = NULL)
+  Xs <- list(labelled = factor(ifelse(rbinom(n, 1, 0.5) == 1, "treated", "control")),
+    numlevel = factor(rbinom(n, 1, 0.5)),
+    numeric  = rbinom(n, 1, 0.5))
+  for (xn in names(Xs)) for (zn in names(Zs)) {
+    lab <- paste(xn, zn)
+    X <- Xs[[xn]]
+    xs <- X_perm(data.frame(X = X), Zs[[zn]], n_perm = 3)[[1]]
+    xs <- if (is.data.frame(xs)) xs[, 1] else xs
+    expect_false(anyNA(xs), info = lab)
+    if (is.factor(X)) {
+      expect_s3_class(xs, "factor")
+      expect_identical(levels(xs), levels(X), info = lab)
+    } else {
+      expect_true(is.numeric(xs), info = lab)
+    }
+    # a permutation preserves the marginal exactly
+    expect_identical(sort(as.character(xs)), sort(as.character(X)), info = lab)
+  }
 })
