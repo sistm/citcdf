@@ -66,10 +66,22 @@ test_that("perm_cont keeps conditioning when the Gaussian weights underflow", {
   X <- rbinom(n, 1, plogis(0.8 * pmin(Z, 3)))
   mm <- model.matrix(~Z)
   fit <- as.vector(mm %*% (solve(crossprod(mm)) %*% t(mm) %*% X))
-  h <- stats::sd(fit) * n^(-1/3)
+  h <- stats::sd(fit) * n^(-1 / 3)
   expect_true(all(exp(-(fit[n] - fit[-n])^2 / (2 * h^2)) == 0))   # really underflowed
   nearest <- order(abs(fit[n] - fit))[2]                          # [1] is itself
   donors <- replicate(30, perm_cont(seq_len(n), Z)[n])
   # a uniform draw would land on the nearest donor ~1/199 of the time
   expect_true(mean(donors == nearest) > 0.5)
+})
+
+test_that("perm_cont survives a badly scaled covariate", {
+  # Forming (M'M)^-1 squares the condition number: with Z on the scale of raw
+  # counts, solve(crossprod(modmat)) would error with "system is computationally
+  # singular". Solving by QR does not.
+  set.seed(8)
+  n <- 100
+  Z <- 1e7 + rnorm(n) * 1e4        # e.g. a raw library size
+  X <- rbinom(n, 1, 0.5)
+  xs <- perm_cont(X, Z)
+  expect_identical(sort(xs), sort(X))
 })

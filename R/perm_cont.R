@@ -32,7 +32,7 @@
 #' single-level designs).
 #'
 #' Permutation weights are Gaussian in the distance between fitted values, with
-#' bandwidth \code{sd(fit) * n^(-1/4)} (polynomial weights left too much mass on
+#' bandwidth \code{sd(fit) * n^(-1/3)} (polynomial weights leave too much mass on
 #' distant candidates, so the neighbourhood was not local and the
 #' \code{X}-\code{Z} relationship was not preserved). Of note, the bandwith
 #' exponent is larger than Silverman's \code{1/5} because his rate is
@@ -86,12 +86,11 @@
 #' table(X, X_star)
 perm_cont <- function(X, Z) {
   modmat <- model.matrix(~Z)
-  reg_coefs <- solve(crossprod(modmat)) %*% t(modmat) %*% X
   n <- length(Z)
-  fit <- as.vector(modmat %*% reg_coefs)
+  fit <- as.vector(X - .lm.fit(modmat, X)$residuals)
 
   # Data driven bandwidth of the Gaussian kernel.
-  h <- stats::sd(fit) * n^(-1 / 4)
+  h <- stats::sd(fit) * n^(-1 / 3)
 
   # Draws are WITHOUT replacement, so X_star is a genuine permutation of
   # X rather than a resample (drawing each i independently let 2 observations

@@ -45,7 +45,7 @@ error in the fitted conditional law model (and never produces degenerate
 single-level designs).
 
 Permutation weights are Gaussian in the distance between fitted values, with
-bandwidth \code{sd(fit) * n^(-1/4)} (polynomial weights left too much mass on
+bandwidth \code{sd(fit) * n^(-1/3)} (polynomial weights leave too much mass on
 distant candidates, so the neighbourhood was not local and the
 \code{X}-\code{Z} relationship was not preserved). Of note, the bandwith
 exponent is larger than Silverman's \code{1/5} because his rate is

@@ -135,10 +135,10 @@
 #'
 #' \donttest{
 #' # adaptive permutations spend extra stages only on the smallest p-values
-#' res_perm_adj <- cit_multi(M = data.frame(Y = Y[, 1:20]),
-#'   X = data.frame(X1 = X1),
-#'   Z = data.frame(Z2 = Z2),
-#'   test = "permutation", n_perm = 50,
+#' res_perm_adj <- cit_multi(M = data.frame(Y[, 1:20]), # data.frame(Y),
+#'   X = data.frame(X = X),
+#'   Z = data.frame(Z = Z),
+#'   test = "permutation", n_perm = 50, # 2000,
 #'   parallel = FALSE)
 #' mean(res_perm_adj$pvals$raw_pval < 0.05)
 #' }
