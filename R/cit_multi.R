@@ -280,12 +280,9 @@ cit_multi <- function(M,
       used_perms <- n_perm_adaptive[1]
 
       k <- 2
-      index <- which((res + 1) / (perm + 1) <= thresholds[k - 1])
-
-      while (length(index) != 0L && k <= length(n_perm_adaptive)) { # adaptive part
-
+      while (k <= length(n_perm_adaptive)) {
         index <- which(((res + 1) / (perm + 1)) < thresholds[k - 1])
-        if (length(index) == 0L) {
+        if (length(index) == 0L) { # no more genes
           break
         }
 
