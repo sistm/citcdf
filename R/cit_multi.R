@@ -270,9 +270,12 @@ cit_multi <- function(M,
       k <- 2
       index <- which((res + 1) / (perm + 1) <= thresholds[k - 1])
 
-      while (length(index) != 0 & k <= length(n_perm_adaptive)) { # adaptive part
+      while (length(index) != 0L && k <= length(n_perm_adaptive)) { # adaptive part
 
         index <- which(((res + 1) / (perm + 1)) < thresholds[k - 1])
+        if (length(index) == 0L) {
+          break
+        }
 
         message(paste("Computing", sum(n_perm_adaptive[k]), "additional permutations..."))
 

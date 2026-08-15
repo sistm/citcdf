@@ -7,8 +7,8 @@
      Because this changes both the RNG stream and the null distribution, permutation 
      p-values from `cit_perm()`,`cit_multi()` and `cit_gsa()` will differ from 
      previous versions. Of note, previous scheme could be anti-conservative, and 
-     some limiting cases were badky handled.
-     - now uses QR devompostion through `.lm.fit()` to be robust to badly scaled 
+     some limiting cases were badly handled.
+     - now uses QR decompostion through `.lm.fit()` to be robust to badly scaled 
      covariates (eg library sizes).
      - now weights draws with a **Gaussian kernel** on the fitted
      values (bandwidth `sd(fit) * n^(-1/3)`) rather than previous
