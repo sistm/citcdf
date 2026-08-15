@@ -70,3 +70,29 @@ test_that("X_perm preserves X's type: class and levels for a factor, values for 
     expect_identical(sort(as.character(xs)), sort(as.character(X)), info = lab)
   }
 })
+
+test_that("X_perm dispatches on the kind of Z and preserves discrete strata", {
+  set.seed(30)
+  n <- 90
+  X <- data.frame(X = as.factor(rbinom(n, 1, 0.5)))
+  Zs <- list(numeric = rnorm(n),
+    double  = as.double(rnorm(n)),
+    integer = sample.int(5, n, TRUE),
+    logical = rbinom(n, 1, 0.5) == 1,
+    factor  = factor(sample(c("a", "b", "c"), n, TRUE)),
+    classed = structure(rnorm(n), class = c("labelled", "numeric")))
+  for (nm in names(Zs)) {
+    z <- Zs[[nm]]
+    xs <- X_perm(X, data.frame(Z = z), n_perm = 2)
+    expect_length(xs, 2)
+    expect_identical(sort(as.character(xs[[1]][, 1])), sort(as.character(X$X)),
+      info = nm)
+    if (!is.numeric(z)) {
+      # permuting within strata leaves every stratum's composition untouched
+      expect_identical(table(xs[[1]][, 1], z, dnn = NULL),
+        table(X$X, z, dnn = NULL), info = nm)
+    }
+  }
+  expect_error(X_perm(X, data.frame(Z = I(as.list(seq_len(n)))), n_perm = 1),
+    "unsupported class")
+})
