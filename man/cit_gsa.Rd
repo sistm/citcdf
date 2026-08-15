@@ -73,8 +73,8 @@ computations. Default is
 parallelization.}
 
 \item{adaptive}{a logical flag indicating whether adaptive permutations
-should be performed. Default is \code{FALSE}. Only used if
-\code{test == 'permutation'}.}
+should be performed. Default is \code{FALSE} (unlike \code{cit_multi()}).
+Only used if \code{test == 'permutation'}.}
 
 \item{space_y}{a logical flag indicating whether the y thresholds are spaced out.
 When \code{space_y} is \code{TRUE}, a regular sequence between the minimum and
@@ -111,6 +111,10 @@ Conditional independence test for gene set analysis
 The gene-set statistic is the sum of per-gene statistics. For the
 permutation test, it is computed with each single permutation of X shared and
 applied across all genes in a set (so inter-gene correlation is preserved).
+
+The \code{space_y} / \code{number_y} grid controls both the
+resolution of the statistic and its computational cost. See
+\code{\link{cit_multi}} for details on this trade-off.
 }
 \examples{
 # Two conditions and 30 genes, split into two sets: in "responder" every of

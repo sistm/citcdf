@@ -23,6 +23,10 @@
 #' @param number_y an integer value indicating the number of y thresholds (and therefore
 #' the number of regressions) to perform the test. Default is \code{length(Y)}.
 #'
+#' @details The \code{space_y} / \code{number_y} grid controls both the
+#' resolution of the statistic and its computational cost. See
+#' \code{\link{cit_multi}} for details on this trade-off.
+#'
 #' @seealso \code{\link{cit_asymp}}, \code{\link{X_perm}}, \code{\link{cit_multi}}
 #'
 #' @export

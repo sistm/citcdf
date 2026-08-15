@@ -65,7 +65,9 @@ parallelization.}
 
 \item{adaptive}{a logical flag indicating whether adaptive additional permutations
 should be performed. Default is \code{TRUE}. Only used if
-\code{test == 'permutation'}.}
+\code{test == 'permutation'}.
+Note \code{cit_gsa()} defaults to \code{adaptive = FALSE} whereas
+\code{cit_multi()} defaults to \code{TRUE}.}
 
 \item{space_y}{a logical flag indicating whether the y thresholds are spaced out.
 When \code{space_y} is \code{TRUE}, a regular sequence between the minimum and
@@ -92,6 +94,17 @@ A list with the following elements:\itemize{
 }
 \description{
 Multiple conditional independence testing
+}
+\details{
+With \code{space_y = FALSE} the test statistic uses every distinct
+observed in \code{Y}), but its computation cost represents
+\code{length(unique(Y))} regressions per gene.
+With \code{space_y = TRUE}, it uses instead a regular grid of \code{number_y}
+points, trading resolution for a computational cost that is independent of
+\code{n}. The grid runs from the smallest non-zero observation (a mass of
+exact zeros, as in count data, does not consume grid points) to
+\code{max(Y)}. Raising \code{number_y} brings p-values
+closer towards their \code{space_y = FALSE} values.
 }
 \examples{
 

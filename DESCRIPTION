@@ -24,6 +24,8 @@ Imports: ggplot2,
          viridisLite
 Suggests: BiocSet,
          GSA,
+         knitr,
+         rmarkdown,
          testthat (>= 3.0.0)
 Description: Complex hypothesis testing through conditional cumulative distribution function estimation.
              Method is detailed in: Gauthier M, Agniel D, Fallet S, Ba K, Thiébaut R & Hejblum BP (2026). 
@@ -33,5 +35,6 @@ Encoding: UTF-8
 URL: https://github.com/sistm/citcdf
 BugReports: https://github.com/sistm/citcdf/issues
 Language: en-US
+VignetteBuilder: knitr
 Config/testthat/edition: 3
 Config/roxygen2/version: 8.0.0

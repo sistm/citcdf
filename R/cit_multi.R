@@ -25,6 +25,8 @@
 #' @param adaptive a logical flag indicating whether adaptive additional permutations
 #' should be performed. Default is \code{TRUE}. Only used if
 #' \code{test == 'permutation'}.
+#' Note \code{cit_gsa()} defaults to \code{adaptive = FALSE} whereas
+#' \code{cit_multi()} defaults to \code{TRUE}.
 #'
 #' @param n_perm_adaptive a vector of the increasing numbers of
 #' adaptive permutations to be performed when \code{adaptive} is \code{TRUE}
@@ -74,6 +76,16 @@
 #'   using Benjamini-Hochberg correction. When '\code{test == "asymptotic"}', a
 #'   third column '\code{test_statistic}' contains the gene-wise test statistics.
 #' }
+#'
+#' @details With \code{space_y = FALSE} the test statistic uses every distinct
+#' observed in \code{Y}), but its computation cost represents
+#' \code{length(unique(Y))} regressions per gene.
+#' With \code{space_y = TRUE}, it uses instead a regular grid of \code{number_y}
+#' points, trading resolution for a computational cost that is independent of
+#' \code{n}. The grid runs from the smallest non-zero observation (a mass of
+#' exact zeros, as in count data, does not consume grid points) to
+#' \code{max(Y)}. Raising \code{number_y} brings p-values
+#' closer towards their \code{space_y = FALSE} values.
 #'
 #' @references Gauthier M, Agniel D, Thiébaut R & Hejblum BP (2021).
 #' Distribution-free complex hypothesis testing for single-cell RNA-seq differential expression analysis, *bioRxiv* 445165.

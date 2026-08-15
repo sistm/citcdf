@@ -29,6 +29,10 @@
 #'
 #' @importFrom survey pchisqsum
 #'
+#' @details The \code{space_y} / \code{number_y} grid controls both the
+#' resolution of the statistic and its computational cost. See
+#' \code{\link{cit_multi}} for details on this trade-off.
+#'
 #' @seealso \code{\link{cit_perm}}, \code{\link{cit_multi}}, \code{\link{ccdf}}
 #'
 #' @export

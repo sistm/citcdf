@@ -11,6 +11,18 @@
 #'
 #' @return a list with the permuted label vector for each permutation
 #'
+#' @details The permutations are conditional on \code{Z}:
+#' \itemize{
+#'  \item When \code{Z} is \code{NULL}, whole rows of \code{X} are permuted
+#'  uniformly.
+#'  \item When \code{Z} is a factor, integer, logical or character, \code{X} is
+#'  permuted independently within each stratum of \code{Z}: the empirical
+#'  association between \code{X} and \code{Z} is preserved exactly.
+#'  \item When \code{Z} is continuous, no exact strata exist and the draw is
+#'  delegated to \code{\link{perm_cont}}, which matches each observation to a
+#'  swap of similar fitted value of \code{X} given \code{Z}.
+#' }
+#'
 #' @seealso \code{\link{perm_cont}}, \code{\link{cit_perm}}
 #'
 #' @export

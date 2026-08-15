@@ -88,8 +88,8 @@
 #' \code{test == 'permutation'}.
 #'
 #' @param adaptive a logical flag indicating whether adaptive permutations
-#' should be performed. Default is \code{FALSE}. Only used if
-#' \code{test == 'permutation'}.
+#' should be performed. Default is \code{FALSE} (unlike \code{cit_multi()}).
+#' Only used if \code{test == 'permutation'}.
 #'
 #' @param n_perm_adaptive a vector of the increasing numbers of
 #' adaptive permutations to be performed when \code{adaptive} is \code{TRUE}
@@ -143,6 +143,10 @@
 #' @details The gene-set statistic is the sum of per-gene statistics. For the
 #' permutation test, it is computed with each single permutation of X shared and
 #' applied across all genes in a set (so inter-gene correlation is preserved).
+#'
+#' The \code{space_y} / \code{number_y} grid controls both the
+#' resolution of the statistic and its computational cost. See
+#' \code{\link{cit_multi}} for details on this trade-off.
 #'
 #' @seealso \code{\link{cit_multi}}, \code{\link{plot.cit_gsa}}
 #'

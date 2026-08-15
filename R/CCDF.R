@@ -26,6 +26,10 @@
 #'
 #' @importFrom stats model.matrix
 #'
+#' @details The \code{space_y} / \code{number_y} grid controls both the
+#' resolution of the statistic and its computational cost. See
+#' \code{\link{cit_multi}} for details on this trade-off.
+#'
 #' @seealso \code{\link{plot_compare_ccdf}}, \code{\link{cit_asymp}}
 #'
 #' @export
