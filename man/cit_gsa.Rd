@@ -113,6 +113,18 @@ The gene-set statistic is the sum of per-gene statistics. For the
 permutation test, it is computed with each single permutation of X shared and
 applied across all genes in a set (so inter-gene correlation is preserved).
 
+For the asymptotic test, the null covariance of the stacked threshold
+indicators is estimated empirically (\code{crossprod(temp) / n}).
+The closed form \eqn{min(p_i, p_j) - p_i p_j} used by
+\code{\link{cit_asymp}} only holds within a gene (because the
+product of two threshold indicators of the same \code{Y} is itself an
+indicator). Across two genes, that same expectation is their joint distribution
+function, which the marginal proportions do not determine as there is
+inter-gene correlation present.
+The empirical estimator coincides with the closed form on the within-gene
+diagonal blocks, and additionally supplies the between-gene blocks which
+carry the inter-gene correlation needed by the summed gene-set statistic.
+
 The \code{space_y} / \code{number_y} grid controls both the
 resolution of the statistic and its computational cost. See
 \code{\link{cit_multi}} for details on this trade-off.
