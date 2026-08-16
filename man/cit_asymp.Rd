@@ -4,14 +4,7 @@
 \alias{cit_asymp}
 \title{Asymptotic test for conditional independence}
 \usage{
-cit_asymp(
-  Y,
-  X,
-  Z = NULL,
-  space_y = FALSE,
-  number_y = length(unique(Y)),
-  design = NULL
-)
+cit_asymp(Y, X, Z = NULL, space_y = FALSE, number_y = 10, design = NULL)
 }
 \arguments{
 \item{Y}{a numeric vector of length \code{n} to test for conditional independence
@@ -77,8 +70,9 @@ quantile(pvals_sim)
 }
 \references{
 Gauthier M, Agniel D, Thiébaut R & Hejblum BP (2021).
-Distribution-free complex hypothesis testing for single-cell RNA-seq differential expression analysis, *bioRxiv* 445165.
-[DOI: 10.1101/2021.05.21.445165](https://doi.org/10.1101/2021.05.21.445165).
+Distribution-free complex hypothesis testing for single-cell RNA-seq
+differential expression analysis, \emph{bioRxiv} 445165.
+\doi{10.1101/2021.05.21.445165}.
 }
 \seealso{
 \code{\link{cit_perm}}, \code{\link{cit_multi}}, \code{\link{ccdf}}

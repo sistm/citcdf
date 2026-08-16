@@ -44,8 +44,9 @@
 #' @seealso \code{\link{cit_perm}}, \code{\link{cit_multi}}, \code{\link{ccdf}}
 #'
 #' @references Gauthier M, Agniel D, Thiébaut R & Hejblum BP (2021).
-#' Distribution-free complex hypothesis testing for single-cell RNA-seq differential expression analysis, *bioRxiv* 445165.
-#' [DOI: 10.1101/2021.05.21.445165](https://doi.org/10.1101/2021.05.21.445165).
+#' Distribution-free complex hypothesis testing for single-cell RNA-seq
+#' differential expression analysis, \emph{bioRxiv} 445165.
+#' \doi{10.1101/2021.05.21.445165}.
 #'
 #' @export
 #'
@@ -68,7 +69,7 @@
 #' hist(pvals_sim) # well calibrated p-values are uniform under the null
 #' quantile(pvals_sim)
 #'
-cit_asymp <- function(Y, X, Z = NULL, space_y = FALSE, number_y = length(unique(Y)),
+cit_asymp <- function(Y, X, Z = NULL, space_y = FALSE, number_y = 10,
                       design = NULL) {
   # Quantities that depend only on (X, Z), not on Y. Callers looping over many
   # genes (cit_multi) build this once and pass it in; a direct call computes it

@@ -426,7 +426,6 @@ cit_gsa <- function(M,
       # test_stat_gs <- NULL
       prop_gs <- list()
       indi_pi_gs <- list()
-      # ccdf_gs <- list()
 
 
       measured_genes <- intersect(M_colnames, geneset[[k]])
@@ -471,14 +470,7 @@ cit_gsa <- function(M,
           prop <- colMeans(indi_pi)
           prop_gs[[i]] <- prop # prop for each genes in the gene set
 
-
-          # ccdf_gs[[i]] <- ccdf(Y=Y, X=X, Z=Z, method="OLS", fast=TRUE, space_y=space_y, number_y=number_y)
-
-
         }
-        # ccdf_list[[k]] <- ccdf_gs
-        # names(ccdf_list[[k]]) <- measured_genes # not geneset, if some genes are not in the data
-        # utile comme le refait plus tard ???
 
 
         indi_pi_gs_tab <- do.call(cbind, indi_pi_gs)
@@ -501,7 +493,7 @@ cit_gsa <- function(M,
           a = ev, method = "saddlepoint")
       }
 
-      return(list("pval" = pval, "test_stat_gs" = test_stat_gs)) # ,"ccdf" = ccdf_list
+      return(list("pval" = pval, "test_stat_gs" = test_stat_gs))
 
     },
     cl = par_clust)

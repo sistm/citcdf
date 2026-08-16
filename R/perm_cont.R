@@ -45,29 +45,31 @@
 #' Berrett TB, Wang Y, Barber RF, Samworth RJ (2020).
 #' The conditional permutation test for independence while controlling for
 #' confounders. \emph{Journal of the Royal Statistical Society Series B},
-#' \bold{82}(1), 175-197.
+#' \bold{82}(1), 175-197. \doi{10.1111/rssb.12340}
 #'
 #' Candes E, Fan Y, Janson L, Lv J (2018). Panning for gold: 'model-X' knockoffs
 #' for high dimensional controlled variable selection.
 #' \emph{Journal of the Royal Statistical Society Series B}, \bold{80}(3), 551-577.
+#' \doi{10.1111/rssb.12265}
 #'
 #' Hemerik J, Goeman JJ (2018). Exact testing with random permutations.
-#' \emph{TEST}, \bold{27}(4), 811-825.
+#' \emph{TEST}, \bold{27}(4), 811-825. \doi{10.1007/s11749-017-0571-1}
 #'
 #' Rosenbaum PR, Rubin DB (1983). The central role of the propensity score in
 #' observational studies for causal effects. \emph{Biometrika}, \bold{70}(1),
-#' 41-55.
+#' 41-55. \doi{10.1093/biomet/70.1.41}
 #'
 #' Kim I, Neykov M, Balakrishnan S, Wasserman L (2022).
 #' Local permutation tests for conditional independence.
-#' \emph{The Annals of Statistics}, \bold{50}(6), 3388-3414.
+#' \emph{The Annals of Statistics}, \bold{50}(6), 3388-3414. \doi{10.1214/22-AOS2233}
 #'
 #' Hall P (1992). Effect of bias estimation on coverage accuracy of bootstrap
 #' confidence intervals for a probability density.
-#' \emph{The Annals of Statistics}, \bold{20}(2), 675-694.
+#' \emph{The Annals of Statistics}, \bold{20}(2), 675-694. \doi{10.1214/aos/1176348651}
 #'
 #' Armstrong TB, Kolesar M (2020). Simple and honest confidence intervals in
 #' nonparametric regression. \emph{Quantitative Economics}, \bold{11}(1), 1-39.
+#' \doi{10.3982/QE1199}
 #'
 #' @seealso \code{\link{X_perm}}
 #'
