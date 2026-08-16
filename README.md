@@ -23,9 +23,9 @@ plotting functions `plot_compare_ccdf()`, `plot.cit_multi()` and
 The approach implemented in this package is detailed in the following
 article:
 
-> Gauthier M, Agniel D, Thiébaut R & Hejblum BP (2020).
+> Gauthier M, Agniel D, Thiébaut R & Hejblum BP (2021).
 > Distribution-free complex hypothesis testing for single-cell RNA-seq
-> differential expression analysis, *BioRxiv*
+> differential expression analysis, *bioRxiv*
 > [doi:10.1101/2021.05.21.445165](https://doi.org/10.1101/2021.05.21.445165)
 
 ## Installation
