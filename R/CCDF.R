@@ -22,7 +22,8 @@
 #' the maximum of the observations is used. Default is \code{FALSE}.
 #'
 #' @param number_y an integer value indicating the number of y thresholds (and therefore
-#' the number of regressions) to perform the test. Default is \code{length(Y)}.
+#' the number of regressions) to perform the test. Only used if \code{space_y}
+#' is \code{TRUE}. Default is \code{10}.
 #'
 #' @importFrom stats model.matrix
 #'
@@ -61,7 +62,7 @@
 #' Y <- ((X == 1) * rnorm(n = n, 0, 1)) + ((X == 0) * rnorm(n = n, 0.5, 1))
 #' res <- ccdf(Y, data.frame(X = X), method = "OLS")
 ccdf <- function(Y, X, Z = NULL, method = c("OLS", "logistic"),
-                 fast = TRUE, space_y = FALSE, number_y = length(Y)) {
+                 fast = TRUE, space_y = FALSE, number_y = 10) {
 
   if (length(method) > 1) {
     method <- method[1]

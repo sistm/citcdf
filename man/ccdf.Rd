@@ -11,7 +11,7 @@ ccdf(
   method = c("OLS", "logistic"),
   fast = TRUE,
   space_y = FALSE,
-  number_y = length(Y)
+  number_y = 10
 )
 }
 \arguments{
@@ -37,7 +37,8 @@ When \code{space_y} is \code{TRUE}, a regular sequence between the minimum and
 the maximum of the observations is used. Default is \code{FALSE}.}
 
 \item{number_y}{an integer value indicating the number of y thresholds (and therefore
-the number of regressions) to perform the test. Default is \code{length(Y)}.}
+the number of regressions) to perform the test. Only used if \code{space_y}
+is \code{TRUE}. Default is \code{10}.}
 }
 \value{
 A list with the following elements:\itemize{

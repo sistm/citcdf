@@ -4,15 +4,7 @@
 \alias{cit_perm}
 \title{Permutation test for conditional independence}
 \usage{
-cit_perm(
-  Y,
-  X,
-  Z = NULL,
-  X_star,
-  n_perm = 100,
-  space_y = FALSE,
-  number_y = length(Y)
-)
+cit_perm(Y, X, Z = NULL, X_star, n_perm = 100, space_y = FALSE, number_y = 10)
 }
 \arguments{
 \item{Y}{a numeric vector of length \code{n} to test for conditional independence
@@ -36,7 +28,8 @@ When \code{space_y} is \code{TRUE}, a regular sequence between the minimum and
 the maximum of the observations is used. Default is \code{FALSE}.}
 
 \item{number_y}{an integer value indicating the number of y thresholds (and therefore
-the number of regressions) to perform the test. Default is \code{length(Y)}.}
+the number of regressions) to perform the test. Only used if \code{space_y}
+is \code{TRUE}. Default is \code{10}.}
 }
 \value{
 A data frame with the following elements:

@@ -21,7 +21,8 @@
 #' the maximum of the observations is used. Default is \code{FALSE}.
 #'
 #' @param number_y an integer value indicating the number of y thresholds (and therefore
-#' the number of regressions) to perform the test. Default is \code{length(Y)}.
+#' the number of regressions) to perform the test. Only used if \code{space_y}
+#' is \code{TRUE}. Default is \code{10}.
 #'
 #' @details The \code{space_y} / \code{number_y} grid controls both the
 #' resolution of the statistic and its computational cost. See
@@ -61,7 +62,7 @@
 #' X_star_z <- X_perm(X, Z, n_perm = 10)
 #' res_perm_adj <- cit_perm(Y, X, Z = Z, X_star = X_star_z, n_perm = 10)
 #' res_perm_adj
-cit_perm <- function(Y, X, Z = NULL, X_star, n_perm = 100, space_y = FALSE, number_y = length(Y)) {
+cit_perm <- function(Y, X, Z = NULL, X_star, n_perm = 100, space_y = FALSE, number_y = 10) {
 
   stopifnot(is.vector(Y))
   stopifnot(is.data.frame(X))

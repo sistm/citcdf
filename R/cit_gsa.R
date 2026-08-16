@@ -119,7 +119,8 @@
 #' observed expression value is used as a distinct threshold. Default is \code{TRUE}.
 #'
 #' @param number_y an integer value indicating the number of y thresholds (and therefore
-#' the number of regressions) to perform the test. Default is 10.
+#' the number of regressions) to perform the test. Only used if \code{space_y}
+#' is \code{TRUE}. Default is \code{10}.
 #'
 #' @return A list with the following elements:\itemize{
 #'   \item \code{which_test}: a character string carrying forward the value of
