@@ -27,7 +27,7 @@
 #' resolution of the statistic and its computational cost. See
 #' \code{\link{cit_multi}} for details on this trade-off.
 #'
-#' @seealso \code{\link{cit_asymp}}, \code{\link{X_perm}}, \code{\link{cit_multi}}
+#' @seealso \code{\link{perm_cont}}, \code{\link{X_perm}}, \code{\link{cit_multi}}
 #'
 #' @export
 #'
@@ -40,6 +40,10 @@
 #'   \item \code{test_statistic} contains the observed test statistic for a given
 #'   gene. It is the same quantity returned by \code{\link{cit_asymp}}.
 #' }
+#'
+#' @references Gauthier M, Agniel D, Thiébaut R & Hejblum BP (2021).
+#' Distribution-free complex hypothesis testing for single-cell RNA-seq differential expression analysis, *bioRxiv* 445165.
+#' [DOI: 10.1101/2021.05.21.445165](https://doi.org/10.1101/2021.05.21.445165).
 #'
 #' @examples
 #'

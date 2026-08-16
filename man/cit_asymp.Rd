@@ -74,6 +74,11 @@ hist(pvals_sim) # well calibrated p-values are uniform under the null
 quantile(pvals_sim)
 
 }
+\references{
+Gauthier M, Agniel D, Thiébaut R & Hejblum BP (2021).
+Distribution-free complex hypothesis testing for single-cell RNA-seq differential expression analysis, *bioRxiv* 445165.
+[DOI: 10.1101/2021.05.21.445165](https://doi.org/10.1101/2021.05.21.445165).
+}
 \seealso{
 \code{\link{cit_perm}}, \code{\link{cit_multi}}, \code{\link{ccdf}}
 }

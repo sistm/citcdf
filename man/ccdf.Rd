@@ -69,6 +69,12 @@ X <- as.factor(rbinom(n = n, size = 1, prob = 0.5))
 Y <- ((X == 1) * rnorm(n = n, 0, 1)) + ((X == 0) * rnorm(n = n, 0.5, 1))
 res <- ccdf(Y, data.frame(X = X), method = "OLS")
 }
+\references{
+Gauthier M, Agniel D, Thiébaut R & Hejblum BP (2021).
+Distribution-free complex hypothesis testing for single-cell RNA-seq
+differential expression analysis, *bioRxiv* 445165.
+[DOI: 10.1101/2021.05.21.445165](https://doi.org/10.1101/2021.05.21.445165).
+}
 \seealso{
 \code{\link{plot_compare_ccdf}}, \code{\link{cit_asymp}}
 }
