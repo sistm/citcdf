@@ -227,7 +227,7 @@ those still significant proceed to the larger stages of `n_perm_adaptive`.
 
 ```{r pbmc-perm, eval = has_seurat}
 res_perm <- cit_multi(M, X = X_pop, Z = Z_lib, test = "permutation",
-                      n_perm = 10, parallel = FALSE, adaptive=FALSE)
+                      n_perm = 100, parallel = FALSE)
 res_perm$n_perm
 ```
 
