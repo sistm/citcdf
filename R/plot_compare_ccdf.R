@@ -8,6 +8,15 @@
     theme(plot.title = element_text(hjust = 0.5)))
 }
 
+# Display name for supplied variables: uses the first column name of the input
+# data.frame. Falls back to `default` when the name is missing or empty (eg a
+# matrix with no dimnames). Only the first column is ever used by ccdf(), so only the
+# first name is ever taken (colnames() returns the whole vector).
+.ccdf_var_name <- function(D, default) {
+  nm <- colnames(D)[1]
+  if (is.null(nm) || is.na(nm) || !nzchar(nm)) default else nm
+}
+
 # One "series" = one drawn quantity. `labels` are the colour-group values,
 # `keys` the text shown in the legend. A mapped series expands over levels of x.
 .ccdf_serie <- function(ycol, labels, colours, geom, keys = labels,
@@ -114,7 +123,8 @@
 .ccdf_discretize_panels <- function(Y, X, Z, method, fast, space_y, number_y,
                                     probs, bin_labels) {
   yv    <- as.numeric(Y[, 1])
-  y_lab <- colnames(Y)
+  y_lab <- .ccdf_var_name(Y, "Y")
+  x_lab <- .ccdf_var_name(X, "X")
   Xd    <- .ccdf_qbin(X[, 1], probs, bin_labels)
   lv    <- levels(Xd)
   l_X <- length(lv)
@@ -125,12 +135,12 @@
     df  <- data.frame(y = res$y, x = res$x, cdf = res$cdf, ccdf = res$ccdf)
     series <- list(.ccdf_ref("cdf", "CDF"),
       .ccdf_serie("ccdf", lv, vx, "step",
-        keys = paste0("CCDF | ", .ccdf_bin_labels(lv, X[, 1], "X")), mapped = TRUE))
+        keys = paste0("CCDF | ", .ccdf_bin_labels(lv, X[, 1], x_lab)), mapped = TRUE))
     return(list(.ccdf_panel(df, series, y_lab)))
   }
 
   Zd    <- .ccdf_qbin(Z[, 1], probs, bin_labels)
-  z_lab <- colnames(Z)
+  z_lab <- .ccdf_var_name(Z, "Z")
   XZ    <- interaction(Xd, Zd, sep = "|", drop = TRUE)
   res   <- ccdf(yv, data.frame(X = XZ), NULL, method, fast, space_y, number_y)
   sp    <- do.call(rbind, strsplit(as.character(res$x), "|", fixed = TRUE))
@@ -141,17 +151,17 @@
   res_X <- ccdf(yv, data.frame(X = Xd), NULL, method, fast, space_y, number_y)
   df_X  <- data.frame(y = res_X$y, x = res_X$x, cdf = res_X$cdf, ccdf = res_X$ccdf)
   top_series <- list(.ccdf_serie("ccdf", lv, vx, "step",
-    keys = paste0("CCDF | ", .ccdf_bin_labels(lv, X[, 1], "X")), mapped = TRUE),
+    keys = paste0("CCDF | ", .ccdf_bin_labels(lv, X[, 1], x_lab)), mapped = TRUE),
   .ccdf_ref("cdf", "CDF"))
   p_top <- .ccdf_panel(df_X, top_series, y_lab) +
-    ggtitle("Marginal on Z") +
+    ggtitle(paste("Marginal on", z_lab)) +
     theme(plot.title = element_text(hjust = 0))
 
   res_Z <- ccdf(yv, data.frame(X = Zd), NULL, method, fast, space_y, number_y)
   df_Z  <- data.frame(y = res_Z$y, ccdf = res_Z$ccdf,
     z = factor(res_Z$x, levels = levels(Zd)))
 
-  ref_lbl <- "Marginal on X"
+  ref_lbl <- paste("Marginal on", x_lab)
   p_bottom <- ggplot(df, aes(x = .data$y)) +
     geom_step(aes(y = .data$ccdf, color = .data$x), linewidth = 0.5) +
     geom_step(data = df_Z, aes(y = .data$ccdf, color = ref_lbl),
@@ -160,7 +170,7 @@
       name   = "CCDF",
       values = stats::setNames(c(vx, "goldenrod1"), c(lv, ref_lbl)),
       breaks = c(lv, ref_lbl),
-      labels = c(paste0("CCDF | ", .ccdf_bin_labels(lv, X[, 1], "X")), ref_lbl),
+      labels = c(paste0("CCDF | ", .ccdf_bin_labels(lv, X[, 1], x_lab)), ref_lbl),
       guide  = guide_legend(override.aes = list(
         linetype = c(rep("solid", l_X), "dotted"),
         shape    = rep(NA, l_X + 1)))) +
@@ -184,7 +194,8 @@
       probs, bin_labels))
 
   res   <- ccdf(as.numeric(Y[, 1]), X, Z, method, fast, space_y, number_y)
-  y_lab <- colnames(Y)
+  y_lab <- .ccdf_var_name(Y, "Y")
+  x_lab <- .ccdf_var_name(X, "X")
   x_fac <- is.factor(X[, 1])
   lv    <- if (x_fac) levels(X[, 1]) else character(0)   # NOT unique(): see notes
   l_X   <- length(lv)
@@ -195,7 +206,7 @@
     series <- if (x_fac)
       list(.ccdf_ref("cdf", "CDF"),
         .ccdf_serie("ccdf", lv, vx[seq_len(l_X)], "step",
-          keys = paste0("CCDF | X=", lv), mapped = TRUE))
+          keys = paste0("CCDF | ", x_lab, "=", lv), mapped = TRUE))
     else
       list(.ccdf_ref("cdf", "CDF"),
         .ccdf_serie("ccdf", "CCDF", vx[1], "point"))
@@ -207,40 +218,40 @@
   res_X <- ccdf(as.numeric(Y[, 1]), X, Z = NULL, method, fast, space_y, number_y)
   df_X  <- data.frame(y = res_X$y, x = res_X$x, cdf = res_X$cdf, ccdf = res_X$ccdf)
   z_fac <- is.factor(Z[, 1])
-  z_lab <- colnames(Z)
+  z_lab <- .ccdf_var_name(Z, "Z")
 
   ## Z and X both continuous: everything fits on a single panel
   if (!z_fac && !x_fac) {
     series <- list(
       .ccdf_ref("cdf",      "CDF", "step", linewidth = 0.7),
-      .ccdf_serie("ccdf_x",   "CCDF | Z, X",   vx[1],  "point"),
-      .ccdf_serie("ccdf_nox", "CCDF | Z", vx[2], geom = "point", shape = 2))
+      .ccdf_serie("ccdf_x",   paste0("CCDF | ", z_lab, ", ", x_lab), vx[1],  "point"),
+      .ccdf_serie("ccdf_nox", paste0("CCDF | ", z_lab), vx[2], geom = "point", shape = 2))
     return(list(.ccdf_panel(df, series, y_lab)))
   }
 
   ## panel A -- marginal on Z
   if (x_fac) {
     top_series <- list(.ccdf_serie("ccdf", lv, vx[seq_len(l_X)], "step",
-      keys = paste0("CCDF | X=", lv), mapped = TRUE),
+      keys = paste0("CCDF | ", x_lab, "=", lv), mapped = TRUE),
     .ccdf_ref("cdf", "CDF"))
   } else {
     top_series <- list(.ccdf_serie("ccdf", "CCDF", vx[1], "point"),
       .ccdf_ref("cdf", "CDF"))
   }
   p_top <- .ccdf_panel(df_X, top_series, y_lab) +
-    ggtitle("Marginal on Z") +
+    ggtitle(paste("Marginal on", z_lab)) +
     theme(plot.title = element_text(hjust = 0))
 
   ## panel B -- given X and Z, vs marginal on Z
   bottom_series <- if (x_fac)
     list(.ccdf_serie("ccdf_x", lv, vx[seq_len(l_X)],
       if (z_fac) "step" else "point",
-      keys = paste0("CCDF | X=", lv), mapped = TRUE),
-    .ccdf_ref("ccdf_nox", "Marginal on X",
+      keys = paste0("CCDF | ", x_lab, "=", lv), mapped = TRUE),
+    .ccdf_ref("ccdf_nox", paste("Marginal on", x_lab),
       geom = if (z_fac) "step" else "point", shape = 2))
   else
-    list(.ccdf_serie("ccdf_x", "Given X and Z", vx[1], "point"),
-      .ccdf_ref("ccdf_nox", "Marginal on X", geom = "point", shape = 2))
+    list(.ccdf_serie("ccdf_x", paste("Given", x_lab, "and", z_lab), vx[1], "point"),
+      .ccdf_ref("ccdf_nox", paste("Marginal on", x_lab), geom = "point", shape = 2))
 
   p_bottom <- .ccdf_panel(df, bottom_series, y_lab,
     legend_name = "CCDF")
@@ -263,10 +274,12 @@
 #'
 #' @param X a data frame whose first column is a numeric or factor vector of
 #' size \code{n} containing the variable to be tested (the condition to be
-#' tested).
+#' tested). Its column name is used in the legend keys.
 #'
 #' @param Z a data frame whose first column is a numeric or factor vector of
 #' size \code{n} containing the covariate. Multiple variables are not allowed.
+#' Its column name is used in the legend keys, the facet strips and the panel
+#' A title.
 #'
 #' @param method a character string indicating which method to use to
 #' compute the CCDF, either \code{'OLS'} or \code{'logistic'}.

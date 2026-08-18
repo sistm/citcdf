@@ -24,10 +24,12 @@ x-axis label.}
 
 \item{X}{a data frame whose first column is a numeric or factor vector of
 size \code{n} containing the variable to be tested (the condition to be
-tested).}
+tested). Its column name is used in the legend keys.}
 
 \item{Z}{a data frame whose first column is a numeric or factor vector of
-size \code{n} containing the covariate. Multiple variables are not allowed.}
+size \code{n} containing the covariate. Multiple variables are not allowed.
+Its column name is used in the legend keys, the facet strips and the panel
+A title.}
 
 \item{method}{a character string indicating which method to use to
 compute the CCDF, either \code{'OLS'} or \code{'logistic'}.
