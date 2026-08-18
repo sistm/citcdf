@@ -257,9 +257,9 @@ cit_multi <- function(M,
     }
     stopifnot(ncol(Z) < 2 | is.null(Z))
 
-    # pool sized to the largest number of permutations any adaptive stage needs
-    n_perm_pool <- ifelse(isTRUE(adaptive), sum(n_perm_adaptive), n_perm)
-    X_star <- X_perm(X, Z, n_perm = n_perm_pool)
+    # Permutations are drawn one adaptive stage at a time
+    X_star <- X_perm(X, Z, n_perm = ifelse(isTRUE(adaptive), n_perm_adaptive[1],
+      n_perm))
 
     if (adaptive == TRUE) {
       #### adaptive ----
@@ -298,13 +298,16 @@ cit_multi <- function(M,
 
         message(paste("Computing", sum(n_perm_adaptive[k]), "additional permutations..."))
 
+        # drawn more permutations adaptively now
+        X_star <- X_perm(X, Z, n_perm = n_perm_adaptive[k])
+
         if (parallel & .Platform$OS.type == "unix") {
           res_perm <- pbapply::pbsapply(seq_along(index),
             function(i) {
               cit_perm(Y = M[, index[i]],
                 X = X,
                 Z = Z,
-                X_star = X_star[(used_perms + 1):(used_perms + n_perm_adaptive[k])],
+                X_star = X_star,
                 n_perm = n_perm_adaptive[k],
                 space_y = space_y,
                 number_y = number_y)$score
@@ -316,7 +319,7 @@ cit_multi <- function(M,
               cit_perm(Y = M[, index[i]],
                 X = X,
                 Z = Z,
-                X_star = X_star[(used_perms + 1):(used_perms + n_perm_adaptive[k])],
+                X_star = X_star,
                 n_perm = n_perm_adaptive[k],
                 space_y = space_y,
                 number_y = number_y)$score

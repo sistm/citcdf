@@ -319,8 +319,9 @@ cit_gsa <- function(M,
       geneset <- list(geneset)
     }
 
-    n_perm_pool <- ifelse(isTRUE(adaptive), sum(n_perm_adaptive),  n_perm)
-    X_star <- X_perm(X, Z, n_perm = n_perm_pool)
+    # Permutations are drawn one adaptive stage at a time
+    X_star <- X_perm(X, Z, n_perm = ifelse(isTRUE(adaptive), n_perm_adaptive[1],
+      n_perm))
 
     design <- .cit_design(X, Z, n)
 
@@ -329,7 +330,7 @@ cit_gsa <- function(M,
       message(paste("Computing", n_perm_adaptive[1], "permutations..."))
 
       res0 <- pbapply::pblapply(seq_along(geneset), function(k) {
-        return(.gsa_perm_set(M, geneset[[k]], Z, X_star[seq_len(n_perm_adaptive[1])],
+        return(.gsa_perm_set(M, geneset[[k]], Z, X_star,
           n_perm_adaptive[1], space_y, number_y, design, set_index = sets_id[k]))
       },
       cl = par_clust)
@@ -345,9 +346,10 @@ cit_gsa <- function(M,
         if (length(index) == 0) break
         message(paste("Computing", n_perm_adaptive[k], "additional permutations..."))
 
-        slice <- X_star[(used_perms + 1):(used_perms + n_perm_adaptive[k])]   # disjoint
+        # drawn more permutations adaptively now
+        X_star <- X_perm(X, Z, n_perm = n_perm_adaptive[k])
         res_k <- pbapply::pblapply(index, function(i) {
-          return(.gsa_perm_set(M, geneset[[i]], Z, slice,
+          return(.gsa_perm_set(M, geneset[[i]], Z, X_star,
             n_perm_adaptive[k], space_y, number_y, design, set_index = sets_id[i]))
         },
         cl = par_clust)
