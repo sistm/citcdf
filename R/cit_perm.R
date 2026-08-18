@@ -12,9 +12,15 @@
 #' containing the covariate to condition the independence
 #' test upon. Multiple covariates are not supported for permutation.
 #'
-#' @param X_star a list of permuted vectors from the function \code{X_perm}
+#' @param X_star a list of \code{n_perm} permuted designs, as returned
+#' by \code{\link{X_perm}}. Default is \code{NULL}, in which case
+#' \code{X_perm(X, Z, n_perm = n_perm)} is called internally. Supply it
+#' explicitly when several outcomes must be scored against the same
+#' permutations, or to avoid redrawing them inside a loop; see \emph{Details}.
 #'
-#' @param n_perm the number of permutations. Default is \code{100}.
+#' @param n_perm the number of permutations. Default is \code{100}. When
+#' \code{X_star} is supplied it must hold at least \code{n_perm} elements;
+#' only the first \code{n_perm} are used.
 #'
 #' @param space_y a logical flag indicating whether the y thresholds are spaced out.
 #' When \code{space_y} is \code{TRUE}, a regular sequence between the minimum and
@@ -27,6 +33,14 @@
 #' @details The \code{space_y} / \code{number_y} grid controls both the
 #' resolution of the statistic and its computational cost. See
 #' \code{\link{cit_multi}} for details on this trade-off.
+#'
+#' Leaving \code{X_star} as \code{NULL} is the convenient form for a single
+#' outcome. Across several outcomes it is not equivalent to supplying one:
+#' each call would draw its own permutations, whereas \code{\link{cit_multi}}
+#' and \code{\link{cit_gsa}} deliberately build one pool with
+#' \code{\link{X_perm}} and reuse it for every gene, so that all genes are
+#' scored against the same permuted designs. Pass a shared \code{X_star} if
+#' you are looping over outcomes yourself.
 #'
 #' @seealso \code{\link{perm_cont}}, \code{\link{X_perm}}, \code{\link{cit_multi}}
 #'
@@ -53,17 +67,20 @@
 #' X <- data.frame(X = as.factor(rbinom(n = 100, size = 1, prob = 0.5)))
 #' Y <- (X$X == 1) * rnorm(100) + (X$X == 0) * rnorm(100, mean = 0.5)
 #'
-#' # X_star holds the permuted designs and is produced by X_perm()
-#' X_star <- X_perm(X, Z = NULL, n_perm = 10)
-#' res_perm <- cit_perm(Y, X, X_star = X_star, n_perm = 10)
+#' # the permuted designs are drawn internally when X_star is left NULL
+#' res_perm <- cit_perm(Y, X, n_perm = 10)
 #' res_perm
+#'
+#' # supplying them explicitly is equivalent, and is what to do when several
+#' # outcomes must be scored against the same permutations
+#' X_star <- X_perm(X, Z = NULL, n_perm = 10)
+#' res_perm_shared <- cit_perm(Y, X, X_star = X_star, n_perm = 10)
 #'
 #' # adjusting for a covariate Z
 #' Z <- data.frame(Z = rnorm(100))
-#' X_star_z <- X_perm(X, Z, n_perm = 10)
-#' res_perm_adj <- cit_perm(Y, X, Z = Z, X_star = X_star_z, n_perm = 10)
+#' res_perm_adj <- cit_perm(Y, X, Z = Z, n_perm = 10)
 #' res_perm_adj
-cit_perm <- function(Y, X, Z = NULL, X_star, n_perm = 100, space_y = FALSE, number_y = 10) {
+cit_perm <- function(Y, X, Z = NULL, X_star = NULL, n_perm = 100, space_y = FALSE, number_y = 10) {
 
   stopifnot(is.vector(Y))
   stopifnot(is.data.frame(X))
@@ -72,13 +89,26 @@ cit_perm <- function(Y, X, Z = NULL, X_star, n_perm = 100, space_y = FALSE, numb
     stopifnot(ncol(X) < 2)
   }
   stopifnot(ncol(Z) < 2 | is.null(Z))
-  stopifnot(is.list(X_star))
-
 
   n <- length(Y)
   stopifnot(nrow(X) == n)
   stopifnot(nrow(Z) == n | is.null(Z))
   .cit_check_Y(Y)
+
+
+  if (is.null(X_star)) {
+    X_star <- X_perm(X, Z, n_perm = n_perm)
+  }
+  stopifnot(is.list(X_star))
+  if (length(X_star) < n_perm) {
+    stop("'X_star' holds ", length(X_star), " permuted design(s) but 'n_perm' ",
+      "is ", n_perm, ". Supply at least 'n_perm' of them, or leave 'X_star' ",
+      "as NULL to have them drawn here.", call. = FALSE)
+  } else if ((length(X_star) > n_perm)) {
+    warning("'X_star' holds ", length(X_star), " permuted design(s), which is
+            larger than 'n_perm', which itself is ", n_perm, ". Only the first ",
+      n_perm, "values from 'X_star' are used.", call. = FALSE)
+  }
 
 
 

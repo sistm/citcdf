@@ -4,7 +4,15 @@
 \alias{cit_perm}
 \title{Permutation test for conditional independence}
 \usage{
-cit_perm(Y, X, Z = NULL, X_star, n_perm = 100, space_y = FALSE, number_y = 10)
+cit_perm(
+  Y,
+  X,
+  Z = NULL,
+  X_star = NULL,
+  n_perm = 100,
+  space_y = FALSE,
+  number_y = 10
+)
 }
 \arguments{
 \item{Y}{a numeric vector of length \code{n} to test for conditional independence
@@ -19,9 +27,15 @@ supported if \code{Z} is \code{NULL}.}
 containing the covariate to condition the independence
 test upon. Multiple covariates are not supported for permutation.}
 
-\item{X_star}{a list of permuted vectors from the function \code{X_perm}}
+\item{X_star}{a list of \code{n_perm} permuted designs, as returned
+by \code{\link{X_perm}}. Default is \code{NULL}, in which case
+\code{X_perm(X, Z, n_perm = n_perm)} is called internally. Supply it
+explicitly when several outcomes must be scored against the same
+permutations, or to avoid redrawing them inside a loop; see \emph{Details}.}
 
-\item{n_perm}{the number of permutations. Default is \code{100}.}
+\item{n_perm}{the number of permutations. Default is \code{100}. When
+\code{X_star} is supplied it must hold at least \code{n_perm} elements;
+only the first \code{n_perm} are used.}
 
 \item{space_y}{a logical flag indicating whether the y thresholds are spaced out.
 When \code{space_y} is \code{TRUE}, a regular sequence between the minimum and
@@ -49,6 +63,14 @@ Permutation test for conditional independence
 The \code{space_y} / \code{number_y} grid controls both the
 resolution of the statistic and its computational cost. See
 \code{\link{cit_multi}} for details on this trade-off.
+
+Leaving \code{X_star} as \code{NULL} is the convenient form for a single
+outcome. Across several outcomes it is not equivalent to supplying one:
+each call would draw its own permutations, whereas \code{\link{cit_multi}}
+and \code{\link{cit_gsa}} deliberately build one pool with
+\code{\link{X_perm}} and reuse it for every gene, so that all genes are
+scored against the same permuted designs. Pass a shared \code{X_star} if
+you are looping over outcomes yourself.
 }
 \examples{
 
@@ -56,15 +78,18 @@ set.seed(123)
 X <- data.frame(X = as.factor(rbinom(n = 100, size = 1, prob = 0.5)))
 Y <- (X$X == 1) * rnorm(100) + (X$X == 0) * rnorm(100, mean = 0.5)
 
-# X_star holds the permuted designs and is produced by X_perm()
-X_star <- X_perm(X, Z = NULL, n_perm = 10)
-res_perm <- cit_perm(Y, X, X_star = X_star, n_perm = 10)
+# the permuted designs are drawn internally when X_star is left NULL
+res_perm <- cit_perm(Y, X, n_perm = 10)
 res_perm
+
+# supplying them explicitly is equivalent, and is what to do when several
+# outcomes must be scored against the same permutations
+X_star <- X_perm(X, Z = NULL, n_perm = 10)
+res_perm_shared <- cit_perm(Y, X, X_star = X_star, n_perm = 10)
 
 # adjusting for a covariate Z
 Z <- data.frame(Z = rnorm(100))
-X_star_z <- X_perm(X, Z, n_perm = 10)
-res_perm_adj <- cit_perm(Y, X, Z = Z, X_star = X_star_z, n_perm = 10)
+res_perm_adj <- cit_perm(Y, X, Z = Z, n_perm = 10)
 res_perm_adj
 }
 \references{

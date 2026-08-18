@@ -14,10 +14,14 @@ import(ggplot2)
 import(patchwork)
 import(pbapply)
 import(stats)
-importFrom(parallel,detectCores)
-importFrom(parallel,makeCluster)
-importFrom(parallel,stopCluster)
-importFrom(stats,median)
-importFrom(stats,model.matrix)
+importFrom(parallel,
+  detectCores,
+  makeCluster,
+  stopCluster
+)
+importFrom(stats,
+  median,
+  model.matrix
+)
 importFrom(survey,pchisqsum)
 importFrom(viridisLite,viridis)
