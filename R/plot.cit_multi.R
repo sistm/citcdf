@@ -47,9 +47,9 @@ plot.cit_multi <- function(x, ..., nominal_level = 0.05) {
   p <- ggplot() + scale_y_log10() + ggplot2::annotation_logticks(sides = "l") +
     geom_point(data = df_plot_perm, aes(x = .data[["x"]], y = .data[["y"]], color = "pvals"), size = 0.5) +
     geom_line(data = df_plot_perm, aes(y = .data[["s"]], x = .data[["x"]], color = "bhlim"), linewidth = 0.5) +
-    geom_line(data = df_plot_perm, aes(y = 0.05, x = .data[["x"]], color = "nomlev"), linewidth = 0.5) +
+    geom_line(data = df_plot_perm, aes(y = nominal_level, x = .data[["x"]], color = "nomlev"), linewidth = 0.5) +
     scale_color_manual(name = "", breaks = c("pvals", "bhlim", "nomlev"),
-      labels = c("Raw p-values", "Bonferroni-Hochberg threshold",
+      labels = c("Raw p-values", "Benjamini-Hochberg threshold",
         paste0(round(nominal_level * 100, digits = 0), "% nominal level")),
       values = c(viridis(4)[c(2, 1)], "red")) +
     guides(color = guide_legend(override.aes = list(shape = c(16, NA, NA), size = c(1, NA, NA), linewidth = c(NA, 0.5, 0.5)))) +
