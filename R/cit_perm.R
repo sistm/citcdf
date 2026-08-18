@@ -78,6 +78,7 @@ cit_perm <- function(Y, X, Z = NULL, X_star, n_perm = 100, space_y = FALSE, numb
   n <- length(Y)
   stopifnot(nrow(X) == n)
   stopifnot(nrow(Z) == n | is.null(Z))
+  .cit_check_Y(Y)
 
 
 

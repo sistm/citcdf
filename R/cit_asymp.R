@@ -77,6 +77,7 @@ cit_asymp <- function(Y, X, Z = NULL, space_y = FALSE, number_y = 10,
   n_Y_all <- length(Y)
   stopifnot(nrow(X) == n_Y_all)
   stopifnot(is.null(Z) || nrow(Z) == n_Y_all)
+  .cit_check_Y(Y)
   if (is.null(design)) {
     design <- .cit_design(X, Z, n_Y_all)
   }

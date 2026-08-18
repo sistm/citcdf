@@ -246,6 +246,7 @@ cit_gsa <- function(M,
   n <- nrow(M)
   stopifnot(nrow(X) == n)
   stopifnot(nrow(Z) == n | is.null(Z))
+  .cit_check_M(M)
 
   if (length(test) > 1) {
     test <- test[1]
