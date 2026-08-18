@@ -23,12 +23,16 @@ Imports: ggplot2,
          survey,
          viridisLite
 Suggests: BiocSet,
+         bnlearn,
          GSA,
          knitr,
+         reactable,
          rmarkdown,
+         sessioninfo,
+         SeuratObject,
          testthat (>= 3.0.0)
 Description: Complex hypothesis testing through conditional cumulative distribution function estimation.
-             Method is detailed in: Gauthier M, Agniel D, Fallet S, Ba K, Thiébaut R & Hejblum BP (2026). 
+             Method is detailed in: Gauthier M, Agniel D, Thiébaut R & Hejblum BP (2021). 
              "Distribution-free complex hypothesis testing for single-cell RNA-seq differential expression analysis", bioRxiv <doi:10.1101/2021.05.21.445165>.
 License: GPL (>= 3)
 Encoding: UTF-8

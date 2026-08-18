@@ -1,0 +1,273 @@
+---
+title: "User guide to the `citcdf` R package"
+author: "Denis Agniel, Sara Fallet, Marine Gauthier, Boris Hejblum"
+date: "`r Sys.Date()`"
+output:
+  rmarkdown::html_vignette:
+    number_sections: yes
+    toc: yes
+bibliography: citcdf.bib
+link-citations: yes
+vignette: >
+  %\VignetteIndexEntry{User guide to the `citcdf` R package}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r knitrsetup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 7,
+  fig.height = 4.5,
+  dpi = 96
+)
+# Datasets borrowed from other packages (Suggests, not hard dependencies).
+has_bnlearn <- requireNamespace("bnlearn", quietly = TRUE)
+has_seurat <- requireNamespace("SeuratObject", quietly = TRUE) &&
+  utils::packageVersion("SeuratObject") >= "5.0.0"
+has_sessioninfo <- requireNamespace("sessioninfo", quietly = TRUE)
+```
+
+![](../man/figures/logo.svg){width=139px}
+
+# Overview of `citcdf`
+
+`citcdf` performs **c**onditional **i**ndependence **t**esting through
+conditional **c**umulative **d**istribution **f**unctions
+[@gauthier2026]. It addresses the following null hypothesis: 
+$$H_0: Y \perp\!\!\!\perp X \mid Z$$ 
+
+by testing whether $F_{Y \mid X, Z}(y) = F_{Y \mid Z}(y)$. The associated test statistic is computed across a grid of thresholds $\omega_1 < \dots < \omega_p$ spanning $Y$, where the indicator $\mathbb{1}_{Y_i \le \omega_j}$ is
+regressed on both $X$ and $Z$ at each threshold $j$. Under $H_0$, the coefficients $\beta_j$ carried by $X$ are all null, and thus `citcdf` test statistic is the sum of squares whose asymptotic distribution is then a weighted mixture of $\chi^2_1$.
+
+No distributional assumption is made on $Y$, and in that sense `citcdf` is *distribution-free*. It is therefore robust to zero-inflation, multi-modality and skewness that typical occur in single-cell RNA-seq data.
+
+
+## Main user functions
+
+Three main functions build form the `citcdf`package leverage this test statistic:
+
+ - `cit_asymp()`: one hypothesis, asymptotic p-value
+ - `cit_perm()`: one hypothesis, permutation p-value
+ - `cit_multi()`: many outcomes at once (with a Benjamini-Hochberg adjustment), either asymptotic or permutation test
+
+## Inputs
+
+`Y` is a numeric vector. `X` and `Z` are data frames, one column per variable,
+numeric or factor. Gene set analysis is available through `cit_gsa()` and is not
+covered here.
+
+```{r load}
+library(citcdf)
+set.seed(20260817)
+```
+
+# Testing a single hypothesis
+
+## The data
+
+We use the `marks`dataset, from the `bnlearn` package [@scutari2010]. It records the exam marks of 88 students in five mathematics topics [@mardia1979]. Of note, *mechanics* and *statistics* marks are **correlated**, but the association is mediated by the *algebra* mark (relevant to both disciplines).
+
+```{r marks-data, eval = has_bnlearn}
+data("marks", package = "bnlearn")
+str(marks)
+```
+
+## Asymptotic test with `cit_asymp()`
+
+$Y$ is the statistics mark, $X$ the mechanics mark. Without conditioning:
+
+```{r asymp-uncond, eval = has_bnlearn}
+Y <- marks$STAT
+X <- data.frame(MECH = marks$MECH)
+
+cit_asymp(Y, X)
+```
+
+Conditioning on the algebra mark asks whether mechanics adds anything beyond
+algebra:
+
+```{r asymp-cond, eval = has_bnlearn}
+Z <- data.frame(ALG = marks$ALG)
+
+cit_asymp(Y, X, Z)
+```
+
+The evidence disappears. 
+
+**NB:** `cit_asymp()` assumed neither normality nor linearity.  
+It remains valid for skewed, zero-inflated or multi-modal outcomes.
+
+Of note, `bnlearn::ci.test()` reaches the same conclusion from a
+Gaussian correlation statistic:
+```{r bnlearn-check, eval = has_bnlearn}
+bnlearn::ci.test("STAT", "MECH", data = marks, test = "cor")$p.value
+bnlearn::ci.test("STAT", "MECH", "ALG", data = marks, test = "cor")$p.value
+```
+
+## Permutation test with `cit_perm()`
+
+The asymptotic null distribution requires a reasonable sample size. For small
+`n`, `cit_perm()` calibrates the same observed statistic against a permutation
+null:
+
+```{r perm-uncond, eval = has_bnlearn}
+cit_perm(Y, X, n_perm = 1000)
+```
+
+`test_statistic` remains identical to the one returned by `cit_asymp()`, and `score` counts the permutations reaching the observed statistic: the (unbiased) permutation p-value is then computed as `(score + 1) / (n_perm + 1)` (so `n_perm` also fixes the smallest reachable p-value, ie. `1/(n_perm +1)`.
+
+Permuting $X$ freely would destroy its association with $Z$ and test the wrong
+null. `X_perm()` computes design permutations conditionally on $Z$:
+
+ - $Z$ discrete: permutes within each strata of $Z$
+ - $Z$ continuous: permutes by matching observations on the fitted value of $X$ given $Z$, following @berrett2020 (see `?perm_cont`)
+
+```{r perm-cond, eval = has_bnlearn}
+cit_perm(Y, X, Z = Z, n_perm = 1000)
+```
+
+Both tests agree on both hypotheses.
+
+**NB:** `cit_perm()` only accepts a single covariate column when `Z` is not `NULL`. Multiple `X` with `Z` present require the asymptotic test.
+
+## Visualization
+
+`plot_compare_ccdf()` displays what the statistic compares: the CCDF of $Y$
+given $X$ against its marginal counterpart. The further apart the 2 are, the larger $D$:
+
+```{r ccdf-plot, eval = has_bnlearn, fig.height = 3.2}
+plot_compare_ccdf(Y = data.frame(STAT = Y), X = X)
+```
+
+# Testing many outcomes with `cit_multi()`
+
+`cit_multi()` loops the test over the columns of a matrix `M` of `n`
+observations by `r` outcomes, and returns Benjamini-Hochberg adjusted p-values (alongside the raw ones).
+
+## scRNA-seq data
+
+This vignette uses `pbmc_small`, the PBMC scRNA-seq excerpt distributed with the `SeuratObject` package [@satija2023] (230 genes, 80 cells).
+
+**NB:** `M` must be oriented *cells-by-genes*, the transpose of usual
+genes-by-cells expression matrix. Also, **outcomes with no variability must be filtered-out beforehand** (otherwise an error is triggered).
+
+```{r pbmc-data, eval = has_seurat}
+data("pbmc_small", package = "SeuratObject")
+expr <- as.matrix(SeuratObject::LayerData(pbmc_small, layer = "data"))
+cell_md <- pbmc_small[[]]
+
+expr <- expr[apply(expr, 1, function(g) length(unique(g)) > 1), ]
+M <- as.data.frame(t(expr))
+dim(M)
+```
+
+The variable of interest is the cell population (`letter.idents`, two populations). The two populations were not sequenced to comparable depth:
+
+```{r pbmc-confounding, eval = has_seurat}
+tapply(cell_md$nCount_RNA, cell_md$letter.idents, median)
+```
+
+Library size is therefore a candidate confounder. An unadjusted comparison will
+identify significant genes that are only associated with sequencing depth.
+
+## Asymptotic analysis
+
+```{r pbmc-asymp, eval = has_seurat}
+X_pop <- data.frame(pop = cell_md$letter.idents)
+Z_lib <- data.frame(libsize = cell_md$nCount_RNA)
+
+res_unadj <- cit_multi(M, X = X_pop, test = "asymptotic", parallel = FALSE)
+res_adj <- cit_multi(M, X = X_pop, Z = Z_lib, test = "asymptotic",
+                     parallel = FALSE)
+
+c(unadjusted = sum(res_unadj$pvals$adj_pval < 0.05),
+  adjusted   = sum(res_adj$pvals$adj_pval < 0.05))
+```
+
+Conditioning on library size withdraws a third of the hits. The strongest
+signals — canonical monocyte markers — survive:
+
+```{r pbmc-top, eval = has_seurat}
+head(res_adj$pvals[order(res_adj$pvals$raw_pval), ], 5)
+```
+
+`res_adj` is a list containing:
+
+ - `which_test` and `n_perm`, the test performed and the number of permutations
+ (`NA` for the asymptotic test)
+ - `pvals`, the gene-wise raw and BH-adjusted p-values, plus the test statistics
+
+The `plot()` method sorts the raw p-values against the BH threshold and the
+nominal level:
+
+```{r pbmc-plot, eval = has_seurat}
+plot(res_adj)
+```
+
+## Visualization
+
+`plot_compare_ccdf()` details one gene. Panel A contrasts the CCDF given the
+cell population with the marginal CDF. Panel B repeats the comparison within
+library-size quartiles.
+
+```{r pbmc-ccdf, eval = has_seurat, fig.height = 5}
+top_gene <- rownames(res_adj$pvals)[which.min(res_adj$pvals$raw_pval)]
+plot_compare_ccdf(Y = M[, top_gene, drop = FALSE], X = X_pop, Z = Z_lib,
+                  space_y = TRUE, number_y = 20)
+```
+
+## Permutation analysis
+
+With 80 cells, the asymptotic approximation should work (low end of its range).
+`test = "permutation"` confirms a few genes. `adaptive = TRUE` (the default)
+spends additional computation time to increase p-value resolution where it matters (especially for FDR-adjusted p-values): all outcomes start at `n_perm`, and only
+those still significant proceed to the larger stages of `n_perm_adaptive`.
+
+```{r pbmc-perm, eval = has_seurat}
+res_perm <- cit_multi(M, X = X_pop, Z = Z_lib, test = "permutation",
+                      n_perm = 10, parallel = FALSE, adaptive=FALSE)
+res_perm$n_perm
+```
+
+```{r pbmc-perm-compare, eval = has_seurat}
+order_asymp <- rownames(res_adj$pvals[order(res_adj$pvals$adj_pval),])
+reactable::reactable(data.frame(asymptotic = signif(res_adj$pvals[order_asymp, "raw_pval"], 3),
+           permutation = signif(res_perm$pvals[order_asymp, "raw_pval"], 3),
+           row.names = order_asymp),
+           defaultPageSize=15
+)
+```
+
+The orderings nearly coincide. Individual p-values, as expected, differ: the permutation ones carry Monte Carlo noise and cannot fall below
+`1 / (total permutations + 1)`.
+
+# Practical considerations
+
+[ ] **Threshold grid:** `space_y = FALSE` places a threshold at every distinct value of `Y`, while `space_y = TRUE` uses a regular grid of `number_y` points instead, at a cost independent of `n`.  
+Defaults differ: `cit_asymp()` and `cit_perm()` use the exhaustive grid, `cit_multi()` uses `number_y = 10`. Expect small numerical differences between a single call and a `cit_multi()` run.
+
+[ ] **Parallelism.** `cit_multi()` parallelises over outcomes and defaults to
+`parallel = interactive()`. Calls above set `parallel = FALSE` for reproducible
+builds. Drop it in real analyses, and set `n_cpus`.
+
+**Multiplicity.** `cit_multi()` returns Benjamini-Hochberg adjusted p-values in `adj_pval` for FDR control. `cit_asymp()` and `cit_perm()` are single-hypothesis functions and do not need sich multiple-testing adjustlent.
+
+**Design.** The asymptotic test accepts several variables of interest (`ncol(X) > 1`) and several covariates (`ncol(Z) > 1`). The permutation test is less flexible accepting at most one covariate.
+
+**Preprocessing.** Normalisation remains the user's choice and responsibility.
+
+# Session information
+
+```{r session, eval = has_sessioninfo, echo=FALSE, collapse = FALSE, comment = ""}
+sessioninfo::session_info()
+```
+
+```{r session-base, eval = !has_sessioninfo, echo = FALSE}
+sessionInfo()
+```
+
+# References
+
+<div id="refs"></div>
