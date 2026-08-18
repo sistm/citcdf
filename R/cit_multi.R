@@ -248,8 +248,13 @@ cit_multi <- function(M,
   # Test ----
   ## permutations ----
   if (test == "permutation") {
-
-    stopifnot(ncol(X) < 2)
+    # multi-column X is supported without Z, conditional permutation scheme
+    # (Z present) is restricted to a single column.
+    if (!is.null(Z) && ncol(X) > 1) {
+      stop("the permutation test supports a single column in 'X' only when 'Z' ",
+        "is provided. Use test = \"asymptotic\" for a multivariate 'X' with ",
+        "covariates.", call. = FALSE)
+    }
     stopifnot(ncol(Z) < 2 | is.null(Z))
 
     # pool sized to the largest number of permutations any adaptive stage needs
