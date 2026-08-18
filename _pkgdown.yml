@@ -1,0 +1,10 @@
+url: https://sistm.github.io/citcdf/
+template:
+  bootstrap: 5
+  bslib:
+    bootswatch: pulse
+    pkgdown-nav-height: 100px
+authors:
+  Boris P Hejblum:
+    href: https://borishejblum.science
+

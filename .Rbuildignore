@@ -6,3 +6,6 @@
 ^CRAN-RELEASE$
 ^README\.Rmd$
 ^Reproducible_files/
+^_pkgdown\.yml$
+^docs$
+^pkgdown$

@@ -39,6 +39,7 @@ differential expression analysis, \emph{bioRxiv} 445165.
 Useful links:
 \itemize{
   \item \url{https://github.com/sistm/citcdf}
+  \item \url{https://sistm.github.io/citcdf/}
   \item Report bugs at \url{https://github.com/sistm/citcdf/issues}
 }
 
