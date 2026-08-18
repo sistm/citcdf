@@ -1,10 +1,36 @@
 url: https://sistm.github.io/citcdf/
+
 template:
   bootstrap: 5
+  # dark syntax highlighting to match the dark page background
+  theme: arrow-dark
   bslib:
-    bootswatch: pulse
-    pkgdown-nav-height: 100px
+    # --- logo palette -------------------------------------------------
+    # #1A9DD9 cyan  -> gradient start (light end)
+    # #29265B navy  -> gradient end   (dark end)
+    # #E6007E pink  -> accent cell
+    # #FFED00 yellow-> accent cells
+    # ------------------------------------------------------------------
+    bg: "#1C1A3F"        # a shade deeper than the logo navy, so the hex pops
+    fg: "#E8E6F2"
+    primary: "#1A9DD9"   # links + navbar/sidebar hover
+    secondary: "#E6007E"
+
+    navbar-dark-bg: "#29265B"   # navbar in the logo's dark gradient stop
+
+    # inline code, matched to the arrow-dark block background
+    code-bg: "#221F4D"
+    code-color: "#FFED00"
+
+    # borders lift off the background (bslib's derived gray-300 is too dim)
+    border-color: "#3E3B6B"
+    table-border-color: "#3E3B6B"
+
+    base_font: {google: "Source Sans Pro"}
+    heading_font: {google: "Source Sans Pro"}
+    code_font: {google: "Source Code Pro"}
+
 authors:
   Boris P Hejblum:
     href: https://borishejblum.science
-
+    
