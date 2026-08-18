@@ -301,10 +301,13 @@ the larger stages of `n_perm_adaptive`.
 ``` r
 
 res_perm <- cit_multi(M, X = X_pop, Z = Z_lib, test = "permutation",
-                      n_perm = 10, parallel = FALSE, adaptive=FALSE)
-#> Computing 10 permutations...
+                      n_perm = 100, parallel = FALSE)
+#> Computing 100 permutations...
+#> Computing 100 additional permutations...
+#> Computing 300 additional permutations...
+#> Computing 500 additional permutations...
 res_perm$n_perm
-#> [1] 10
+#> [1]  100  200  500 1000
 ```
 
 ``` r
