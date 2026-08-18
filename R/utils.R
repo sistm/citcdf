@@ -37,7 +37,7 @@
 
 .cit_check_Y <- function(Y, arg = "Y") {
   if (.cit_is_constant(Y)) {
-    stop("'", arg, "' has a single distinct value. A conditional CDF cannot be ",
+    stop("'", arg, "' has one single value. A conditional CDF cannot be ",
       "estimated from a constant outcome, and the test statistic is degenerate. ",
       "Remove zero-variance outcomes before testing.", call. = FALSE)
   }
@@ -59,7 +59,7 @@
       nms <- paste0("column ", which(const))
     }
     shown <- nms[seq_len(min(5L, length(nms)))]
-    stop(sum(const), " of the ", r, " outcomes in 'M' have a single distinct ",
+    stop(sum(const), " of the ", r, " outcomes in 'M' has one single ",
       "value (zero variance): ", paste(shown, collapse = ", "),
       if (length(nms) > 5L) paste0(", ... and ", length(nms) - 5L, " more") else "",
       ".\n  A conditional CDF cannot be estimated from a constant outcome. ",

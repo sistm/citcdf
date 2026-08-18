@@ -30,11 +30,11 @@ test_that("a constant outcome is rejected up front, not inside eigen()", {
 
   for (Y in list(rep(3, n), rep(0, n))) {
     for (sy in c(FALSE, TRUE)) {
-      expect_error(cit_asymp(Y, X, space_y = sy), "single distinct value")
+      expect_error(cit_asymp(Y, X, space_y = sy), "one single value")
     }
     expect_error(
       cit_perm(Y, X, NULL, X_star = X_perm(X, NULL, n_perm = 10), n_perm = 10),
-      "single distinct value")
+      "one single value")
   }
 })
 

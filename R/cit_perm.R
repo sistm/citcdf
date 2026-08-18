@@ -105,9 +105,9 @@ cit_perm <- function(Y, X, Z = NULL, X_star = NULL, n_perm = 100, space_y = FALS
       "is ", n_perm, ". Supply at least 'n_perm' of them, or leave 'X_star' ",
       "as NULL to have them drawn here.", call. = FALSE)
   } else if ((length(X_star) > n_perm)) {
-    warning("'X_star' holds ", length(X_star), " permuted design(s), which is
-            larger than 'n_perm', which itself is ", n_perm, ". Only the first ",
-      n_perm, "values from 'X_star' are used.", call. = FALSE)
+    warning("'X_star' holds ", length(X_star), " permuted design(s), which is ",
+      "larger than 'n_perm', which itself is ", n_perm, ". Only the first ",
+      n_perm, " values from 'X_star' are used.", call. = FALSE)
   }
 
 
