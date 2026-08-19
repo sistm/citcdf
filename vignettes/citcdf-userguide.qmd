@@ -1,16 +1,17 @@
 ---
-title: "User guide to the `citcdf` R package"
-author: "Denis Agniel, Sara Fallet, Marine Gauthier, Boris Hejblum"
-date: "`r Sys.Date()`"
-output:
-  rmarkdown::html_vignette:
-    number_sections: yes
-    toc: yes
+title: "User guide to the citcdf R package"
+author: "Boris Hejblum"
+date: today
+format:
+  html:
+    toc: true                      
+    number-sections: true         
+    html-math-method: mathjax
 bibliography: citcdf.bib
-link-citations: yes
+link-citations: true
 vignette: >
-  %\VignetteIndexEntry{User guide to the `citcdf` R package}
-  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{User guide to the citcdf R package}
+  %\VignetteEngine{quarto::html}
   %\VignetteEncoding{UTF-8}
 ---
 

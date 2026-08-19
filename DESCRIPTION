@@ -26,6 +26,7 @@ Suggests: BiocSet,
          bnlearn,
          GSA,
          knitr,
+         quarto,
          reactable,
          rmarkdown,
          sessioninfo,
@@ -39,6 +40,6 @@ Encoding: UTF-8
 URL: https://github.com/sistm/citcdf, https://sistm.github.io/citcdf/
 BugReports: https://github.com/sistm/citcdf/issues
 Language: en-US
-VignetteBuilder: knitr
+VignetteBuilder: quarto
 Config/testthat/edition: 3
 Config/roxygen2/version: 8.1.0
