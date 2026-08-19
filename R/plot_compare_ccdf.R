@@ -17,9 +17,31 @@
   if (is.null(nm) || is.na(nm) || !nzchar(nm)) default else nm
 }
 
+# "\u2264" does not work well with pdf() unfortunately.
+# Legend and strip text is rendered through plotmath, so that the "less than
+# or equal" sign can be written as the ASCII operator `<=` and drawn from the
+# device's symbol font.
+# Every label therefore travels as plotmath source, not as display text, and
+# is parsed at the point of use. `.ccdf_lit()` turns display text into a
+# plotmath string literal: quoted so it renders upright rather than as an
+# italic symbol, and escaped so that a quote or backslash in a user's column
+# name cannot break the parse.
+.ccdf_lit <- function(x) encodeString(x, quote = '"')
+
+.ccdf_math <- function(x) parse(text = x)
+
+# facet strip text are parsed the same way.
+.ccdf_strip_labeller <- function(lut) {
+  function(df) {
+    df[[1]] <- unname(lut[as.character(df[[1]])])
+    label_parsed(df)
+  }
+}
+
 # One "series" = one drawn quantity. `labels` are the colour-group values,
-# `keys` the text shown in the legend. A mapped series expands over levels of x.
-.ccdf_serie <- function(ycol, labels, colours, geom, keys = labels,
+# `keys` are the plotmath source shown in the legend.
+# A mapped series expands over levels of x.
+.ccdf_serie <- function(ycol, labels, colours, geom, keys = .ccdf_lit(labels),
                         mapped = FALSE, linetype = "solid", shape = 16,
                         linewidth = 0.5, size = 0.5) {
   list(ycol = ycol, labels = labels, keys = keys, colours = colours,
@@ -64,7 +86,7 @@
     name   = name,
     values = stats::setNames(pull(function(s) s$colours), labs),
     breaks = labs,
-    labels = pull(function(s) s$keys),
+    labels = .ccdf_math(pull(function(s) s$keys)),
     guide  = guide_legend(override.aes = list(
       linetype = pull(function(s) rep(s$linetype, length(s$labels))),
       shape    = pull(function(s) rep(s$shape,    length(s$labels))))))
@@ -92,25 +114,46 @@
 # unique() is applied to the break points -- this yields fewer than the
 # requested bins rather than erroring.
 .ccdf_qbin <- function(v, probs = c(0, .25, .5, .75, 1),
-                       bin_labels = c("Q1", "Q2", "Q3", "Q4")) {
+                       bin_labels = c("Q1", "Q2", "Q3", "Q4"),
+                       arg = "X") {
   if (is.factor(v)) return(v)
   brks <- unique(stats::quantile(v, probs, na.rm = TRUE))
+  # A constant variable collapses every quantile onto one value, leaving a
+  # single break. cut() then reads that lone number as a requested number of
+  # intervals rather than as a breakpoint and errors.
+  if (length(brks) < 2) {
+    stop("'", arg, "' has only one single value and cannot be binned into ",
+      "quantile groups: there is no variation to condition on. Supply a ",
+      "variable that actually varies, or drop it from the call.", call. = FALSE)
+  }
   cut(v, breaks = brks, include.lowest = TRUE,
     labels = bin_labels[seq_len(length(brks) - 1)])
 }
 
-# Legend/facet text for a (possibly quartile-binned) variable.
+# Legend/facet text for a (possibly quartile-binned) variable, returned as
+# plotmath source (see .ccdf_lit above).
 #
 # `lv` are the levels actually used for grouping (eg "Q1".."Q4" when binned),
 # so they are replaced with the interval each bin actually spans, reusing the
 # bin names themselves as the interior breakpoints: "X<Q1", "Q1<=X<Q2",
-# ..., "Q(n-1)<=X".
-.ccdf_bin_labels <- function(lv, orig, var_name) {
-  if (is.factor(orig) || length(lv) < 2) return(paste0(var_name, "=", lv))
+# ..., "Q(n-1)<=X". `prefix` is folded into the first literal of each label so
+# the whole thing stays a single plotmath expression.
+.ccdf_bin_labels <- function(lv, orig, var_name, prefix = "") {
+  if (is.factor(orig) || length(lv) < 2) {
+    return(.ccdf_lit(paste0(prefix, var_name, "=", lv)))
+  }
   cuts <- lv[-length(lv)]
+  # Both comparisons are real plotmath operators, so both get the operator's
+  # own spacing. R's comparisons are non-associative -- `a <= b < c` does not
+  # parse -- so the first one is wrapped in group() with the documented
+  # invisible delimiter "." to make it a single operand of the second.
   mid  <- if (length(cuts) > 1)
-    paste0(cuts[-length(cuts)], "\u2264", var_name, "<", cuts[-1]) else character(0)
-  return(c(paste0(var_name, "<", cuts[1]), mid, paste0(cuts[length(cuts)], "\u2264", var_name)))
+    paste0("group(\".\", ", .ccdf_lit(paste0(prefix, cuts[-length(cuts)])),
+      " <= ", .ccdf_lit(var_name), ", \".\") < ",
+      .ccdf_lit(cuts[-1])) else character(0)
+  c(paste0(.ccdf_lit(paste0(prefix, var_name)), " < ", .ccdf_lit(cuts[1])), mid,
+    paste0(.ccdf_lit(paste0(prefix, cuts[length(cuts)])), " <= ",
+      .ccdf_lit(var_name)))
 }
 
 # Panels for `discretize = TRUE`: X (and Z, if present) are quartile-binned
@@ -125,7 +168,7 @@
   yv    <- as.numeric(Y[, 1])
   y_lab <- .ccdf_var_name(Y, "Y")
   x_lab <- .ccdf_var_name(X, "X")
-  Xd    <- .ccdf_qbin(X[, 1], probs, bin_labels)
+  Xd    <- .ccdf_qbin(X[, 1], probs, bin_labels, arg = x_lab)
   lv    <- levels(Xd)
   l_X <- length(lv)
   vx    <- viridis(n = l_X + 1)[seq_len(l_X)]
@@ -135,12 +178,13 @@
     df  <- data.frame(y = res$y, x = res$x, cdf = res$cdf, ccdf = res$ccdf)
     series <- list(.ccdf_ref("cdf", "CDF"),
       .ccdf_serie("ccdf", lv, vx, "step",
-        keys = paste0("CCDF | ", .ccdf_bin_labels(lv, X[, 1], x_lab)), mapped = TRUE))
+        keys = .ccdf_bin_labels(lv, X[, 1], x_lab, prefix = "CCDF | "),
+        mapped = TRUE))
     return(list(.ccdf_panel(df, series, y_lab)))
   }
 
-  Zd    <- .ccdf_qbin(Z[, 1], probs, bin_labels)
   z_lab <- .ccdf_var_name(Z, "Z")
+  Zd    <- .ccdf_qbin(Z[, 1], probs, bin_labels, arg = z_lab)
   XZ    <- interaction(Xd, Zd, sep = "|", drop = TRUE)
   res   <- ccdf(yv, data.frame(X = XZ), NULL, method, fast, space_y, number_y)
   sp    <- do.call(rbind, strsplit(as.character(res$x), "|", fixed = TRUE))
@@ -151,7 +195,7 @@
   res_X <- ccdf(yv, data.frame(X = Xd), NULL, method, fast, space_y, number_y)
   df_X  <- data.frame(y = res_X$y, x = res_X$x, cdf = res_X$cdf, ccdf = res_X$ccdf)
   top_series <- list(.ccdf_serie("ccdf", lv, vx, "step",
-    keys = paste0("CCDF | ", .ccdf_bin_labels(lv, X[, 1], x_lab)), mapped = TRUE),
+    keys = .ccdf_bin_labels(lv, X[, 1], x_lab, prefix = "CCDF | "), mapped = TRUE),
   .ccdf_ref("cdf", "CDF"))
   p_top <- .ccdf_panel(df_X, top_series, y_lab) +
     ggtitle(paste("Marginal on", z_lab)) +
@@ -170,14 +214,16 @@
       name   = "CCDF",
       values = stats::setNames(c(vx, "goldenrod1"), c(lv, ref_lbl)),
       breaks = c(lv, ref_lbl),
-      labels = c(paste0("CCDF | ", .ccdf_bin_labels(lv, X[, 1], x_lab)), ref_lbl),
+      labels = .ccdf_math(c(
+        .ccdf_bin_labels(lv, X[, 1], x_lab, prefix = "CCDF | "),
+        .ccdf_lit(ref_lbl))),
       guide  = guide_legend(override.aes = list(
         linetype = c(rep("solid", l_X), "dotted"),
         shape    = rep(NA, l_X + 1)))) +
     .ccdf_labs(y_lab) +
     facet_wrap(~z, ncol = 2, scales = "fixed",
-      labeller = as_labeller(stats::setNames(
-        paste("|", .ccdf_bin_labels(levels(Zd), Z[, 1], z_lab)),
+      labeller = .ccdf_strip_labeller(stats::setNames(
+        .ccdf_bin_labels(levels(Zd), Z[, 1], z_lab, prefix = "| "),
         levels(Zd))))
   list(p_top, p_bottom)
 }
@@ -206,7 +252,7 @@
     series <- if (x_fac)
       list(.ccdf_ref("cdf", "CDF"),
         .ccdf_serie("ccdf", lv, vx[seq_len(l_X)], "step",
-          keys = paste0("CCDF | ", x_lab, "=", lv), mapped = TRUE))
+          keys = .ccdf_lit(paste0("CCDF | ", x_lab, "=", lv)), mapped = TRUE))
     else
       list(.ccdf_ref("cdf", "CDF"),
         .ccdf_serie("ccdf", "CCDF", vx[1], "point"))
@@ -232,7 +278,7 @@
   ## panel A -- marginal on Z
   if (x_fac) {
     top_series <- list(.ccdf_serie("ccdf", lv, vx[seq_len(l_X)], "step",
-      keys = paste0("CCDF | ", x_lab, "=", lv), mapped = TRUE),
+      keys = .ccdf_lit(paste0("CCDF | ", x_lab, "=", lv)), mapped = TRUE),
     .ccdf_ref("cdf", "CDF"))
   } else {
     top_series <- list(.ccdf_serie("ccdf", "CCDF", vx[1], "point"),
@@ -246,7 +292,7 @@
   bottom_series <- if (x_fac)
     list(.ccdf_serie("ccdf_x", lv, vx[seq_len(l_X)],
       if (z_fac) "step" else "point",
-      keys = paste0("CCDF | ", x_lab, "=", lv), mapped = TRUE),
+      keys = .ccdf_lit(paste0("CCDF | ", x_lab, "=", lv)), mapped = TRUE),
     .ccdf_ref("ccdf_nox", paste("Marginal on", x_lab),
       geom = if (z_fac) "step" else "point", shape = 2))
   else
@@ -316,16 +362,12 @@
 #' For this reason, we provide the option to discretize \code{X} and
 #' \code{Z} for graphical representation, in order to ease the interpretation.
 #'
-#' When \code{X} or \code{Z} is continuous it is quartile-binned, the
-#' bin labels use the "less than or equal" sign (U+2264). The classic
-#' \code{\link[grDevices]{pdf}} device cannot encode that character: it will
-#' emits a \code{"conversion failure ... mbcsToSbcs"} warning and substitutes a
-#' dot. On-screen devices, \code{png()} and \code{svg()} are unaffected.
-#' To export to PDF, use the cairo device (if available, check with
-#' (\code{capabilities("cairo")}):
-#' \preformatted{
-#' ggsave("fig.pdf", p, device = cairo_pdf)
-#' }
+#' When \code{X} or \code{Z} is continuous it is quartile-binned, and the bin
+#' labels show the interval each bin spans using a "less than or equal" sign.
+#' That sign is drawn through \code{\link[grDevices]{plotmath}} rather than as
+#' a literal character, so it renders identically on every device (including
+#' the classic \code{\link[grDevices]{pdf}} device).
+#' workaround is needed.
 #'
 #' @section A note on when \code{X} and \code{Z} are both factors:
 #'
@@ -364,34 +406,30 @@
 #' Zf <- data.frame(Z = as.factor(rbinom(n, size = 1, prob = 0.5)))
 #' Zc <- data.frame(Z = rnorm(n))
 #'
-#' # 1. Z absent, X factor         -- CDF plus one CCDF step per level of X
+#' # Z absent, X factor         -- CDF plus one CCDF step per level of X
 #' plot_compare_ccdf(Y, Xf)
 #'
-#' # 2. Z absent, X continuous     -- CDF step plus CCDF points
+#' # Z absent, X continuous     -- CDF step plus CCDF points
 #' plot_compare_ccdf(Y, Xc)
 #'
-#' # 3. Z factor, X factor         -- panel B faceted by Z, steps
+#' # Z factor, X factor         -- panel B faceted by Z, steps
 #' plot_compare_ccdf(Y, Xf, Zf)
 #'
 #' \donttest{
-#' # 4. Z factor, X continuous     -- panel B faceted by Z, points
+#' # Z factor, X continuous     -- panel B faceted by Z, points
 #' plot_compare_ccdf(Y, Xc, Zf)
 #'
-#' # 5. Z continuous, X factor     -- panel B not faceted
+#' # Z continuous, X factor     -- panel B not faceted
 #' plot_compare_ccdf(Y, Xf, Zc)
 #'
-#' # 6. Z continuous, X continuous -- a single panel, CDF plus both CCDFs
+#' # Z continuous, X continuous -- a single panel, CDF plus both CCDFs
 #' plot_compare_ccdf(Y, Xc, Zc)
 #'
-#' # a factor with more than two levels gets one colour per level
+#' # A factor with more than two levels gets one colour per level
 #' X3 <- data.frame(X = as.factor(sample(0:2, n, replace = TRUE)))
 #' plot_compare_ccdf(Y, X3, Zf)
 #'
-#' # the logistic method works for every case above
-#' plot_compare_ccdf(Y, Xf, Zf, method = "logistic")
-#'
-#' # force the interaction encoding even when X and Z are already factors
-#' # (removes the rare additive-model artifact noted above)
+#' # Forcing the interaction encoding even when X and Z are already factors
 #' plot_compare_ccdf(Y, Xf, Zf, discretize = TRUE)
 #' }
 #'

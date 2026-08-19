@@ -220,3 +220,101 @@ test_that("the y-grid handles an all-zero Y without losing its lower endpoint", 
   expect_identical(g(Yb, TRUE, 10), seq(min(Yb), max(Yb), length.out = 10))
   expect_identical(g(Ya, FALSE, 10), sort(unique(Ya)))
 })
+
+test_that("bin labels render on every device, with no encoding warnings", {
+  skip_on_cran()
+  set.seed(123)
+  n <- 40
+  Y  <- data.frame(expression = rnorm(n))
+  Xf <- data.frame(treatment = as.factor(rbinom(n, 1, 0.5)))
+  Xc <- data.frame(dose = rnorm(n))
+  Zf <- data.frame(batch = as.factor(rbinom(n, 1, 0.5)))
+  Zc <- data.frame(age = rnorm(n))
+
+  cases <- list(
+    function() plot_compare_ccdf(Y, Xf),
+    function() plot_compare_ccdf(Y, Xc),
+    function() plot_compare_ccdf(Y, Xf, Zf),
+    function() plot_compare_ccdf(Y, Xc, Zf),
+    function() plot_compare_ccdf(Y, Xf, Zc),
+    function() plot_compare_ccdf(Y, Xc, Zc),
+    function() plot_compare_ccdf(Y, Xf, Zf, discretize = TRUE),
+    function() plot_compare_ccdf(Y, Xc, Zc, discretize = TRUE))
+
+  # Going through plotmath must leave every device silent.
+  for (dev in c("pdf", "png")) {
+    for (k in seq_along(cases)) {
+      f <- tempfile(fileext = paste0(".", dev))
+      expect_no_warning({
+        do.call(dev, list(f))
+        on.exit(grDevices::dev.off(), add = TRUE)
+        print(cases[[k]]())
+        grDevices::dev.off()
+        on.exit()
+      })
+      unlink(f)
+    }
+  }
+})
+
+test_that("plotmath labels survive column names with special characters", {
+  set.seed(1)
+  n <- 40
+  Y <- data.frame(Y = rnorm(n))
+  for (nm in c("log2(FC)", "a b c", "he said \"hi\"", "back\\slash",
+    "alpha", "x^2", "50%")) {
+    X <- data.frame(V = rnorm(n))
+    colnames(X) <- nm
+    Z <- data.frame(W = rnorm(n))
+    colnames(Z) <- nm
+    # the name must parse as a plotmath *literal*, never as an operator
+    expect_no_error(ggplot2::ggplot_build(
+      plot_compare_ccdf(Y, X, Z, discretize = TRUE)))
+  }
+
+  # both comparisons are real plotmath operators, and no raw U+2264 is left
+  lab <- citcdf:::.ccdf_bin_labels(c("Q1", "Q2", "Q3", "Q4"), rnorm(20), "dose")
+  expect_length(lab, 4L)
+  expect_no_error(parse(text = lab))
+  expect_false(any(grepl("\u2264", lab, fixed = TRUE)))
+  # every "<" and "<=" sits outside the quoted literals, i.e. is an operator
+  outside <- gsub('"[^"]*"', "", lab)
+  expect_true(all(grepl("<", outside, fixed = TRUE)))
+  expect_false(any(grepl("<", gsub('[^"]*("[^"]*")[^"]*', "\\1", lab),
+    fixed = TRUE)))
+  # ties can collapse the quartile breaks down to two bins
+  lab2 <- citcdf:::.ccdf_bin_labels(c("Q1", "Q2"), rnorm(20), "dose")
+  expect_length(lab2, 2L)
+  expect_no_error(parse(text = lab2))
+})
+
+test_that("quantile binning refuses a constant variable by name", {
+  set.seed(1)
+  n <- 40
+  Y  <- data.frame(Y = rnorm(n))
+  Xk <- data.frame(dose = rep(1, n))
+  Zk <- data.frame(age = rep(2, n))
+  Xc <- data.frame(dose = rnorm(n))
+  Xf <- data.frame(treatment = as.factor(rbinom(n, 1, 0.5)))
+
+  # cut() used to read the single surviving break as a REQUESTED NUMBER of
+  # intervals, giving "invalid number of intervals" with no hint at the input
+  expect_error(plot_compare_ccdf(Y, Xk), "'dose' has a single distinct value")
+  expect_error(plot_compare_ccdf(Y, Xk, discretize = TRUE),
+    "'dose' has a single distinct value")
+  expect_error(plot_compare_ccdf(Y, Xc, Zk), "'age' has a single distinct value")
+  expect_error(plot_compare_ccdf(Y, Xf, Zk), "'age' has a single distinct value")
+
+  # constant apart from NAs is still constant; an unnamed column falls back
+  expect_error(plot_compare_ccdf(Y, data.frame(dose = c(rep(1, n - 2), NA, NA))),
+    "'dose' has a single distinct value")
+  Xu <- data.frame(V = rep(1, n))
+  colnames(Xu) <- ""
+  expect_error(plot_compare_ccdf(Y, Xu), "'X' has a single distinct value")
+
+  # two distinct values still bin, so the guard is not over-eager
+  expect_no_error(citcdf:::.ccdf_qbin(rep(1:2, length.out = n)))
+  expect_length(levels(citcdf:::.ccdf_qbin(rnorm(n))), 4L)
+  # factors pass through untouched
+  expect_identical(citcdf:::.ccdf_qbin(Xf[, 1]), Xf[, 1])
+})
