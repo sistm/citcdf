@@ -253,11 +253,11 @@ Defaults differ: `cit_asymp()` and `cit_perm()` use the exhaustive grid, `cit_mu
 `parallel = interactive()`. Calls above set `parallel = FALSE` for reproducible
 builds. Drop it in real analyses, and set `n_cpus`.
 
-**Multiplicity.** `cit_multi()` returns Benjamini-Hochberg adjusted p-values in `adj_pval` for FDR control. `cit_asymp()` and `cit_perm()` are single-hypothesis functions and do not need sich multiple-testing adjustlent.
+**Multiplicity.** `cit_multi()` returns Benjamini-Hochberg adjusted p-values in `adj_pval` for FDR control. `cit_asymp()` and `cit_perm()` are single-hypothesis functions and do not need such multiple-testing adjustment.
 
 **Design.** The asymptotic test accepts several variables of interest (`ncol(X) > 1`) and several covariates (`ncol(Z) > 1`). The permutation test is less flexible accepting at most one covariate.
 
-**Preprocessing.** Normalisation remains the user's choice and responsibility.
+**Preprocessing.** Normalization remains the user's choice and responsibility.
 
 # Session information
 

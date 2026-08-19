@@ -33,8 +33,8 @@
 #'
 #' Permutation weights are Gaussian in the distance between fitted values, with
 #' bandwidth \code{sd(fit) * n^(-1/3)} (polynomial weights leave too much mass on
-#' distant candidates, so the neighbourhood was not local and the
-#' \code{X}-\code{Z} relationship was not preserved). Of note, the bandwith
+#' distant candidates, so the neighborhood was not local and the
+#' \code{X}-\code{Z} relationship was not preserved). Of note, the bandwidth
 #' exponent is larger than Silverman's \code{1/5} because his rate is
 #' optimized for density estimation but leaves a first-order bias that
 #' invalidates inference built on it (Hall, 1992; Armstrong and Kolesar, 2020);

@@ -45,11 +45,11 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Boris P. Hejblum \email{boris.hejblum@u-bordeaux.fr}
+\strong{Maintainer}: Boris P. Hejblum \email{boris.hejblum@u-bordeaux.fr} [copyright holder]
 
 Authors:
 \itemize{
-  \item Boris P. Hejblum \email{boris.hejblum@u-bordeaux.fr}
+  \item Boris P. Hejblum \email{boris.hejblum@u-bordeaux.fr} [copyright holder]
   \item Denis Agniel \email{denis.agniel@gmail.com}
   \item Sara Fallet \email{sara.fallet@u-bordeaux.fr}
   \item Marine Gauthier \email{marine.gauthier@epoch-intelligence.fr}
