@@ -6,7 +6,7 @@
 
 `citcdf` performs **c**onditional **i**ndependence **t**esting through
 conditional **c**umulative **d**istribution **f**unctions ([Gauthier et
-al. 2026](#ref-gauthier2026)). It addresses the following null
+al. 2021](#ref-gauthier2021)). It addresses the following null
 hypothesis:
 ``` math
 H_0: Y \perp\!\!\!\perp X \mid Z
@@ -345,20 +345,20 @@ parallelises over outcomes and defaults to `parallel = interactive()`.
 Calls above set `parallel = FALSE` for reproducible builds. Drop it in
 real analyses, and set `n_cpus`.
 
-**Multiplicity.**
+\[ \] **Multiplicity.**
 [`cit_multi()`](https://sistm.github.io/citcdf/reference/cit_multi.md)
 returns Benjamini-Hochberg adjusted p-values in `adj_pval` for FDR
 control.
 [`cit_asymp()`](https://sistm.github.io/citcdf/reference/cit_asymp.md)
 and [`cit_perm()`](https://sistm.github.io/citcdf/reference/cit_perm.md)
-are single-hypothesis functions and do not need sich multiple-testing
-adjustlent.
+are single-hypothesis functions and do not need such multiple-testing
+adjustment.
 
-**Design.** The asymptotic test accepts several variables of interest
-(`ncol(X) > 1`) and several covariates (`ncol(Z) > 1`). The permutation
-test is less flexible accepting at most one covariate.
+\[ \] **Design.** The asymptotic test accepts several variables of
+interest (`ncol(X) > 1`) and several covariates (`ncol(Z) > 1`). The
+permutation test is less flexible accepting at most one covariate.
 
-**Preprocessing.** Normalisation remains the user’s choice and
+\[ \] **Preprocessing.** Normalization remains the user’s choice and
 responsibility.
 
 ## 5 Session information
@@ -452,7 +452,7 @@ Permutation Test for Independence While Controlling for Confounders.”
 *Journal of the Royal Statistical Society Series B: Statistical
 Methodology* 82 (1): 175–97. <https://doi.org/10.1111/rssb.12340>.
 
-Gauthier, M, D Agniel, S Fallet, K Ba, R Thiébaut, and BP Hejblum. 2026.
+Gauthier, M, D Agniel, R Thiébaut, and BP Hejblum. 2021.
 “Distribution-Free Complex Hypothesis Testing for Single-Cell RNA-Seq
 Differential Expression Analysis.” *bioRxiv*, 445165.
 <https://doi.org/10.1101/2021.05.21.445165>.

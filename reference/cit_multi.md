@@ -77,8 +77,8 @@ cit_multi(
 
   an integer indicating the number of cores to be used for the
   computations. Default is
-  `max(1L, paralleldetectCores(logical = FALSE) - 1L, na.rm = TRUE)`. If
-  `n_cpus = 1`, then sequential computations are used without any
+  `max(1L, parallel::detectCores(logical = FALSE) - 1L, na.rm = TRUE)`.
+  If `n_cpus = 1`, then sequential computations are used without any
   parallelization.
 
 - adaptive:

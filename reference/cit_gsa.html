@@ -134,7 +134,7 @@ should be enabled. Default is <code>TRUE</code> if <code><a href="https://rdrr.i
 <dt id="arg-n-cpus">n_cpus<a class="anchor" aria-label="anchor" href="#arg-n-cpus"></a></dt>
 <dd><p>an integer indicating the number of cores to be used for the
 computations. Default is
-<code>max(1L, paralleldetectCores(logical = FALSE) - 1L, na.rm = TRUE)</code>. If
+<code>max(1L, parallel::detectCores(logical = FALSE) - 1L, na.rm = TRUE)</code>. If
 <code>n_cpus = 1</code>, then sequential computations are used without any
 parallelization.</p></dd>
 

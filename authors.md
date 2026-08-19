@@ -10,7 +10,7 @@
 
 - **Marine Gauthier**. Author.
 
-- **Boris P. Hejblum**. Author, maintainer.
+- **Boris P. Hejblum**. Author, maintainer, copyright holder.
 
 - **Pierre Neuvial**. Contributor.
 

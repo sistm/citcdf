@@ -52,10 +52,11 @@ Useful links:
 ## Author
 
 **Maintainer**: Boris P. Hejblum <boris.hejblum@u-bordeaux.fr>
+\[copyright holder\]
 
 Authors:
 
-- Boris P. Hejblum <boris.hejblum@u-bordeaux.fr>
+- Boris P. Hejblum <boris.hejblum@u-bordeaux.fr> \[copyright holder\]
 
 - Denis Agniel <denis.agniel@gmail.com>
 
