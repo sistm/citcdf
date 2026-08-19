@@ -326,7 +326,7 @@ the permutation ones carry Monte Carlo noise and cannot fall below
 
 ## 4 Practical considerations
 
-\[ \] **Threshold grid:** `space_y = FALSE` places a threshold at every
+**Threshold grid:** `space_y = FALSE` places a threshold at every
 distinct value of `Y`, while `space_y = TRUE` uses a regular grid of
 `number_y` points instead, at a cost independent of `n`.  
 Defaults differ:
@@ -339,13 +339,13 @@ single call and a
 [`cit_multi()`](https://sistm.github.io/citcdf/reference/cit_multi.md)
 run.
 
-\[ \] **Parallelism.**
+**Parallelism.**
 [`cit_multi()`](https://sistm.github.io/citcdf/reference/cit_multi.md)
 parallelises over outcomes and defaults to `parallel = interactive()`.
 Calls above set `parallel = FALSE` for reproducible builds. Drop it in
 real analyses, and set `n_cpus`.
 
-\[ \] **Multiplicity.**
+**Multiplicity.**
 [`cit_multi()`](https://sistm.github.io/citcdf/reference/cit_multi.md)
 returns Benjamini-Hochberg adjusted p-values in `adj_pval` for FDR
 control.
@@ -354,11 +354,11 @@ and [`cit_perm()`](https://sistm.github.io/citcdf/reference/cit_perm.md)
 are single-hypothesis functions and do not need such multiple-testing
 adjustment.
 
-\[ \] **Design.** The asymptotic test accepts several variables of
-interest (`ncol(X) > 1`) and several covariates (`ncol(Z) > 1`). The
-permutation test is less flexible accepting at most one covariate.
+**Design.** The asymptotic test accepts several variables of interest
+(`ncol(X) > 1`) and several covariates (`ncol(Z) > 1`). The permutation
+test is less flexible accepting at most one covariate.
 
-\[ \] **Preprocessing.** Normalization remains the user’s choice and
+**Preprocessing.** Normalization remains the user’s choice and
 responsibility.
 
 ## 5 Session information
