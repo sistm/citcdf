@@ -5,8 +5,9 @@
 ^cran-comments\.md$
 ^CRAN-RELEASE$
 ^README\.Rmd$
-^Reproducible_files/
+^Reproducible_files$
 ^_pkgdown\.yml$
 ^docs$
 ^pkgdown$
-^oldvignettes/
+^oldvignettes$
+
