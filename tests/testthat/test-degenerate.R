@@ -153,10 +153,13 @@ test_that("cit_perm() draws X_star itself when it is not supplied", {
     expect_identical(implicit, explicit)
   }
 
-  # a supplied X_star is used untouched, and a longer pool is truncated
+  # a supplied X_star is used untouched, and an oversized pool is truncated to
+  # its first n_perm designs -- which cit_perm() warns about on the way past
   set.seed(21)
   pool <- X_perm(X, NULL, n_perm = 200)
-  expect_identical(cit_perm(Y, X, X_star = pool, n_perm = 50),
+  expect_warning(truncated <- cit_perm(Y, X, X_star = pool, n_perm = 50),
+    "Only the first 50")
+  expect_identical(truncated,
     cit_perm(Y, X, X_star = pool[seq_len(50)], n_perm = 50))
 
   # too short a pool is now a message rather than "subscript out of bounds"
@@ -182,9 +185,12 @@ test_that("cit_gsa() survives NAs in M", {
   M[3, 2] <- NA
   geneset <- list(s1 = c("g1", "g2"), s2 = c("g3", "g4"))
 
-  # genesets are matched against the genes that survive the NA filter
-  expect_warning(res <- cit_gsa(M = M, X = X, geneset = geneset,
-    parallel = FALSE), "NA values")
+  # genesets are matched against the genes that survive the NA filter, so two
+  # warnings fire: the filter dropping g2, then s1 finding g2 missing
+  expect_warning(
+    expect_warning(res <- cit_gsa(M = M, X = X, geneset = geneset,
+      parallel = FALSE), "NA values"),
+    "genes from geneset s1 are not observed")
   expect_equal(nrow(res$pvals), 2L)
   expect_true(all(is.finite(res$pvals$raw_pval)))
 
@@ -299,18 +305,18 @@ test_that("quantile binning refuses a constant variable by name", {
 
   # cut() used to read the single surviving break as a REQUESTED NUMBER of
   # intervals, giving "invalid number of intervals" with no hint at the input
-  expect_error(plot_compare_ccdf(Y, Xk), "'dose' has a single distinct value")
+  expect_error(plot_compare_ccdf(Y, Xk), "'dose' has only one single value")
   expect_error(plot_compare_ccdf(Y, Xk, discretize = TRUE),
-    "'dose' has a single distinct value")
-  expect_error(plot_compare_ccdf(Y, Xc, Zk), "'age' has a single distinct value")
-  expect_error(plot_compare_ccdf(Y, Xf, Zk), "'age' has a single distinct value")
+    "'dose' has only one single value")
+  expect_error(plot_compare_ccdf(Y, Xc, Zk), "'age' has only one single value")
+  expect_error(plot_compare_ccdf(Y, Xf, Zk), "'age' has only one single value")
 
   # constant apart from NAs is still constant; an unnamed column falls back
   expect_error(plot_compare_ccdf(Y, data.frame(dose = c(rep(1, n - 2), NA, NA))),
-    "'dose' has a single distinct value")
+    "'dose' has only one single value")
   Xu <- data.frame(V = rep(1, n))
   colnames(Xu) <- ""
-  expect_error(plot_compare_ccdf(Y, Xu), "'X' has a single distinct value")
+  expect_error(plot_compare_ccdf(Y, Xu), "'X' has only one single value")
 
   # two distinct values still bin, so the guard is not over-eager
   expect_no_error(citcdf:::.ccdf_qbin(rep(1:2, length.out = n)))
