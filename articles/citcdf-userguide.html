@@ -5,20 +5,30 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>User guide to the `citcdf` R package • citcdf</title>
-<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>User guide to the citcdf R package • citcdf</title>
+<!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
+<link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
+<link rel="icon" sizes="any" href="../favicon.ico">
+<link rel="manifest" href="../site.webmanifest">
+<script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/Source_Sans_Pro-0.4.10/font.css" rel="stylesheet">
 <link href="../deps/Source_Code_Pro-0.4.10/font.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="User guide to the `citcdf` R package">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><script src="citcdf-userguide_files/libs/quarto-html/popper.min.js"></script><script src="citcdf-userguide_files/libs/quarto-html/tippy.umd.min.js"></script><link href="citcdf-userguide_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="citcdf-userguide_files/libs/quarto-html/light-border.css" rel="stylesheet">
+<script src="citcdf-userguide_files/libs/core-js-2.5.3/shim.min.js"></script><script src="citcdf-userguide_files/libs/react-18.2.0/react.min.js"></script><script src="citcdf-userguide_files/libs/react-18.2.0/react-dom.min.js"></script><script src="citcdf-userguide_files/libs/reactwidget-2.0.0/react-tools.js"></script><link href="citcdf-userguide_files/libs/htmltools-fill-0.5.9/fill.css" rel="stylesheet">
+<script src="citcdf-userguide_files/libs/htmlwidgets-1.6.4/htmlwidgets.js"></script><link href="citcdf-userguide_files/libs/reactable-0.4.5/reactable.css" rel="stylesheet">
+<script src="citcdf-userguide_files/libs/reactable-binding-0.4.5/reactable.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="User guide to the citcdf R package">
+<meta property="og:image" content="https://sistm.github.io/citcdf/logo.svg">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
-    <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
+    <nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">citcdf</a>
 
@@ -35,7 +45,7 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/citcdf-userguide.html">User guide to the `citcdf` R package</a></li>
+<li><a class="dropdown-item" href="../articles/citcdf-userguide.html">User guide to the citcdf R package</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -45,111 +55,73 @@
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
 </form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/sistm/citcdf/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-lightswitch" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true" aria-label="Light switch"><span class="fa fa-sun"></span></button>
+  <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown-lightswitch">
+<li><button class="dropdown-item" data-bs-theme-value="light"><span class="fa fa-sun"></span> Light</button></li>
+    <li><button class="dropdown-item" data-bs-theme-value="dark"><span class="fa fa-moon"></span> Dark</button></li>
+    <li><button class="dropdown-item" data-bs-theme-value="auto"><span class="fa fa-adjust"></span> Auto</button></li>
+  </ul>
+</li>
       </ul>
 </div>
 
 
   </div>
-</nav><div class="container template-article">
-
-
-
-<script src="citcdf-userguide_files/core-js-2.5.3/shim.min.js"></script><script src="citcdf-userguide_files/react-18.2.0/react.min.js"></script><script src="citcdf-userguide_files/react-18.2.0/react-dom.min.js"></script><script src="citcdf-userguide_files/reactwidget-2.0.0/react-tools.js"></script><link href="citcdf-userguide_files/htmltools-fill-0.5.9/fill.css" rel="stylesheet">
-<script src="citcdf-userguide_files/htmlwidgets-1.6.4/htmlwidgets.js"></script><link href="citcdf-userguide_files/reactable-0.4.5/reactable.css" rel="stylesheet">
-<script src="citcdf-userguide_files/reactable-binding-0.4.5/reactable.js"></script><div class="row">
+</nav><div class="container template-quarto">
+<div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.svg" class="logo" alt=""><h1>User guide to the `citcdf` R package</h1>
-                        <h4 data-toc-skip class="author">Denis Agniel,
-Sara Fallet, Marine Gauthier, Boris Hejblum</h4>
-            
-            <h4 data-toc-skip class="date">2026-08-19</h4>
-      
-      <small class="dont-index">Source: <a href="https://github.com/sistm/citcdf/blob/main/vignettes/citcdf-userguide.Rmd" class="external-link"><code>vignettes/citcdf-userguide.Rmd</code></a></small>
-      <div class="d-none name"><code>citcdf-userguide.Rmd</code></div>
+      <img src="../logo.svg" class="logo" alt=""><h1>User guide to the citcdf R package</h1>
+
+      <p class="author">Boris Hejblum</p>
+      <p class="date">2026-08-19</p>
+
+      <small class="dont-index">Source: <a href="https://github.com/sistm/citcdf/blob/main/vignettes/citcdf-userguide.qmd" class="external-link"><code>vignettes/citcdf-userguide.qmd</code></a></small>
+      <div class="d-none name"><code></code></div>
     </div>
 
-    
-    
-<p><img src="../reference/figures/logo.svg" width="139"></p>
-<div class="section level2">
-<h2 id="overview-of-citcdf">Overview of <code>citcdf</code><a class="anchor" aria-label="anchor" href="#overview-of-citcdf"></a>
+
+
+
+
+
+    <p><img src="../reference/figures/logo.svg" width="139"></p>
+<section class="section level2" data-number="1"><h2 data-number="1" id="overview-of-citcdf">
+<span class="header-section-number">1</span> Overview of <code>citcdf</code>
+<a class="anchor" aria-label="anchor" href="#overview-of-citcdf"></a>
 </h2>
-<p><code>citcdf</code> performs <strong>c</strong>onditional
-<strong>i</strong>ndependence <strong>t</strong>esting through
-conditional <strong>c</strong>umulative <strong>d</strong>istribution
-<strong>f</strong>unctions <span class="citation">(<a href="#ref-gauthier2026">Gauthier et al. 2026</a>)</span>. It addresses
-the following null hypothesis:
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>H</mi><mn>0</mn></msub><mo>:</mo><mi>Y</mi><mo>⟂</mo><mspace width="-0.167em"></mspace><mspace width="-0.167em"></mspace><mspace width="-0.167em"></mspace><mo>⟂</mo><mi>X</mi><mo>∣</mo><mi>Z</mi></mrow><annotation encoding="application/x-tex">H_0: Y \perp\!\!\!\perp X \mid Z</annotation></semantics></math></p>
-<p>by testing whether
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>F</mi><mrow><mi>Y</mi><mo>∣</mo><mi>X</mi><mo>,</mo><mi>Z</mi></mrow></msub><mo stretchy="false" form="prefix">(</mo><mi>y</mi><mo stretchy="false" form="postfix">)</mo><mo>=</mo><msub><mi>F</mi><mrow><mi>Y</mi><mo>∣</mo><mi>Z</mi></mrow></msub><mo stretchy="false" form="prefix">(</mo><mi>y</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">F_{Y \mid X, Z}(y) = F_{Y \mid Z}(y)</annotation></semantics></math>.
-The associated test statistic is computed across a grid of thresholds
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ω</mi><mn>1</mn></msub><mo>&lt;</mo><mi>…</mi><mo>&lt;</mo><msub><mi>ω</mi><mi>p</mi></msub></mrow><annotation encoding="application/x-tex">\omega_1 &lt; \dots &lt; \omega_p</annotation></semantics></math>
-spanning
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Y</mi><annotation encoding="application/x-tex">Y</annotation></semantics></math>,
-where the indicator
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mn>𝟙</mn><mrow><msub><mi>Y</mi><mi>i</mi></msub><mo>≤</mo><msub><mi>ω</mi><mi>j</mi></msub></mrow></msub><annotation encoding="application/x-tex">\mathbb{1}_{Y_i \le \omega_j}</annotation></semantics></math>
-is regressed on both
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>X</mi><annotation encoding="application/x-tex">X</annotation></semantics></math>
-and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Z</mi><annotation encoding="application/x-tex">Z</annotation></semantics></math>
-at each threshold
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>j</mi><annotation encoding="application/x-tex">j</annotation></semantics></math>.
-Under
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>H</mi><mn>0</mn></msub><annotation encoding="application/x-tex">H_0</annotation></semantics></math>,
-the coefficients
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>β</mi><mi>j</mi></msub><annotation encoding="application/x-tex">\beta_j</annotation></semantics></math>
-carried by
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>X</mi><annotation encoding="application/x-tex">X</annotation></semantics></math>
-are all null, and thus <code>citcdf</code> test statistic is the sum of
-squares whose asymptotic distribution is then a weighted mixture of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>χ</mi><mn>1</mn><mn>2</mn></msubsup><annotation encoding="application/x-tex">\chi^2_1</annotation></semantics></math>.</p>
-<p>No distributional assumption is made on
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Y</mi><annotation encoding="application/x-tex">Y</annotation></semantics></math>,
-and in that sense <code>citcdf</code> is <em>distribution-free</em>. It
-is therefore robust to zero-inflation, multi-modality and skewness that
-typical occur in single-cell RNA-seq data.</p>
-<div class="section level3">
-<h3 id="main-user-functions">Main user functions<a class="anchor" aria-label="anchor" href="#main-user-functions"></a>
+<p><code>citcdf</code> performs <strong>c</strong>onditional <strong>i</strong>ndependence <strong>t</strong>esting through conditional <strong>c</strong>umulative <strong>d</strong>istribution <strong>f</strong>unctions <span class="citation" data-cites="gauthier2026">(<a href="#ref-gauthier2026" role="doc-biblioref">Gauthier et al. 2026</a>)</span>. It addresses the following null hypothesis: <math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>H</mi><mn>0</mn></msub><mo>:</mo><mi>Y</mi><mo>⟂</mo><mspace width="-0.167em"></mspace><mspace width="-0.167em"></mspace><mspace width="-0.167em"></mspace><mo>⟂</mo><mi>X</mi><mo>∣</mo><mi>Z</mi></mrow><annotation encoding="application/x-tex">H_0: Y \perp\!\!\!\perp X \mid Z</annotation></semantics></math></p>
+<p>by testing whether <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>F</mi><mrow><mi>Y</mi><mo>∣</mo><mi>X</mi><mo>,</mo><mi>Z</mi></mrow></msub><mo stretchy="false" form="prefix">(</mo><mi>y</mi><mo stretchy="false" form="postfix">)</mo><mo>=</mo><msub><mi>F</mi><mrow><mi>Y</mi><mo>∣</mo><mi>Z</mi></mrow></msub><mo stretchy="false" form="prefix">(</mo><mi>y</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">F_{Y \mid X, Z}(y) = F_{Y \mid Z}(y)</annotation></semantics></math>. The associated test statistic is computed across a grid of thresholds <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ω</mi><mn>1</mn></msub><mo>&lt;</mo><mi>…</mi><mo>&lt;</mo><msub><mi>ω</mi><mi>p</mi></msub></mrow><annotation encoding="application/x-tex">\omega_1 &lt; \dots &lt; \omega_p</annotation></semantics></math> spanning <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Y</mi><annotation encoding="application/x-tex">Y</annotation></semantics></math>, where the indicator <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mn mathvariant="double-struck">𝟙</mn><mrow><msub><mi>Y</mi><mi>i</mi></msub><mo>≤</mo><msub><mi>ω</mi><mi>j</mi></msub></mrow></msub><annotation encoding="application/x-tex">\mathbb{1}_{Y_i \le \omega_j}</annotation></semantics></math> is regressed on both <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>X</mi><annotation encoding="application/x-tex">X</annotation></semantics></math> and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Z</mi><annotation encoding="application/x-tex">Z</annotation></semantics></math> at each threshold <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>j</mi><annotation encoding="application/x-tex">j</annotation></semantics></math>. Under <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>H</mi><mn>0</mn></msub><annotation encoding="application/x-tex">H_0</annotation></semantics></math>, the coefficients <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>β</mi><mi>j</mi></msub><annotation encoding="application/x-tex">\beta_j</annotation></semantics></math> carried by <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>X</mi><annotation encoding="application/x-tex">X</annotation></semantics></math> are all null, and thus <code>citcdf</code> test statistic is the sum of squares whose asymptotic distribution is then a weighted mixture of <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>χ</mi><mn>1</mn><mn>2</mn></msubsup><annotation encoding="application/x-tex">\chi^2_1</annotation></semantics></math>.</p>
+<p>No distributional assumption is made on <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Y</mi><annotation encoding="application/x-tex">Y</annotation></semantics></math>, and in that sense <code>citcdf</code> is <em>distribution-free</em>. It is therefore robust to zero-inflation, multi-modality and skewness that typical occur in single-cell RNA-seq data.</p>
+<section class="level2" data-number="1.1"><h3 data-number="1.1" id="main-user-functions">
+<span class="header-section-number">1.1</span> Main user functions<a class="anchor" aria-label="anchor" href="#main-user-functions"></a>
 </h3>
-<p>Three main functions build form the <code>citcdf</code>package
-leverage this test statistic:</p>
+<p>Three main functions build form the <code>citcdf</code>package leverage this test statistic:</p>
 <ul>
 <li>
 <code><a href="../reference/cit_asymp.html">cit_asymp()</a></code>: one hypothesis, asymptotic p-value</li>
 <li>
 <code><a href="../reference/cit_perm.html">cit_perm()</a></code>: one hypothesis, permutation p-value</li>
 <li>
-<code><a href="../reference/cit_multi.html">cit_multi()</a></code>: many outcomes at once (with a
-Benjamini-Hochberg adjustment), either asymptotic or permutation
-test</li>
-</ul>
-</div>
-<div class="section level3">
-<h3 id="inputs">Inputs<a class="anchor" aria-label="anchor" href="#inputs"></a>
+<code><a href="../reference/cit_multi.html">cit_multi()</a></code>: many outcomes at once (with a Benjamini-Hochberg adjustment), either asymptotic or permutation test</li>
+</ul></section><section class="level2" data-number="1.2"><h3 data-number="1.2" id="inputs">
+<span class="header-section-number">1.2</span> Inputs<a class="anchor" aria-label="anchor" href="#inputs"></a>
 </h3>
-<p><code>Y</code> is a numeric vector. <code>X</code> and <code>Z</code>
-are data frames, one column per variable, numeric or factor. Gene set
-analysis is available through <code><a href="../reference/cit_gsa.html">cit_gsa()</a></code> and is not covered
-here.</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<p><code>Y</code> is a numeric vector. <code>X</code> and <code>Z</code> are data frames, one column per variable, numeric or factor. Gene set analysis is available through <code><a href="../reference/cit_gsa.html">cit_gsa()</a></code> and is not covered here.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/sistm/citcdf" class="external-link">citcdf</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">20260817</span><span class="op">)</span></span></code></pre></div>
 </div>
-</div>
-<div class="section level2">
-<h2 id="testing-a-single-hypothesis">Testing a single hypothesis<a class="anchor" aria-label="anchor" href="#testing-a-single-hypothesis"></a>
+</section></section><section class="section level2" data-number="2"><h2 data-number="2" id="testing-a-single-hypothesis">
+<span class="header-section-number">2</span> Testing a single hypothesis<a class="anchor" aria-label="anchor" href="#testing-a-single-hypothesis"></a>
 </h2>
-<div class="section level3">
-<h3 id="the-data">The data<a class="anchor" aria-label="anchor" href="#the-data"></a>
+<section class="level2" data-number="2.1"><h3 data-number="2.1" id="the-data">
+<span class="header-section-number">2.1</span> The data<a class="anchor" aria-label="anchor" href="#the-data"></a>
 </h3>
-<p>We use the <code>marks</code>dataset, from the <code>bnlearn</code>
-package <span class="citation">(<a href="#ref-scutari2010">Scutari
-2010</a>)</span>. It records the exam marks of 88 students in five
-mathematics topics <span class="citation">(<a href="#ref-mardia1979">Mardia et al. 1979</a>)</span>. Of note,
-<em>mechanics</em> and <em>statistics</em> marks are
-<strong>correlated</strong>, but the association is mediated by the
-<em>algebra</em> mark (relevant to both disciplines).</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<p>We use the <code>marks</code>dataset, from the <code>bnlearn</code> package <span class="citation" data-cites="scutari2010">(<a href="#ref-scutari2010" role="doc-biblioref">Scutari 2010</a>)</span>. It records the exam marks of 88 students in five mathematics topics <span class="citation" data-cites="mardia1979">(<a href="#ref-mardia1979" role="doc-biblioref">Mardia et al. 1979</a>)</span>. Of note, <em>mechanics</em> and <em>statistics</em> marks are <strong>correlated</strong>, but the association is mediated by the <em>algebra</em> mark (relevant to both disciplines).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"marks"</span>, package <span class="op">=</span> <span class="st">"bnlearn"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">marks</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 'data.frame':    88 obs. of  5 variables:</span></span>
@@ -159,122 +131,94 @@ mathematics topics <span class="citation">(<a href="#ref-mardia1979">Mardia et a
 <span><span class="co">#&gt;  $ ANL : num  67 70 66 70 70 64 65 62 62 62 ...</span></span>
 <span><span class="co">#&gt;  $ STAT: num  81 81 81 68 63 73 68 56 70 45 ...</span></span></code></pre></div>
 </div>
-<div class="section level3">
-<h3 id="asymptotic-test-with-cit_asymp">Asymptotic test with <code>cit_asymp()</code><a class="anchor" aria-label="anchor" href="#asymptotic-test-with-cit_asymp"></a>
+</section><section class="level2" data-number="2.2"><h3 data-number="2.2" id="asymptotic-test-with-cit_asymp">
+<span class="header-section-number">2.2</span> Asymptotic test with <code>cit_asymp()</code>
+<a class="anchor" aria-label="anchor" href="#asymptotic-test-with-cit_asymp"></a>
 </h3>
-<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Y</mi><annotation encoding="application/x-tex">Y</annotation></semantics></math>
-is the statistics mark,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>X</mi><annotation encoding="application/x-tex">X</annotation></semantics></math>
-the mechanics mark. Without conditioning:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Y</mi><annotation encoding="application/x-tex">Y</annotation></semantics></math> is the statistics mark, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>X</mi><annotation encoding="application/x-tex">X</annotation></semantics></math> the mechanics mark. Without conditioning:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">Y</span> <span class="op">&lt;-</span> <span class="va">marks</span><span class="op">$</span><span class="va">STAT</span></span>
 <span><span class="va">X</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>MECH <span class="op">=</span> <span class="va">marks</span><span class="op">$</span><span class="va">MECH</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/cit_asymp.html">cit_asymp</a></span><span class="op">(</span><span class="va">Y</span>, <span class="va">X</span><span class="op">)</span></span>
 <span><span class="co">#&gt;       raw_pval test_statistic</span></span>
 <span><span class="co">#&gt; 1 0.0003640664      0.1797552</span></span></code></pre></div>
-<p>Conditioning on the algebra mark asks whether mechanics adds anything
-beyond algebra:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+</div>
+<p>Conditioning on the algebra mark asks whether mechanics adds anything beyond algebra:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">Z</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>ALG <span class="op">=</span> <span class="va">marks</span><span class="op">$</span><span class="va">ALG</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/cit_asymp.html">cit_asymp</a></span><span class="op">(</span><span class="va">Y</span>, <span class="va">X</span>, <span class="va">Z</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    raw_pval test_statistic</span></span>
 <span><span class="co">#&gt; 1 0.6204986     0.01850231</span></span></code></pre></div>
+</div>
 <p>The evidence disappears.</p>
-<p><strong>NB:</strong> <code><a href="../reference/cit_asymp.html">cit_asymp()</a></code> assumed neither
-normality nor linearity.<br>
+<p><strong>NB:</strong> <code><a href="../reference/cit_asymp.html">cit_asymp()</a></code> assumed neither normality nor linearity.<br>
 It remains valid for skewed, zero-inflated or multi-modal outcomes.</p>
-<p>Of note, <code><a href="https://rdrr.io/pkg/bnlearn/man/ci.test.html" class="external-link">bnlearn::ci.test()</a></code> reaches the same conclusion
-from a Gaussian correlation statistic:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<p>Of note, <code><a href="https://rdrr.io/pkg/bnlearn/man/ci.test.html" class="external-link">bnlearn::ci.test()</a></code> reaches the same conclusion from a Gaussian correlation statistic:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">bnlearn</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/bnlearn/man/ci.test.html" class="external-link">ci.test</a></span><span class="op">(</span><span class="st">"STAT"</span>, <span class="st">"MECH"</span>, data <span class="op">=</span> <span class="va">marks</span>, test <span class="op">=</span> <span class="st">"cor"</span><span class="op">)</span><span class="op">$</span><span class="va">p.value</span></span>
 <span><span class="co">#&gt; [1] 0.0001792015</span></span>
 <span><span class="fu">bnlearn</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/bnlearn/man/ci.test.html" class="external-link">ci.test</a></span><span class="op">(</span><span class="st">"STAT"</span>, <span class="st">"MECH"</span>, <span class="st">"ALG"</span>, data <span class="op">=</span> <span class="va">marks</span>, test <span class="op">=</span> <span class="st">"cor"</span><span class="op">)</span><span class="op">$</span><span class="va">p.value</span></span>
 <span><span class="co">#&gt; [1] 0.7060518</span></span></code></pre></div>
 </div>
-<div class="section level3">
-<h3 id="permutation-test-with-cit_perm">Permutation test with <code>cit_perm()</code><a class="anchor" aria-label="anchor" href="#permutation-test-with-cit_perm"></a>
+</section><section class="level2" data-number="2.3"><h3 data-number="2.3" id="permutation-test-with-cit_perm">
+<span class="header-section-number">2.3</span> Permutation test with <code>cit_perm()</code>
+<a class="anchor" aria-label="anchor" href="#permutation-test-with-cit_perm"></a>
 </h3>
-<p>The asymptotic null distribution requires a reasonable sample size.
-For small <code>n</code>, <code><a href="../reference/cit_perm.html">cit_perm()</a></code> calibrates the same
-observed statistic against a permutation null:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<p>The asymptotic null distribution requires a reasonable sample size. For small <code>n</code>, <code><a href="../reference/cit_perm.html">cit_perm()</a></code> calibrates the same observed statistic against a permutation null:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/cit_perm.html">cit_perm</a></span><span class="op">(</span><span class="va">Y</span>, <span class="va">X</span>, n_perm <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   score    raw_pval test_statistic</span></span>
 <span><span class="co">#&gt; 1     0 0.000999001      0.1797552</span></span></code></pre></div>
-<p><code>test_statistic</code> remains identical to the one returned by
-<code><a href="../reference/cit_asymp.html">cit_asymp()</a></code>, and <code>score</code> counts the permutations
-reaching the observed statistic: the (unbiased) permutation p-value is
-then computed as <code>(score + 1) / (n_perm + 1)</code> (so
-<code>n_perm</code> also fixes the smallest reachable p-value, ie.
-<code>1/(n_perm +1)</code>.</p>
-<p>Permuting
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>X</mi><annotation encoding="application/x-tex">X</annotation></semantics></math>
-freely would destroy its association with
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Z</mi><annotation encoding="application/x-tex">Z</annotation></semantics></math>
-and test the wrong null. <code><a href="../reference/X_perm.html">X_perm()</a></code> computes design
-permutations conditionally on
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Z</mi><annotation encoding="application/x-tex">Z</annotation></semantics></math>:</p>
+</div>
+<p><code>test_statistic</code> remains identical to the one returned by <code><a href="../reference/cit_asymp.html">cit_asymp()</a></code>, and <code>score</code> counts the permutations reaching the observed statistic: the (unbiased) permutation p-value is then computed as <code>(score + 1) / (n_perm + 1)</code> (so <code>n_perm</code> also fixes the smallest reachable p-value, ie. <code>1/(n_perm +1)</code>.</p>
+<p>Permuting <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>X</mi><annotation encoding="application/x-tex">X</annotation></semantics></math> freely would destroy its association with <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Z</mi><annotation encoding="application/x-tex">Z</annotation></semantics></math> and test the wrong null. <code><a href="../reference/X_perm.html">X_perm()</a></code> computes design permutations conditionally on <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Z</mi><annotation encoding="application/x-tex">Z</annotation></semantics></math>:</p>
 <ul>
 <li>
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Z</mi><annotation encoding="application/x-tex">Z</annotation></semantics></math>
-discrete: permutes within each strata of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Z</mi><annotation encoding="application/x-tex">Z</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Z</mi><annotation encoding="application/x-tex">Z</annotation></semantics></math> discrete: permutes within each strata of <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Z</mi><annotation encoding="application/x-tex">Z</annotation></semantics></math>
 </li>
 <li>
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Z</mi><annotation encoding="application/x-tex">Z</annotation></semantics></math>
-continuous: permutes by matching observations on the fitted value of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>X</mi><annotation encoding="application/x-tex">X</annotation></semantics></math>
-given
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Z</mi><annotation encoding="application/x-tex">Z</annotation></semantics></math>,
-following <span class="citation">Berrett et al. (<a href="#ref-berrett2020">2020</a>)</span> (see
-<code><a href="../reference/perm_cont.html">?perm_cont</a></code>)</li>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Z</mi><annotation encoding="application/x-tex">Z</annotation></semantics></math> continuous: permutes by matching observations on the fitted value of <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>X</mi><annotation encoding="application/x-tex">X</annotation></semantics></math> given <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Z</mi><annotation encoding="application/x-tex">Z</annotation></semantics></math>, following <span class="citation" data-cites="berrett2020">Berrett et al. (<a href="#ref-berrett2020" role="doc-biblioref">2020</a>)</span> (see <code><a href="../reference/perm_cont.html">?perm_cont</a></code>)</li>
 </ul>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/cit_perm.html">cit_perm</a></span><span class="op">(</span><span class="va">Y</span>, <span class="va">X</span>, Z <span class="op">=</span> <span class="va">Z</span>, n_perm <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   score  raw_pval test_statistic</span></span>
-<span><span class="co">#&gt; 1   498 0.4985015     0.01850231</span></span></code></pre></div>
+<span><span class="co">#&gt; 1   523 0.5234765     0.01850231</span></span></code></pre></div>
+</div>
 <p>Both tests agree on both hypotheses.</p>
-<p><strong>NB:</strong> <code><a href="../reference/cit_perm.html">cit_perm()</a></code> only accepts a single
-covariate column when <code>Z</code> is not <code>NULL</code>. Multiple
-<code>X</code> with <code>Z</code> present require the asymptotic
-test.</p>
-</div>
-<div class="section level3">
-<h3 id="visualization">Visualization<a class="anchor" aria-label="anchor" href="#visualization"></a>
+<p><strong>NB:</strong> <code><a href="../reference/cit_perm.html">cit_perm()</a></code> only accepts a single covariate column when <code>Z</code> is not <code>NULL</code>. Multiple <code>X</code> with <code>Z</code> present require the asymptotic test.</p>
+</section><section class="level2" data-number="2.4"><h3 data-number="2.4" id="visualization">
+<span class="header-section-number">2.4</span> Visualization<a class="anchor" aria-label="anchor" href="#visualization"></a>
 </h3>
-<p><code><a href="../reference/plot_compare_ccdf.html">plot_compare_ccdf()</a></code> displays what the statistic
-compares: the CCDF of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Y</mi><annotation encoding="application/x-tex">Y</annotation></semantics></math>
-given
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>X</mi><annotation encoding="application/x-tex">X</annotation></semantics></math>
-against its marginal counterpart. The further apart the 2 are, the
-larger
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>D</mi><annotation encoding="application/x-tex">D</annotation></semantics></math>:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<p><code><a href="../reference/plot_compare_ccdf.html">plot_compare_ccdf()</a></code> displays what the statistic compares: the CCDF of <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Y</mi><annotation encoding="application/x-tex">Y</annotation></semantics></math> given <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>X</mi><annotation encoding="application/x-tex">X</annotation></semantics></math> against its marginal counterpart. The further apart the 2 are, the larger <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>D</mi><annotation encoding="application/x-tex">D</annotation></semantics></math>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_compare_ccdf.html">plot_compare_ccdf</a></span><span class="op">(</span>Y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>STAT <span class="op">=</span> <span class="va">Y</span><span class="op">)</span>, X <span class="op">=</span> <span class="va">X</span><span class="op">)</span></span></code></pre></div>
-<p><img src="citcdf-userguide_files/figure-html/ccdf-plot-1.png" class="r-plt" alt="" width="672"></p>
+<div class="cell-output-display">
+<div>
+<figure><p><img src="citcdf-userguide_files/figure-html/ccdf-plot-1.png" width="672"></p>
+</figure>
 </div>
 </div>
-<div class="section level2">
-<h2 id="testing-many-outcomes-with-cit_multi">Testing many outcomes with <code>cit_multi()</code><a class="anchor" aria-label="anchor" href="#testing-many-outcomes-with-cit_multi"></a>
+</div>
+</section></section><section class="section level2" data-number="3"><h2 data-number="3" id="testing-many-outcomes-with-cit_multi">
+<span class="header-section-number">3</span> Testing many outcomes with <code>cit_multi()</code>
+<a class="anchor" aria-label="anchor" href="#testing-many-outcomes-with-cit_multi"></a>
 </h2>
-<p><code><a href="../reference/cit_multi.html">cit_multi()</a></code> loops the test over the columns of a matrix
-<code>M</code> of <code>n</code> observations by <code>r</code>
-outcomes, and returns Benjamini-Hochberg adjusted p-values (alongside
-the raw ones).</p>
-<div class="section level3">
-<h3 id="scrna-seq-data">scRNA-seq data<a class="anchor" aria-label="anchor" href="#scrna-seq-data"></a>
+<p><code><a href="../reference/cit_multi.html">cit_multi()</a></code> loops the test over the columns of a matrix <code>M</code> of <code>n</code> observations by <code>r</code> outcomes, and returns Benjamini-Hochberg adjusted p-values (alongside the raw ones).</p>
+<section class="level2" data-number="3.1"><h3 data-number="3.1" id="scrna-seq-data">
+<span class="header-section-number">3.1</span> scRNA-seq data<a class="anchor" aria-label="anchor" href="#scrna-seq-data"></a>
 </h3>
-<p>This vignette uses <code>pbmc_small</code>, the PBMC scRNA-seq
-excerpt distributed with the <code>SeuratObject</code> package <span class="citation">(<a href="#ref-satija2023">Satija et al.
-2023</a>)</span> (230 genes, 80 cells).</p>
-<p><strong>NB:</strong> <code>M</code> must be oriented
-<em>cells-by-genes</em>, the transpose of usual genes-by-cells
-expression matrix. Also, <strong>outcomes with no variability must be
-filtered-out beforehand</strong> (otherwise an error is triggered).</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<p>This vignette uses <code>pbmc_small</code>, the PBMC scRNA-seq excerpt distributed with the <code>SeuratObject</code> package <span class="citation" data-cites="satija2023">(<a href="#ref-satija2023" role="doc-biblioref">Satija et al. 2023</a>)</span> (230 genes, 80 cells).</p>
+<p><strong>NB:</strong> <code>M</code> must be oriented <em>cells-by-genes</em>, the transpose of usual genes-by-cells expression matrix. Also, <strong>outcomes with no variability must be filtered-out beforehand</strong> (otherwise an error is triggered).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"pbmc_small"</span>, package <span class="op">=</span> <span class="st">"SeuratObject"</span><span class="op">)</span></span>
 <span><span class="va">expr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="fu">SeuratObject</span><span class="fu">::</span><span class="fu"><a href="https://satijalab.github.io/seurat-object/reference/Layers.html" class="external-link">LayerData</a></span><span class="op">(</span><span class="va">pbmc_small</span>, layer <span class="op">=</span> <span class="st">"data"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">cell_md</span> <span class="op">&lt;-</span> <span class="va">pbmc_small</span><span class="op">[[</span><span class="op">]</span><span class="op">]</span></span>
@@ -283,21 +227,20 @@ filtered-out beforehand</strong> (otherwise an error is triggered).</p>
 <span><span class="va">M</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">expr</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">M</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1]  80 230</span></span></code></pre></div>
-<p>The variable of interest is the cell population
-(<code>letter.idents</code>, two populations). The two populations were
-not sequenced to comparable depth:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+</div>
+<p>The variable of interest is the cell population (<code>letter.idents</code>, two populations). The two populations were not sequenced to comparable depth:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/tapply.html" class="external-link">tapply</a></span><span class="op">(</span><span class="va">cell_md</span><span class="op">$</span><span class="va">nCount_RNA</span>, <span class="va">cell_md</span><span class="op">$</span><span class="va">letter.idents</span>, <span class="va">median</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   A   B </span></span>
 <span><span class="co">#&gt; 150 353</span></span></code></pre></div>
-<p>Library size is therefore a candidate confounder. An unadjusted
-comparison will identify significant genes that are only associated with
-sequencing depth.</p>
 </div>
-<div class="section level3">
-<h3 id="asymptotic-analysis">Asymptotic analysis<a class="anchor" aria-label="anchor" href="#asymptotic-analysis"></a>
+<p>Library size is therefore a candidate confounder. An unadjusted comparison will identify significant genes that are only associated with sequencing depth.</p>
+</section><section class="level2" data-number="3.2"><h3 data-number="3.2" id="asymptotic-analysis">
+<span class="header-section-number">3.2</span> Asymptotic analysis<a class="anchor" aria-label="anchor" href="#asymptotic-analysis"></a>
 </h3>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">X_pop</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>pop <span class="op">=</span> <span class="va">cell_md</span><span class="op">$</span><span class="va">letter.idents</span><span class="op">)</span></span>
 <span><span class="va">Z_lib</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>libsize <span class="op">=</span> <span class="va">cell_md</span><span class="op">$</span><span class="va">nCount_RNA</span><span class="op">)</span></span>
 <span></span>
@@ -309,9 +252,10 @@ sequencing depth.</p>
 <span>  adjusted   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">res_adj</span><span class="op">$</span><span class="va">pvals</span><span class="op">$</span><span class="va">adj_pval</span> <span class="op">&lt;</span> <span class="fl">0.05</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; unadjusted   adjusted </span></span>
 <span><span class="co">#&gt;         89         55</span></span></code></pre></div>
-<p>Conditioning on library size withdraws a third of the hits. The
-strongest signals — canonical monocyte markers — survive:</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+</div>
+<p>Conditioning on library size withdraws a third of the hits. The strongest signals — canonical monocyte markers — survive:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">res_adj</span><span class="op">$</span><span class="va">pvals</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">res_adj</span><span class="op">$</span><span class="va">pvals</span><span class="op">$</span><span class="va">raw_pval</span><span class="op">)</span>, <span class="op">]</span>, <span class="fl">5</span><span class="op">)</span></span>
 <span><span class="co">#&gt;            raw_pval     adj_pval test_statistic</span></span>
 <span><span class="co">#&gt; S100A8 1.951411e-11 4.488246e-09       246.5594</span></span>
@@ -319,45 +263,47 @@ strongest signals — canonical monocyte markers — survive:</p>
 <span><span class="co">#&gt; TYMP   3.219987e-08 2.468657e-06       256.8253</span></span>
 <span><span class="co">#&gt; AIF1   9.697369e-08 5.430011e-06       205.6298</span></span>
 <span><span class="co">#&gt; IFITM3 1.180437e-07 5.430011e-06       195.7231</span></span></code></pre></div>
+</div>
 <p><code>res_adj</code> is a list containing:</p>
 <ul>
 <li>
-<code>which_test</code> and <code>n_perm</code>, the test performed
-and the number of permutations (<code>NA</code> for the asymptotic
-test)</li>
+<code>which_test</code> and <code>n_perm</code>, the test performed and the number of permutations (<code>NA</code> for the asymptotic test)</li>
 <li>
-<code>pvals</code>, the gene-wise raw and BH-adjusted p-values, plus
-the test statistics</li>
+<code>pvals</code>, the gene-wise raw and BH-adjusted p-values, plus the test statistics</li>
 </ul>
-<p>The <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> method sorts the raw p-values against the BH
-threshold and the nominal level:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<p>The <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> method sorts the raw p-values against the BH threshold and the nominal level:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">res_adj</span><span class="op">)</span></span></code></pre></div>
-<p><img src="citcdf-userguide_files/figure-html/pbmc-plot-1.png" class="r-plt" alt="" width="672"></p>
+<div class="cell-output-display">
+<div>
+<figure><p><img src="citcdf-userguide_files/figure-html/pbmc-plot-1.png" width="672"></p>
+</figure>
 </div>
-<div class="section level3">
-<h3 id="visualization-1">Visualization<a class="anchor" aria-label="anchor" href="#visualization-1"></a>
+</div>
+</div>
+</section><section class="level2" data-number="3.3"><h3 data-number="3.3" id="visualization-1">
+<span class="header-section-number">3.3</span> Visualization<a class="anchor" aria-label="anchor" href="#visualization-1"></a>
 </h3>
-<p><code><a href="../reference/plot_compare_ccdf.html">plot_compare_ccdf()</a></code> details one gene. Panel A contrasts
-the CCDF given the cell population with the marginal CDF. Panel B
-repeats the comparison within library-size quartiles.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<p><code><a href="../reference/plot_compare_ccdf.html">plot_compare_ccdf()</a></code> details one gene. Panel A contrasts the CCDF given the cell population with the marginal CDF. Panel B repeats the comparison within library-size quartiles.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">top_gene</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">res_adj</span><span class="op">$</span><span class="va">pvals</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.min.html" class="external-link">which.min</a></span><span class="op">(</span><span class="va">res_adj</span><span class="op">$</span><span class="va">pvals</span><span class="op">$</span><span class="va">raw_pval</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="fu"><a href="../reference/plot_compare_ccdf.html">plot_compare_ccdf</a></span><span class="op">(</span>Y <span class="op">=</span> <span class="va">M</span><span class="op">[</span>, <span class="va">top_gene</span>, drop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">]</span>, X <span class="op">=</span> <span class="va">X_pop</span>, Z <span class="op">=</span> <span class="va">Z_lib</span>,</span>
 <span>                  space_y <span class="op">=</span> <span class="cn">TRUE</span>, number_y <span class="op">=</span> <span class="fl">20</span><span class="op">)</span></span></code></pre></div>
-<p><img src="citcdf-userguide_files/figure-html/pbmc-ccdf-1.png" class="r-plt" alt="" width="672"></p>
+<div class="cell-output-display">
+<div>
+<figure><p><img src="citcdf-userguide_files/figure-html/pbmc-ccdf-1.png" width="672"></p>
+</figure>
 </div>
-<div class="section level3">
-<h3 id="permutation-analysis">Permutation analysis<a class="anchor" aria-label="anchor" href="#permutation-analysis"></a>
+</div>
+</div>
+</section><section class="level2" data-number="3.4"><h3 data-number="3.4" id="permutation-analysis">
+<span class="header-section-number">3.4</span> Permutation analysis<a class="anchor" aria-label="anchor" href="#permutation-analysis"></a>
 </h3>
-<p>With 80 cells, the asymptotic approximation should work (low end of
-its range). <code>test = "permutation"</code> confirms a few genes.
-<code>adaptive = TRUE</code> (the default) spends additional computation
-time to increase p-value resolution where it matters (especially for
-FDR-adjusted p-values): all outcomes start at <code>n_perm</code>, and
-only those still significant proceed to the larger stages of
-<code>n_perm_adaptive</code>.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<p>With 80 cells, the asymptotic approximation should work (low end of its range). <code>test = "permutation"</code> confirms a few genes. <code>adaptive = TRUE</code> (the default) spends additional computation time to increase p-value resolution where it matters (especially for FDR-adjusted p-values): all outcomes start at <code>n_perm</code>, and only those still significant proceed to the larger stages of <code>n_perm_adaptive</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">res_perm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cit_multi.html">cit_multi</a></span><span class="op">(</span><span class="va">M</span>, X <span class="op">=</span> <span class="va">X_pop</span>, Z <span class="op">=</span> <span class="va">Z_lib</span>, test <span class="op">=</span> <span class="st">"permutation"</span>,</span>
 <span>                      n_perm <span class="op">=</span> <span class="fl">100</span>, parallel <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Computing 100 permutations...</span></span>
@@ -366,52 +312,37 @@ only those still significant proceed to the larger stages of
 <span><span class="co">#&gt; Computing 500 additional permutations...</span></span>
 <span><span class="va">res_perm</span><span class="op">$</span><span class="va">n_perm</span></span>
 <span><span class="co">#&gt; [1]  100  200  500 1000</span></span></code></pre></div>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">order_asymp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">res_adj</span><span class="op">$</span><span class="va">pvals</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">res_adj</span><span class="op">$</span><span class="va">pvals</span><span class="op">$</span><span class="va">adj_pval</span><span class="op">)</span>,<span class="op">]</span><span class="op">)</span></span>
 <span><span class="fu">reactable</span><span class="fu">::</span><span class="fu"><a href="https://glin.github.io/reactable/reference/reactable.html" class="external-link">reactable</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>asymptotic <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">signif</a></span><span class="op">(</span><span class="va">res_adj</span><span class="op">$</span><span class="va">pvals</span><span class="op">[</span><span class="va">order_asymp</span>, <span class="st">"raw_pval"</span><span class="op">]</span>, <span class="fl">3</span><span class="op">)</span>,</span>
 <span>           permutation <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">signif</a></span><span class="op">(</span><span class="va">res_perm</span><span class="op">$</span><span class="va">pvals</span><span class="op">[</span><span class="va">order_asymp</span>, <span class="st">"raw_pval"</span><span class="op">]</span>, <span class="fl">3</span><span class="op">)</span>,</span>
 <span>           row.names <span class="op">=</span> <span class="va">order_asymp</span><span class="op">)</span>,</span>
 <span>           defaultPageSize<span class="op">=</span><span class="fl">15</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<div class="reactable html-widget html-fill-item" id="htmlwidget-ac96cb3ee4656e2e9ec3" style="width:auto;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-ac96cb3ee4656e2e9ec3">{"x":{"tag":{"name":"Reactable","attribs":{"data":{".rownames":["S100A8","S100A9","TYMP","AIF1","IFITM3","LYZ","FCN1","TYROBP","S100A11","CTSB","CFD","CST3","LST1","SERPINA1","FCER1G","CTSS","MS4A6A","PSAP","FCGRT","CD14","LGALS1","FPR1","LGALS3","SMCO4","IL1B","NUP214","C5AR1","BLVRA","CARD16","COTL1","NFKBIA","TSPO","ASGR1","CCL5","CFP","SAT1","IL17RA","LGALS2","RNF130","CD68","RBP7","GRN","CTSW","MPEG1","WARS","CST7","LINC00936","PRF1","BID","IFI6","GSTP1","HCK","GNLY","LILRA3","GZMM","GZMA","RARRES3","HIST1H2AC","HLA-DRA","VSTM1","PF4","GNG11","LAMP1","RGS2","RP11-290F20.3","GZMB","RUFY1","NKG7","GP9","PGRMC1","CA2","TPM4","IFI30","CD7","HNRNPA3","TUBB1","CLU","C12orf75","HLA-DPB1","FGFBP2","HNRNPF","SDPR","SPARC","SCO2","KLRD1","PTCRA","CXCR4","CRBN","ALOX5AP","S1PR4","HNRNPH1","HLA-DPA1","CLEC10A","PPBP","TTC38","SPON2","LCK","ACRBP","TSC22D1","LRRC25","PTGDR","LGALS9","ODC1","HLA-DRB1","GZMH","CLIC3","AKR1C3","XBP1","CD3E","ITGA2B","PPP1R18","NGFRAP1","HLA-DQB1","CCL4","TALDO1","VDAC3","CD247","CD3D","IL2RB","ADAR","SNHG7","IL32","LTB","NRGN","EIF3G","CD9","XCL2","PMPCB","GPX1","PARVB","FERMT3","MYL9","MS4A1","KLRG1","TMEM40","TREML1","NRBP1","LY86","HLA-DQA2","ANXA2","NCOA4","EIF4A2","VPS28","HLA-DQA1","MMADHC","GYPC","DNAJC2","CD8A","GZMK","ZNF76","NT5C","PTPN22","TNFRSF1B","RHOC","NCF1","PPP3CC","MS4A7","RGS1","BANK1","LDHB","TMEM123","FAM96A","PPAPDC1B","GIMAP1","SATB1","TCL1A","TAF7","EPC1","TAGAP","ACAP1","MAL","CD79A","CCDC104","HSP90AA1","RPL7L1","ASNSD1","HLA-DRB5","CD1C","MYO1G","IGFBP7","DLGAP1-AS1","LINC00926","TMUB1","ZNF330","TCF7","CD79B","HVCN1","IGLL5","BLOC1S4","LYAR","FCER2","RP11-693J15.5","FCRLA","TNFAIP8","DNAJB1","HLA-DMA","IFITM2","S100B","CD2","FCGR3A","SAFB2","IL7R","SIT1","CCR7","COPS6","HLA-DMB","NOSIP","KIAA0125","PCMT1","TMEM204","POP7","ARHGDIA","SP100","EAF2","CD180","SSR2","CYB561A3","STX10","ACSM3","CD200","YWHAB","MPHOSPH6","KHDRBS1","CD19","PIK3IP1","SRSF7","THYN1","ZFP36L1","FUOM","FCER1A"],"asymptotic":[1.95e-11,7.53e-11,3.22e-08,9.7e-08,1.18e-07,9.11e-07,8.67e-07,5.31e-06,5.07e-06,8.97e-06,8.53e-06,6.78e-06,8.81e-06,9.45e-06,1.11e-05,1.26e-05,1.6e-05,1.52e-05,2.57e-05,3.28e-05,3.44e-05,3.76e-05,5.57e-05,6.58e-05,8.55e-05,0.000128,0.000223,0.000353,0.000426,0.000666,0.00088,0.000956,0.00119,0.00143,0.00155,0.00251,0.0026,0.00273,0.00332,0.00387,0.00426,0.00469,0.00511,0.00495,0.00512,0.00533,0.00661,0.00797,0.00866,0.00871,0.00958,0.0101,0.0106,0.0116,0.0117,0.0126,0.0153,0.0157,0.018,0.0183,0.0174,0.0182,0.018,0.019,0.0204,0.0244,0.0267,0.0279,0.0298,0.0326,0.0329,0.0355,0.0363,0.0375,0.0371,0.0378,0.0401,0.0405,0.0457,0.0477,0.0497,0.0498,0.0518,0.057,0.0565,0.0591,0.0616,0.0619,0.0618,0.0655,0.0663,0.0679,0.0754,0.0752,0.074,0.0734,0.0767,0.0812,0.092,0.0953,0.0959,0.1,0.101,0.105,0.106,0.106,0.11,0.109,0.111,0.113,0.113,0.116,0.118,0.119,0.126,0.133,0.132,0.141,0.141,0.148,0.154,0.156,0.163,0.167,0.178,0.177,0.179,0.186,0.185,0.187,0.199,0.209,0.22,0.222,0.223,0.226,0.23,0.229,0.235,0.236,0.236,0.249,0.251,0.265,0.273,0.272,0.278,0.288,0.297,0.309,0.314,0.327,0.324,0.328,0.342,0.35,0.35,0.357,0.37,0.37,0.369,0.373,0.383,0.379,0.382,0.409,0.409,0.407,0.404,0.413,0.426,0.43,0.439,0.447,0.45,0.475,0.469,0.478,0.477,0.471,0.486,0.493,0.498,0.499,0.505,0.524,0.525,0.519,0.523,0.525,0.531,0.542,0.542,0.548,0.553,0.55,0.553,0.55,0.563,0.577,0.588,0.589,0.6,0.605,0.607,0.617,0.626,0.632,0.636,0.647,0.646,0.656,0.668,0.667,0.666,0.7,0.709,0.707,0.713,0.722,0.745,0.78,0.777,0.793,0.871,0.871,0.908,0.91,0.913,0.984],"permutation":[0.000999,0.000999,0.000999,0.000999,0.000999,0.000999,0.000999,0.000999,0.000999,0.000999,0.000999,0.000999,0.002,0.000999,0.000999,0.000999,0.000999,0.000999,0.000999,0.000999,0.000999,0.002,0.000999,0.004,0.000999,0.000999,0.000999,0.002,0.00799,0.000999,0.000999,0.00599,0.004,0.000999,0.016,0.014,0.005,0.00599,0.004,0.0539,0.005,0.005,0.000999,0.022,0.012,0.000999,0.024,0.000999,0.0746,0.012,0.00699,0.129,0.000999,0.0599,0.000999,0.002,0.005,0.00699,0.003,0.0746,0.00699,0.00699,0.003,0.149,0.0379,0.00999,0.016,0.00799,0.012,0.016,0.014,0.014,0.0697,0.0339,0.014,0.0259,0.012,0.022,0.016,0.024,0.02,0.0279,0.0259,0.228,0.00899,0.0279,0.0259,0.0299,0.0459,0.0259,0.016,0.024,0.0619,0.0539,0.016,0.0319,0.0896,0.0259,0.0697,0.297,0.0419,0.455,0.0697,0.114,0.0379,0.0419,0.0597,0.119,0.0896,0.0697,0.0739,0.0319,0.208,0.0679,0.307,0.119,0.104,0.139,0.0399,0.0796,0.0995,0.129,0.0796,0.139,0.347,0.109,0.0746,0.0647,0.129,0.208,0.178,0.178,0.277,0.149,0.0697,0.188,0.257,0.158,0.347,0.267,0.168,0.178,0.327,0.396,0.307,0.228,0.208,0.356,0.317,0.515,0.238,0.366,0.426,0.356,0.188,0.525,0.683,0.297,0.535,0.287,0.337,0.208,0.564,0.297,0.515,0.485,0.366,0.317,0.356,0.426,0.525,0.406,0.485,0.515,0.446,0.535,0.733,0.792,0.614,0.495,0.663,0.634,0.396,0.465,0.515,0.564,0.594,0.901,0.564,0.574,0.693,0.703,0.733,0.545,0.614,0.574,0.772,0.277,0.475,0.693,0.653,0.554,0.762,0.574,0.673,0.673,0.584,0.832,0.653,0.931,0.891,0.743,0.723,0.634,0.931,0.762,0.842,0.673,0.931,0.931,0.713,0.653,0.802,0.941,0.941,0.842,0.931,0.96,0.99,1]},"columns":[{"id":".rownames","name":"","type":"character","sortable":false,"filterable":false,"rowHeader":true},{"id":"asymptotic","name":"asymptotic","type":"numeric"},{"id":"permutation","name":"permutation","type":"numeric"}],"defaultPageSize":15,"dataKey":"0e244cfe5cabc8ecb5d7b3f7b3a1549b"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script><p>The orderings nearly coincide. Individual p-values, as expected,
-differ: the permutation ones carry Monte Carlo noise and cannot fall
-below <code>1 / (total permutations + 1)</code>.</p>
+<div class="cell-output-display">
+<div class="reactable html-widget html-fill-item" id="htmlwidget-0d2cb4570cd4f04415b2" style="width:auto;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-0d2cb4570cd4f04415b2">{"x":{"tag":{"name":"Reactable","attribs":{"data":{".rownames":["S100A8","S100A9","TYMP","AIF1","IFITM3","LYZ","FCN1","TYROBP","S100A11","CTSB","CFD","CST3","LST1","SERPINA1","FCER1G","CTSS","MS4A6A","PSAP","FCGRT","CD14","LGALS1","FPR1","LGALS3","SMCO4","IL1B","NUP214","C5AR1","BLVRA","CARD16","COTL1","NFKBIA","TSPO","ASGR1","CCL5","CFP","SAT1","IL17RA","LGALS2","RNF130","CD68","RBP7","GRN","CTSW","MPEG1","WARS","CST7","LINC00936","PRF1","BID","IFI6","GSTP1","HCK","GNLY","LILRA3","GZMM","GZMA","RARRES3","HIST1H2AC","HLA-DRA","VSTM1","PF4","GNG11","LAMP1","RGS2","RP11-290F20.3","GZMB","RUFY1","NKG7","GP9","PGRMC1","CA2","TPM4","IFI30","CD7","HNRNPA3","TUBB1","CLU","C12orf75","HLA-DPB1","FGFBP2","HNRNPF","SDPR","SPARC","SCO2","KLRD1","PTCRA","CXCR4","CRBN","ALOX5AP","S1PR4","HNRNPH1","HLA-DPA1","CLEC10A","PPBP","TTC38","SPON2","LCK","ACRBP","TSC22D1","LRRC25","PTGDR","LGALS9","ODC1","HLA-DRB1","GZMH","CLIC3","AKR1C3","XBP1","CD3E","ITGA2B","PPP1R18","NGFRAP1","HLA-DQB1","CCL4","TALDO1","VDAC3","CD247","CD3D","IL2RB","ADAR","SNHG7","IL32","LTB","NRGN","EIF3G","CD9","XCL2","PMPCB","GPX1","PARVB","FERMT3","MYL9","MS4A1","KLRG1","TMEM40","TREML1","NRBP1","LY86","HLA-DQA2","ANXA2","NCOA4","EIF4A2","VPS28","HLA-DQA1","MMADHC","GYPC","DNAJC2","CD8A","GZMK","ZNF76","NT5C","PTPN22","TNFRSF1B","RHOC","NCF1","PPP3CC","MS4A7","RGS1","BANK1","LDHB","TMEM123","FAM96A","PPAPDC1B","GIMAP1","SATB1","TCL1A","TAF7","EPC1","TAGAP","ACAP1","MAL","CD79A","CCDC104","HSP90AA1","RPL7L1","ASNSD1","HLA-DRB5","CD1C","MYO1G","IGFBP7","DLGAP1-AS1","LINC00926","TMUB1","ZNF330","TCF7","CD79B","HVCN1","IGLL5","BLOC1S4","LYAR","FCER2","RP11-693J15.5","FCRLA","TNFAIP8","DNAJB1","HLA-DMA","IFITM2","S100B","CD2","FCGR3A","SAFB2","IL7R","SIT1","CCR7","COPS6","HLA-DMB","NOSIP","KIAA0125","PCMT1","TMEM204","POP7","ARHGDIA","SP100","EAF2","CD180","SSR2","CYB561A3","STX10","ACSM3","CD200","YWHAB","MPHOSPH6","KHDRBS1","CD19","PIK3IP1","SRSF7","THYN1","ZFP36L1","FUOM","FCER1A"],"asymptotic":[1.95e-11,7.53e-11,3.22e-08,9.7e-08,1.18e-07,9.11e-07,8.67e-07,5.31e-06,5.07e-06,8.97e-06,8.53e-06,6.78e-06,8.81e-06,9.45e-06,1.11e-05,1.26e-05,1.6e-05,1.52e-05,2.57e-05,3.28e-05,3.44e-05,3.76e-05,5.57e-05,6.58e-05,8.55e-05,0.000128,0.000223,0.000353,0.000426,0.000666,0.00088,0.000956,0.00119,0.00143,0.00155,0.00251,0.0026,0.00273,0.00332,0.00387,0.00426,0.00469,0.00511,0.00495,0.00512,0.00533,0.00661,0.00797,0.00866,0.00871,0.00958,0.0101,0.0106,0.0116,0.0117,0.0126,0.0153,0.0157,0.018,0.0183,0.0174,0.0182,0.018,0.019,0.0204,0.0244,0.0267,0.0279,0.0298,0.0326,0.0329,0.0355,0.0363,0.0375,0.0371,0.0378,0.0401,0.0405,0.0457,0.0477,0.0497,0.0498,0.0518,0.057,0.0565,0.0591,0.0616,0.0619,0.0618,0.0655,0.0663,0.0679,0.0754,0.0752,0.074,0.0734,0.0767,0.0812,0.092,0.0953,0.0959,0.1,0.101,0.105,0.106,0.106,0.11,0.109,0.111,0.113,0.113,0.116,0.118,0.119,0.126,0.133,0.132,0.141,0.141,0.148,0.154,0.156,0.163,0.167,0.178,0.177,0.179,0.186,0.185,0.187,0.199,0.209,0.22,0.222,0.223,0.226,0.23,0.229,0.235,0.236,0.236,0.249,0.251,0.265,0.273,0.272,0.278,0.288,0.297,0.309,0.314,0.327,0.324,0.328,0.342,0.35,0.35,0.357,0.37,0.37,0.369,0.373,0.383,0.379,0.382,0.409,0.409,0.407,0.404,0.413,0.426,0.43,0.439,0.447,0.45,0.475,0.469,0.478,0.477,0.471,0.486,0.493,0.498,0.499,0.505,0.524,0.525,0.519,0.523,0.525,0.531,0.542,0.542,0.548,0.553,0.55,0.553,0.55,0.563,0.577,0.588,0.589,0.6,0.605,0.607,0.617,0.626,0.632,0.636,0.647,0.646,0.656,0.668,0.667,0.666,0.7,0.709,0.707,0.713,0.722,0.745,0.78,0.777,0.793,0.871,0.871,0.908,0.91,0.913,0.984],"permutation":[0.000999,0.000999,0.000999,0.000999,0.000999,0.000999,0.000999,0.000999,0.000999,0.000999,0.000999,0.000999,0.002,0.000999,0.000999,0.000999,0.000999,0.000999,0.000999,0.000999,0.000999,0.002,0.002,0.003,0.000999,0.002,0.000999,0.002,0.004,0.002,0.00599,0.011,0.004,0.000999,0.02,0.012,0.003,0.003,0.004,0.0597,0.004,0.004,0.000999,0.0259,0.012,0.000999,0.022,0.000999,0.0547,0.012,0.005,0.119,0.000999,0.0697,0.003,0.000999,0.012,0.005,0.005,0.109,0.005,0.004,0.004,0.188,0.0547,0.00699,0.014,0.012,0.012,0.016,0.014,0.02,0.0746,0.0299,0.022,0.022,0.012,0.018,0.005,0.0259,0.012,0.0339,0.0339,0.218,0.00999,0.024,0.0299,0.0339,0.0439,0.018,0.00999,0.0259,0.0547,0.0547,0.024,0.0259,0.149,0.022,0.0697,0.287,0.0519,0.455,0.119,0.0796,0.0339,0.0339,0.0279,0.109,0.0746,0.139,0.0746,0.024,0.129,0.0597,0.188,0.129,0.119,0.178,0.0647,0.158,0.119,0.139,0.0547,0.149,0.267,0.178,0.0995,0.0746,0.178,0.198,0.129,0.257,0.188,0.188,0.0547,0.238,0.267,0.158,0.297,0.267,0.238,0.188,0.337,0.297,0.317,0.198,0.287,0.465,0.327,0.485,0.257,0.426,0.505,0.376,0.218,0.386,0.673,0.317,0.436,0.347,0.337,0.267,0.465,0.317,0.446,0.366,0.376,0.228,0.317,0.376,0.475,0.386,0.495,0.446,0.485,0.614,0.624,0.703,0.594,0.475,0.644,0.594,0.446,0.465,0.545,0.465,0.495,0.901,0.465,0.475,0.644,0.604,0.683,0.614,0.663,0.495,0.683,0.297,0.525,0.653,0.673,0.554,0.822,0.644,0.673,0.634,0.693,0.772,0.604,0.891,0.881,0.752,0.634,0.584,0.901,0.693,0.812,0.663,0.881,0.891,0.693,0.723,0.812,0.921,0.941,0.911,0.98,0.95,0.98,1]},"columns":[{"id":".rownames","name":"","type":"character","sortable":false,"filterable":false,"rowHeader":true},{"id":"asymptotic","name":"asymptotic","type":"numeric"},{"id":"permutation","name":"permutation","type":"numeric"}],"defaultPageSize":15,"dataKey":"efe9d48f635c7138c310103416a6311c"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
-<div class="section level2">
-<h2 id="practical-considerations">Practical considerations<a class="anchor" aria-label="anchor" href="#practical-considerations"></a>
+<p>The orderings nearly coincide. Individual p-values, as expected, differ: the permutation ones carry Monte Carlo noise and cannot fall below <code>1 / (total permutations + 1)</code>.</p>
+</section></section><section class="section level2" data-number="4"><h2 data-number="4" id="practical-considerations">
+<span class="header-section-number">4</span> Practical considerations<a class="anchor" aria-label="anchor" href="#practical-considerations"></a>
 </h2>
-<p>[ ] <strong>Threshold grid:</strong> <code>space_y = FALSE</code>
-places a threshold at every distinct value of <code>Y</code>, while
-<code>space_y = TRUE</code> uses a regular grid of <code>number_y</code>
-points instead, at a cost independent of <code>n</code>.<br>
-Defaults differ: <code><a href="../reference/cit_asymp.html">cit_asymp()</a></code> and <code><a href="../reference/cit_perm.html">cit_perm()</a></code>
-use the exhaustive grid, <code><a href="../reference/cit_multi.html">cit_multi()</a></code> uses
-<code>number_y = 10</code>. Expect small numerical differences between a
-single call and a <code><a href="../reference/cit_multi.html">cit_multi()</a></code> run.</p>
-<p>[ ] <strong>Parallelism.</strong> <code><a href="../reference/cit_multi.html">cit_multi()</a></code>
-parallelises over outcomes and defaults to
-<code>parallel = interactive()</code>. Calls above set
-<code>parallel = FALSE</code> for reproducible builds. Drop it in real
-analyses, and set <code>n_cpus</code>.</p>
-<p><strong>Multiplicity.</strong> <code><a href="../reference/cit_multi.html">cit_multi()</a></code> returns
-Benjamini-Hochberg adjusted p-values in <code>adj_pval</code> for FDR
-control. <code><a href="../reference/cit_asymp.html">cit_asymp()</a></code> and <code><a href="../reference/cit_perm.html">cit_perm()</a></code> are
-single-hypothesis functions and do not need sich multiple-testing
-adjustlent.</p>
-<p><strong>Design.</strong> The asymptotic test accepts several
-variables of interest (<code>ncol(X) &gt; 1</code>) and several
-covariates (<code>ncol(Z) &gt; 1</code>). The permutation test is less
-flexible accepting at most one covariate.</p>
-<p><strong>Preprocessing.</strong> Normalisation remains the user’s
-choice and responsibility.</p>
-</div>
-<div class="section level2">
-<h2 id="session-information">Session information<a class="anchor" aria-label="anchor" href="#session-information"></a>
+<p>[ ] <strong>Threshold grid:</strong> <code>space_y = FALSE</code> places a threshold at every distinct value of <code>Y</code>, while <code>space_y = TRUE</code> uses a regular grid of <code>number_y</code> points instead, at a cost independent of <code>n</code>.<br>
+Defaults differ: <code><a href="../reference/cit_asymp.html">cit_asymp()</a></code> and <code><a href="../reference/cit_perm.html">cit_perm()</a></code> use the exhaustive grid, <code><a href="../reference/cit_multi.html">cit_multi()</a></code> uses <code>number_y = 10</code>. Expect small numerical differences between a single call and a <code><a href="../reference/cit_multi.html">cit_multi()</a></code> run.</p>
+<p>[ ] <strong>Parallelism.</strong> <code><a href="../reference/cit_multi.html">cit_multi()</a></code> parallelises over outcomes and defaults to <code>parallel = interactive()</code>. Calls above set <code>parallel = FALSE</code> for reproducible builds. Drop it in real analyses, and set <code>n_cpus</code>.</p>
+<p><strong>Multiplicity.</strong> <code><a href="../reference/cit_multi.html">cit_multi()</a></code> returns Benjamini-Hochberg adjusted p-values in <code>adj_pval</code> for FDR control. <code><a href="../reference/cit_asymp.html">cit_asymp()</a></code> and <code><a href="../reference/cit_perm.html">cit_perm()</a></code> are single-hypothesis functions and do not need sich multiple-testing adjustlent.</p>
+<p><strong>Design.</strong> The asymptotic test accepts several variables of interest (<code>ncol(X) &gt; 1</code>) and several covariates (<code>ncol(Z) &gt; 1</code>). The permutation test is less flexible accepting at most one covariate.</p>
+<p><strong>Preprocessing.</strong> Normalisation remains the user’s choice and responsibility.</p>
+</section><section class="section level2" data-number="5"><h2 data-number="5" id="session-information">
+<span class="header-section-number">5</span> Session information<a class="anchor" aria-label="anchor" href="#session-information"></a>
 </h2>
-<pre><code> [1m [36m─ Session info ─────────────────────────────────────────────────────────────── [39m [22m
-  [3m [90msetting  [39m [23m  [3m [90mvalue [39m [23m
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>─ Session info ───────────────────────────────────────────────────────────────
+ setting  value
  version  R version 4.6.1 (2026-06-24)
  os       Ubuntu 24.04.4 LTS
  system   x86_64, linux-gnu
@@ -422,123 +353,183 @@ choice and responsibility.</p>
  tz       UTC
  date     2026-08-19
  pandoc   3.8.3 @ /opt/hostedtoolcache/pandoc/3.8.3/x64/ (via rmarkdown)
- quarto   NA
+ quarto   1.10.18 @ /usr/local/bin/quarto
 
- [1m [36m─ Packages ─────────────────────────────────────────────────────────────────── [39m [22m
-  [3m [90mpackage      [39m [23m  [3m [90m* [39m [23m  [3m [90mversion [39m [23m  [3m [90mdate (UTC) [39m [23m  [3m [90mlib [39m [23m  [3m [90msource [39m [23m
- bnlearn        5.2.1    [90m2026-07-17 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
- bslib          0.12.0   [90m2026-08-04 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
- cachem         1.1.0    [90m2024-05-16 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
- citcdf       * 1.1.0    [90m2026-08-19 [39m  [90m[1] [39m  [1m [35mlocal [39m [22m
- cli            3.6.6    [90m2026-04-09 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
- codetools      0.2-20   [90m2024-03-31 [39m  [90m[3] [39m  [90mCRAN (R 4.6.1) [39m
- DBI            1.3.0    [90m2026-02-25 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
- desc           1.4.3    [90m2023-12-10 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
- digest         0.6.39   [90m2025-11-19 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
- dotCall64      1.2      [90m2024-10-04 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
- dplyr          1.2.1    [90m2026-04-03 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
- evaluate       1.0.5    [90m2025-08-27 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
- farver         2.1.2    [90m2024-05-13 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
- fastmap        1.2.0    [90m2024-05-15 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
- fs             2.1.0    [90m2026-04-18 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
- future         1.75.0   [90m2026-07-20 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
- future.apply   1.20.2   [90m2026-02-20 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
- generics       0.1.4    [90m2025-05-09 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
- ggplot2        4.0.3    [90m2026-04-22 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
- globals        0.19.1   [90m2026-03-13 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
- glue           1.8.1    [90m2026-04-17 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
- gtable         0.3.6    [90m2024-10-25 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
- htmltools      0.5.9    [90m2025-12-04 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
- htmlwidgets    1.6.4    [90m2023-12-06 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
- jquerylib      0.1.4    [90m2021-04-26 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
- jsonlite       2.0.0    [90m2025-03-27 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
- knitr          1.51     [90m2025-12-20 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
- labeling       0.4.3    [90m2023-08-29 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
- lattice        0.22-9   [90m2026-02-09 [39m  [90m[3] [39m  [90mCRAN (R 4.6.1) [39m
- lifecycle      1.0.5    [90m2026-01-08 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
- listenv        1.0.0    [90m2026-06-22 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
- magrittr       2.0.5    [90m2026-04-04 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
- Matrix         1.7-5    [90m2026-03-21 [39m  [90m[3] [39m  [90mCRAN (R 4.6.1) [39m
- mitools        2.4      [90m2019-04-26 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
- otel           0.2.0    [90m2025-08-29 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
- parallelly     1.48.0   [90m2026-06-29 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
- patchwork      1.3.2    [90m2025-08-25 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
- pbapply        1.7-4    [90m2025-07-20 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
- pillar         1.11.1   [90m2025-09-17 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
- pkgconfig      2.0.3    [90m2019-09-22 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
- pkgdown        2.2.1    [90m2026-07-07 [39m  [90m[1] [39m  [1m [35many (@2.2.1) [39m [22m
- progressr      1.0.0    [90m2026-07-04 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
- R6             2.6.1    [90m2025-02-15 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
- ragg           1.5.2    [90m2026-03-23 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
- RColorBrewer   1.1-3    [90m2022-04-03 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
- Rcpp           1.1.2    [90m2026-07-05 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
- reactable      0.4.5    [90m2025-12-01 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
- reactR         0.6.1    [90m2024-09-14 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
- rlang          1.3.0    [90m2026-07-05 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
- rmarkdown      2.31     [90m2026-03-26 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
- S7             0.2.2    [90m2026-04-22 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
- sass           0.4.10   [90m2025-04-11 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
- scales         1.4.0    [90m2025-04-24 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
- sessioninfo    1.2.4    [90m2026-06-04 [39m  [90m[1] [39m  [1m [35many (@1.2.4) [39m [22m
- SeuratObject   5.4.0    [90m2026-04-11 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
- sp             2.2-3    [90m2026-07-19 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
- spam           2.11-4   [90m2026-05-29 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
- survey         4.5      [90m2026-02-24 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
- survival       3.8-6    [90m2026-01-16 [39m  [90m[3] [39m  [90mCRAN (R 4.6.1) [39m
- systemfonts    1.3.2    [90m2026-03-05 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
- textshaping    1.0.5    [90m2026-03-06 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
- tibble         3.3.1    [90m2026-01-11 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
- tidyselect     1.2.1    [90m2024-03-11 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
- vctrs          0.7.3    [90m2026-04-11 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
- viridisLite    0.4.3    [90m2026-02-04 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
- withr          3.0.3    [90m2026-06-19 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
- xfun           0.60     [90m2026-07-09 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
- yaml           2.3.12   [90m2025-12-10 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
+─ Packages ───────────────────────────────────────────────────────────────────
+ package      * version date (UTC) lib source
+ bnlearn        5.2.1   2026-07-17 [1] RSPM
+ citcdf       * 1.1.0   2026-08-19 [1] local
+ cli            3.6.6   2026-04-09 [1] RSPM
+ codetools      0.2-20  2024-03-31 [3] CRAN (R 4.6.1)
+ DBI            1.3.0   2026-02-25 [1] RSPM
+ digest         0.6.39  2025-11-19 [1] RSPM
+ dotCall64      1.2     2024-10-04 [1] RSPM
+ dplyr          1.2.1   2026-04-03 [1] RSPM
+ evaluate       1.0.5   2025-08-27 [1] RSPM
+ farver         2.1.2   2024-05-13 [1] RSPM
+ fastmap        1.2.0   2024-05-15 [1] RSPM
+ future         1.75.0  2026-07-20 [1] RSPM
+ future.apply   1.20.2  2026-02-20 [1] RSPM
+ generics       0.1.4   2025-05-09 [1] RSPM
+ ggplot2        4.0.3   2026-04-22 [1] RSPM
+ globals        0.19.1  2026-03-13 [1] RSPM
+ glue           1.8.1   2026-04-17 [1] RSPM
+ gtable         0.3.6   2024-10-25 [1] RSPM
+ htmltools      0.5.9   2025-12-04 [1] RSPM
+ htmlwidgets    1.6.4   2023-12-06 [1] RSPM
+ jsonlite       2.0.0   2025-03-27 [1] RSPM
+ knitr          1.51    2025-12-20 [1] RSPM
+ labeling       0.4.3   2023-08-29 [1] RSPM
+ lattice        0.22-9  2026-02-09 [3] CRAN (R 4.6.1)
+ lifecycle      1.0.5   2026-01-08 [1] RSPM
+ listenv        1.0.0   2026-06-22 [1] RSPM
+ magrittr       2.0.5   2026-04-04 [1] RSPM
+ Matrix         1.7-5   2026-03-21 [3] CRAN (R 4.6.1)
+ mitools        2.4     2019-04-26 [1] RSPM
+ otel           0.2.0   2025-08-29 [1] RSPM
+ parallelly     1.48.0  2026-06-29 [1] RSPM
+ patchwork      1.3.2   2025-08-25 [1] RSPM
+ pbapply        1.7-4   2025-07-20 [1] RSPM
+ pillar         1.11.1  2025-09-17 [1] RSPM
+ pkgconfig      2.0.3   2019-09-22 [1] RSPM
+ progressr      1.0.0   2026-07-04 [1] RSPM
+ R6             2.6.1   2025-02-15 [1] RSPM
+ RColorBrewer   1.1-3   2022-04-03 [1] RSPM
+ Rcpp           1.1.2   2026-07-05 [1] RSPM
+ reactable      0.4.5   2025-12-01 [1] RSPM
+ reactR         0.6.1   2024-09-14 [1] RSPM
+ rlang          1.3.0   2026-07-05 [1] RSPM
+ rmarkdown      2.31    2026-03-26 [1] RSPM
+ S7             0.2.2   2026-04-22 [1] RSPM
+ scales         1.4.0   2025-04-24 [1] RSPM
+ sessioninfo    1.2.4   2026-06-04 [1] any (@1.2.4)
+ SeuratObject   5.4.0   2026-04-11 [1] RSPM
+ sp             2.2-3   2026-07-19 [1] RSPM
+ spam           2.11-4  2026-05-29 [1] RSPM
+ survey         4.5     2026-02-24 [1] RSPM
+ survival       3.8-6   2026-01-16 [3] CRAN (R 4.6.1)
+ tibble         3.3.1   2026-01-11 [1] RSPM
+ tidyselect     1.2.1   2024-03-11 [1] RSPM
+ vctrs          0.7.3   2026-04-11 [1] RSPM
+ viridisLite    0.4.3   2026-02-04 [1] RSPM
+ withr          3.0.3   2026-06-19 [1] RSPM
+ xfun           0.60    2026-07-09 [1] RSPM
+ yaml           2.3.12  2025-12-10 [1] RSPM
 
- [90m [1] /home/runner/work/_temp/Library [39m
- [90m [2] /opt/R/4.6.1/lib/R/site-library [39m
- [90m [3] /opt/R/4.6.1/lib/R/library [39m
-  [41m [37m* [39m [49m ── Packages attached to the search path.
+ [1] /home/runner/work/_temp/Library
+ [2] /opt/R/4.6.1/lib/R/site-library
+ [3] /opt/R/4.6.1/lib/R/library
+ * ── Packages attached to the search path.
 
- [1m [36m────────────────────────────────────────────────────────────────────────────── [39m [22m</code></pre>
+──────────────────────────────────────────────────────────────────────────────</code></pre>
 </div>
-<div class="section level2">
-<h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+</div>
+</section><section class="section level2" data-number="6"><h2 data-number="6" id="references">
+<span class="header-section-number">6</span> References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<div id="refs" class="references csl-bib-body hanging-indent">
-<div id="ref-berrett2020" class="csl-entry">
-Berrett, Thomas B., Yi Wang, Rina Foygel Barber, and Richard J.
-Samworth. 2020. <span>“The Conditional Permutation Test for Independence
-While Controlling for Confounders.”</span> <em>Journal of the Royal
-Statistical Society Series B: Statistical Methodology</em> 82 (1):
-175–97. <a href="https://doi.org/10.1111/rssb.12340" class="external-link">https://doi.org/10.1111/rssb.12340</a>.
+<div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-berrett2020" class="csl-entry" role="listitem">
+Berrett, TB, Y Wang, RF Barber, and RJ Samworth. 2020. <span>“The Conditional Permutation Test for Independence While Controlling for Confounders.”</span> <em>Journal of the Royal Statistical Society Series B: Statistical Methodology</em> 82 (1): 175–97. <a href="https://doi.org/10.1111/rssb.12340" class="external-link">https://doi.org/10.1111/rssb.12340</a>.
 </div>
-<div id="ref-gauthier2026" class="csl-entry">
-Gauthier, Marine, Denis Agniel, Sara Fallet, Kalidou Ba, Rodolphe
-Thiébaut, and Boris P. Hejblum. 2026. <span>“Distribution-Free Complex
-Hypothesis Testing for Single-Cell <span>RNA</span>-Seq Differential
-Expression Analysis.”</span> <em>bioRxiv</em>, 445165. <a href="https://doi.org/10.1101/2021.05.21.445165" class="external-link">https://doi.org/10.1101/2021.05.21.445165</a>.
+<div id="ref-gauthier2026" class="csl-entry" role="listitem">
+Gauthier, M, D Agniel, S Fallet, K Ba, R Thiébaut, and BP Hejblum. 2026. <span>“Distribution-Free Complex Hypothesis Testing for Single-Cell <span>RNA</span>-Seq Differential Expression Analysis.”</span> <em>bioRxiv</em>, 445165. <a href="https://doi.org/10.1101/2021.05.21.445165" class="external-link">https://doi.org/10.1101/2021.05.21.445165</a>.
 </div>
-<div id="ref-mardia1979" class="csl-entry">
-Mardia, Kanti V., John T. Kent, and John M. Bibby. 1979.
-<em>Multivariate Analysis</em>. Academic Press.
+<div id="ref-mardia1979" class="csl-entry" role="listitem">
+Mardia, KV, JT Kent, and JM Bibby. 1979. <em>Multivariate Analysis</em>. Academic Press.
 </div>
-<div id="ref-satija2023" class="csl-entry">
-Satija, Rahul, Paul Hoffman, Yuhan Hao, et al. 2023. <em>SeuratObject:
-Data Structures for Single Cell Data</em>. <a href="https://CRAN.R-project.org/package=SeuratObject" class="external-link">https://CRAN.R-project.org/package=SeuratObject</a>.
+<div id="ref-satija2023" class="csl-entry" role="listitem">
+Satija, R, P Hoffman, Y Hao, et al. 2023. <em>SeuratObject: Data Structures for Single Cell Data</em>. <a href="https://CRAN.R-project.org/package=SeuratObject" class="external-link">https://CRAN.R-project.org/package=SeuratObject</a>.
 </div>
-<div id="ref-scutari2010" class="csl-entry">
-Scutari, Marco. 2010. <span>“Learning <span>B</span>ayesian Networks
-with the <span class="nocase">bnlearn</span> <span>R</span>
-Package.”</span> <em>Journal of Statistical Software</em> 35 (3): 1–22.
-<a href="https://doi.org/10.18637/jss.v035.i03" class="external-link">https://doi.org/10.18637/jss.v035.i03</a>.
+<div id="ref-scutari2010" class="csl-entry" role="listitem">
+Scutari, M. 2010. <span>“Learning <span>B</span>ayesian Networks with the <span class="nocase">bnlearn</span> <span>R</span> Package.”</span> <em>Journal of Statistical Software</em> 35 (3): 1–22. <a href="https://doi.org/10.18637/jss.v035.i03" class="external-link">https://doi.org/10.18637/jss.v035.i03</a>.
 </div>
 </div>
-</div>
-  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
+</section><script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'light-border',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config);
+    }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script></main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
 </div>
-
 
 
     <footer><div class="pkgdown-footer-left">

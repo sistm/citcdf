@@ -1,8 +1,8 @@
-# User guide to the \`citcdf\` R package
+# User guide to the citcdf R package
 
 ![](../reference/figures/logo.svg)
 
-## Overview of `citcdf`
+## 1 Overview of `citcdf`
 
 `citcdf` performs **c**onditional **i**ndependence **t**esting through
 conditional **c**umulative **d**istribution **f**unctions ([Gauthier et
@@ -26,7 +26,7 @@ No distributional assumption is made on $`Y`$, and in that sense
 zero-inflation, multi-modality and skewness that typical occur in
 single-cell RNA-seq data.
 
-### Main user functions
+### 1.1 Main user functions
 
 Three main functions build form the `citcdf`package leverage this test
 statistic:
@@ -39,7 +39,7 @@ statistic:
   many outcomes at once (with a Benjamini-Hochberg adjustment), either
   asymptotic or permutation test
 
-### Inputs
+### 1.2 Inputs
 
 `Y` is a numeric vector. `X` and `Z` are data frames, one column per
 variable, numeric or factor. Gene set analysis is available through
@@ -52,9 +52,9 @@ library(citcdf)
 set.seed(20260817)
 ```
 
-## Testing a single hypothesis
+## 2 Testing a single hypothesis
 
-### The data
+### 2.1 The data
 
 We use the `marks`dataset, from the `bnlearn` package ([Scutari
 2010](#ref-scutari2010)). It records the exam marks of 88 students in
@@ -75,7 +75,7 @@ str(marks)
 #>  $ STAT: num  81 81 81 68 63 73 68 56 70 45 ...
 ```
 
-### Asymptotic test with `cit_asymp()`
+### 2.2 Asymptotic test with `cit_asymp()`
 
 $`Y`$ is the statistics mark, $`X`$ the mechanics mark. Without
 conditioning:
@@ -121,7 +121,7 @@ bnlearn::ci.test("STAT", "MECH", "ALG", data = marks, test = "cor")$p.value
 #> [1] 0.7060518
 ```
 
-### Permutation test with `cit_perm()`
+### 2.3 Permutation test with `cit_perm()`
 
 The asymptotic null distribution requires a reasonable sample size. For
 small `n`,
@@ -157,7 +157,7 @@ computes design permutations conditionally on $`Z`$:
 
 cit_perm(Y, X, Z = Z, n_perm = 1000)
 #>   score  raw_pval test_statistic
-#> 1   498 0.4985015     0.01850231
+#> 1   523 0.5234765     0.01850231
 ```
 
 Both tests agree on both hypotheses.
@@ -167,7 +167,7 @@ Both tests agree on both hypotheses.
 only accepts a single covariate column when `Z` is not `NULL`. Multiple
 `X` with `Z` present require the asymptotic test.
 
-### Visualization
+### 2.4 Visualization
 
 [`plot_compare_ccdf()`](https://sistm.github.io/citcdf/reference/plot_compare_ccdf.md)
 displays what the statistic compares: the CCDF of $`Y`$ given $`X`$
@@ -181,14 +181,14 @@ plot_compare_ccdf(Y = data.frame(STAT = Y), X = X)
 
 ![](citcdf-userguide_files/figure-html/ccdf-plot-1.png)
 
-## Testing many outcomes with `cit_multi()`
+## 3 Testing many outcomes with `cit_multi()`
 
 [`cit_multi()`](https://sistm.github.io/citcdf/reference/cit_multi.md)
 loops the test over the columns of a matrix `M` of `n` observations by
 `r` outcomes, and returns Benjamini-Hochberg adjusted p-values
 (alongside the raw ones).
 
-### scRNA-seq data
+### 3.1 scRNA-seq data
 
 This vignette uses `pbmc_small`, the PBMC scRNA-seq excerpt distributed
 with the `SeuratObject` package ([Satija et al. 2023](#ref-satija2023))
@@ -225,7 +225,7 @@ Library size is therefore a candidate confounder. An unadjusted
 comparison will identify significant genes that are only associated with
 sequencing depth.
 
-### Asymptotic analysis
+### 3.2 Asymptotic analysis
 
 ``` r
 
@@ -273,7 +273,7 @@ plot(res_adj)
 
 ![](citcdf-userguide_files/figure-html/pbmc-plot-1.png)
 
-### Visualization
+### 3.3 Visualization
 
 [`plot_compare_ccdf()`](https://sistm.github.io/citcdf/reference/plot_compare_ccdf.md)
 details one gene. Panel A contrasts the CCDF given the cell population
@@ -289,7 +289,7 @@ plot_compare_ccdf(Y = M[, top_gene, drop = FALSE], X = X_pop, Z = Z_lib,
 
 ![](citcdf-userguide_files/figure-html/pbmc-ccdf-1.png)
 
-### Permutation analysis
+### 3.4 Permutation analysis
 
 With 80 cells, the asymptotic approximation should work (low end of its
 range). `test = "permutation"` confirms a few genes. `adaptive = TRUE`
@@ -324,7 +324,7 @@ The orderings nearly coincide. Individual p-values, as expected, differ:
 the permutation ones carry Monte Carlo noise and cannot fall below
 `1 / (total permutations + 1)`.
 
-## Practical considerations
+## 4 Practical considerations
 
 \[ \] **Threshold grid:** `space_y = FALSE` places a threshold at every
 distinct value of `Y`, while `space_y = TRUE` uses a regular grid of
@@ -361,10 +361,10 @@ test is less flexible accepting at most one covariate.
 **Preprocessing.** Normalisation remains the user’s choice and
 responsibility.
 
-## Session information
+## 5 Session information
 
-     [1m [36m─ Session info ─────────────────────────────────────────────────────────────── [39m [22m
-      [3m [90msetting  [39m [23m  [3m [90mvalue [39m [23m
+    ─ Session info ───────────────────────────────────────────────────────────────
+     setting  value
      version  R version 4.6.1 (2026-06-24)
      os       Ubuntu 24.04.4 LTS
      system   x86_64, linux-gnu
@@ -375,107 +375,95 @@ responsibility.
      tz       UTC
      date     2026-08-19
      pandoc   3.8.3 @ /opt/hostedtoolcache/pandoc/3.8.3/x64/ (via rmarkdown)
-     quarto   NA
+     quarto   1.10.18 @ /usr/local/bin/quarto
 
-     [1m [36m─ Packages ─────────────────────────────────────────────────────────────────── [39m [22m
-      [3m [90mpackage      [39m [23m  [3m [90m* [39m [23m  [3m [90mversion [39m [23m  [3m [90mdate (UTC) [39m [23m  [3m [90mlib [39m [23m  [3m [90msource [39m [23m
-     bnlearn        5.2.1    [90m2026-07-17 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
-     bslib          0.12.0   [90m2026-08-04 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
-     cachem         1.1.0    [90m2024-05-16 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
-     citcdf       * 1.1.0    [90m2026-08-19 [39m  [90m[1] [39m  [1m [35mlocal [39m [22m
-     cli            3.6.6    [90m2026-04-09 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
-     codetools      0.2-20   [90m2024-03-31 [39m  [90m[3] [39m  [90mCRAN (R 4.6.1) [39m
-     DBI            1.3.0    [90m2026-02-25 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
-     desc           1.4.3    [90m2023-12-10 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
-     digest         0.6.39   [90m2025-11-19 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
-     dotCall64      1.2      [90m2024-10-04 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
-     dplyr          1.2.1    [90m2026-04-03 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
-     evaluate       1.0.5    [90m2025-08-27 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
-     farver         2.1.2    [90m2024-05-13 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
-     fastmap        1.2.0    [90m2024-05-15 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
-     fs             2.1.0    [90m2026-04-18 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
-     future         1.75.0   [90m2026-07-20 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
-     future.apply   1.20.2   [90m2026-02-20 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
-     generics       0.1.4    [90m2025-05-09 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
-     ggplot2        4.0.3    [90m2026-04-22 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
-     globals        0.19.1   [90m2026-03-13 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
-     glue           1.8.1    [90m2026-04-17 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
-     gtable         0.3.6    [90m2024-10-25 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
-     htmltools      0.5.9    [90m2025-12-04 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
-     htmlwidgets    1.6.4    [90m2023-12-06 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
-     jquerylib      0.1.4    [90m2021-04-26 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
-     jsonlite       2.0.0    [90m2025-03-27 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
-     knitr          1.51     [90m2025-12-20 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
-     labeling       0.4.3    [90m2023-08-29 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
-     lattice        0.22-9   [90m2026-02-09 [39m  [90m[3] [39m  [90mCRAN (R 4.6.1) [39m
-     lifecycle      1.0.5    [90m2026-01-08 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
-     listenv        1.0.0    [90m2026-06-22 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
-     magrittr       2.0.5    [90m2026-04-04 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
-     Matrix         1.7-5    [90m2026-03-21 [39m  [90m[3] [39m  [90mCRAN (R 4.6.1) [39m
-     mitools        2.4      [90m2019-04-26 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
-     otel           0.2.0    [90m2025-08-29 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
-     parallelly     1.48.0   [90m2026-06-29 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
-     patchwork      1.3.2    [90m2025-08-25 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
-     pbapply        1.7-4    [90m2025-07-20 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
-     pillar         1.11.1   [90m2025-09-17 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
-     pkgconfig      2.0.3    [90m2019-09-22 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
-     pkgdown        2.2.1    [90m2026-07-07 [39m  [90m[1] [39m  [1m [35many (@2.2.1) [39m [22m
-     progressr      1.0.0    [90m2026-07-04 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
-     R6             2.6.1    [90m2025-02-15 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
-     ragg           1.5.2    [90m2026-03-23 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
-     RColorBrewer   1.1-3    [90m2022-04-03 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
-     Rcpp           1.1.2    [90m2026-07-05 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
-     reactable      0.4.5    [90m2025-12-01 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
-     reactR         0.6.1    [90m2024-09-14 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
-     rlang          1.3.0    [90m2026-07-05 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
-     rmarkdown      2.31     [90m2026-03-26 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
-     S7             0.2.2    [90m2026-04-22 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
-     sass           0.4.10   [90m2025-04-11 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
-     scales         1.4.0    [90m2025-04-24 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
-     sessioninfo    1.2.4    [90m2026-06-04 [39m  [90m[1] [39m  [1m [35many (@1.2.4) [39m [22m
-     SeuratObject   5.4.0    [90m2026-04-11 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
-     sp             2.2-3    [90m2026-07-19 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
-     spam           2.11-4   [90m2026-05-29 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
-     survey         4.5      [90m2026-02-24 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
-     survival       3.8-6    [90m2026-01-16 [39m  [90m[3] [39m  [90mCRAN (R 4.6.1) [39m
-     systemfonts    1.3.2    [90m2026-03-05 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
-     textshaping    1.0.5    [90m2026-03-06 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
-     tibble         3.3.1    [90m2026-01-11 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
-     tidyselect     1.2.1    [90m2024-03-11 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
-     vctrs          0.7.3    [90m2026-04-11 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
-     viridisLite    0.4.3    [90m2026-02-04 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
-     withr          3.0.3    [90m2026-06-19 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
-     xfun           0.60     [90m2026-07-09 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
-     yaml           2.3.12   [90m2025-12-10 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
+    ─ Packages ───────────────────────────────────────────────────────────────────
+     package      * version date (UTC) lib source
+     bnlearn        5.2.1   2026-07-17 [1] RSPM
+     citcdf       * 1.1.0   2026-08-19 [1] local
+     cli            3.6.6   2026-04-09 [1] RSPM
+     codetools      0.2-20  2024-03-31 [3] CRAN (R 4.6.1)
+     DBI            1.3.0   2026-02-25 [1] RSPM
+     digest         0.6.39  2025-11-19 [1] RSPM
+     dotCall64      1.2     2024-10-04 [1] RSPM
+     dplyr          1.2.1   2026-04-03 [1] RSPM
+     evaluate       1.0.5   2025-08-27 [1] RSPM
+     farver         2.1.2   2024-05-13 [1] RSPM
+     fastmap        1.2.0   2024-05-15 [1] RSPM
+     future         1.75.0  2026-07-20 [1] RSPM
+     future.apply   1.20.2  2026-02-20 [1] RSPM
+     generics       0.1.4   2025-05-09 [1] RSPM
+     ggplot2        4.0.3   2026-04-22 [1] RSPM
+     globals        0.19.1  2026-03-13 [1] RSPM
+     glue           1.8.1   2026-04-17 [1] RSPM
+     gtable         0.3.6   2024-10-25 [1] RSPM
+     htmltools      0.5.9   2025-12-04 [1] RSPM
+     htmlwidgets    1.6.4   2023-12-06 [1] RSPM
+     jsonlite       2.0.0   2025-03-27 [1] RSPM
+     knitr          1.51    2025-12-20 [1] RSPM
+     labeling       0.4.3   2023-08-29 [1] RSPM
+     lattice        0.22-9  2026-02-09 [3] CRAN (R 4.6.1)
+     lifecycle      1.0.5   2026-01-08 [1] RSPM
+     listenv        1.0.0   2026-06-22 [1] RSPM
+     magrittr       2.0.5   2026-04-04 [1] RSPM
+     Matrix         1.7-5   2026-03-21 [3] CRAN (R 4.6.1)
+     mitools        2.4     2019-04-26 [1] RSPM
+     otel           0.2.0   2025-08-29 [1] RSPM
+     parallelly     1.48.0  2026-06-29 [1] RSPM
+     patchwork      1.3.2   2025-08-25 [1] RSPM
+     pbapply        1.7-4   2025-07-20 [1] RSPM
+     pillar         1.11.1  2025-09-17 [1] RSPM
+     pkgconfig      2.0.3   2019-09-22 [1] RSPM
+     progressr      1.0.0   2026-07-04 [1] RSPM
+     R6             2.6.1   2025-02-15 [1] RSPM
+     RColorBrewer   1.1-3   2022-04-03 [1] RSPM
+     Rcpp           1.1.2   2026-07-05 [1] RSPM
+     reactable      0.4.5   2025-12-01 [1] RSPM
+     reactR         0.6.1   2024-09-14 [1] RSPM
+     rlang          1.3.0   2026-07-05 [1] RSPM
+     rmarkdown      2.31    2026-03-26 [1] RSPM
+     S7             0.2.2   2026-04-22 [1] RSPM
+     scales         1.4.0   2025-04-24 [1] RSPM
+     sessioninfo    1.2.4   2026-06-04 [1] any (@1.2.4)
+     SeuratObject   5.4.0   2026-04-11 [1] RSPM
+     sp             2.2-3   2026-07-19 [1] RSPM
+     spam           2.11-4  2026-05-29 [1] RSPM
+     survey         4.5     2026-02-24 [1] RSPM
+     survival       3.8-6   2026-01-16 [3] CRAN (R 4.6.1)
+     tibble         3.3.1   2026-01-11 [1] RSPM
+     tidyselect     1.2.1   2024-03-11 [1] RSPM
+     vctrs          0.7.3   2026-04-11 [1] RSPM
+     viridisLite    0.4.3   2026-02-04 [1] RSPM
+     withr          3.0.3   2026-06-19 [1] RSPM
+     xfun           0.60    2026-07-09 [1] RSPM
+     yaml           2.3.12  2025-12-10 [1] RSPM
 
-     [90m [1] /home/runner/work/_temp/Library [39m
-     [90m [2] /opt/R/4.6.1/lib/R/site-library [39m
-     [90m [3] /opt/R/4.6.1/lib/R/library [39m
-      [41m [37m* [39m [49m ── Packages attached to the search path.
+     [1] /home/runner/work/_temp/Library
+     [2] /opt/R/4.6.1/lib/R/site-library
+     [3] /opt/R/4.6.1/lib/R/library
+     * ── Packages attached to the search path.
 
-     [1m [36m────────────────────────────────────────────────────────────────────────────── [39m [22m
+    ──────────────────────────────────────────────────────────────────────────────
 
-## References
+## 6 References
 
-Berrett, Thomas B., Yi Wang, Rina Foygel Barber, and Richard J.
-Samworth. 2020. “The Conditional Permutation Test for Independence While
-Controlling for Confounders.” *Journal of the Royal Statistical Society
-Series B: Statistical Methodology* 82 (1): 175–97.
-<https://doi.org/10.1111/rssb.12340>.
+Berrett, TB, Y Wang, RF Barber, and RJ Samworth. 2020. “The Conditional
+Permutation Test for Independence While Controlling for Confounders.”
+*Journal of the Royal Statistical Society Series B: Statistical
+Methodology* 82 (1): 175–97. <https://doi.org/10.1111/rssb.12340>.
 
-Gauthier, Marine, Denis Agniel, Sara Fallet, Kalidou Ba, Rodolphe
-Thiébaut, and Boris P. Hejblum. 2026. “Distribution-Free Complex
-Hypothesis Testing for Single-Cell RNA-Seq Differential Expression
-Analysis.” *bioRxiv*, 445165.
+Gauthier, M, D Agniel, S Fallet, K Ba, R Thiébaut, and BP Hejblum. 2026.
+“Distribution-Free Complex Hypothesis Testing for Single-Cell RNA-Seq
+Differential Expression Analysis.” *bioRxiv*, 445165.
 <https://doi.org/10.1101/2021.05.21.445165>.
 
-Mardia, Kanti V., John T. Kent, and John M. Bibby. 1979. *Multivariate
-Analysis*. Academic Press.
+Mardia, KV, JT Kent, and JM Bibby. 1979. *Multivariate Analysis*.
+Academic Press.
 
-Satija, Rahul, Paul Hoffman, Yuhan Hao, et al. 2023. *SeuratObject: Data
-Structures for Single Cell Data*.
+Satija, R, P Hoffman, Y Hao, et al. 2023. *SeuratObject: Data Structures
+for Single Cell Data*.
 <https://CRAN.R-project.org/package=SeuratObject>.
 
-Scutari, Marco. 2010. “Learning Bayesian Networks with the bnlearn R
+Scutari, M. 2010. “Learning Bayesian Networks with the bnlearn R
 Package.” *Journal of Statistical Software* 35 (3): 1–22.
 <https://doi.org/10.18637/jss.v035.i03>.
