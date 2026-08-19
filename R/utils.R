@@ -14,7 +14,9 @@
   if (!space_y) {
     return(sort(unique(Y)))
   }
-  from <- if (length(which(Y == 0)) == 0) min(Y) else min(Y[-which(Y == 0)])
+
+  nz <- Y[Y != 0]
+  from <- ifelse(length(nz) == 0L, min(Y), min(nz))
   seq(from = from, to = max(Y), length.out = number_y)
 }
 

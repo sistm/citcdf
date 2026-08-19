@@ -173,3 +173,50 @@ test_that("cit_perm() draws X_star itself when it is not supplied", {
   X2 <- data.frame(X1 = as.factor(rbinom(n, 1, 0.5)), X2 = rnorm(n))
   expect_no_error(cit_perm(Y, X2, n_perm = 20))
 })
+
+test_that("cit_gsa() survives NAs in M", {
+  set.seed(1)
+  n <- 60
+  X <- data.frame(X = as.factor(rbinom(n, 1, 0.5)))
+  M <- matrix(rnorm(n * 4), n, 4, dimnames = list(NULL, paste0("g", 1:4)))
+  M[3, 2] <- NA
+  geneset <- list(s1 = c("g1", "g2"), s2 = c("g3", "g4"))
+
+  # genesets are matched against the genes that survive the NA filter
+  expect_warning(res <- cit_gsa(M = M, X = X, geneset = geneset,
+    parallel = FALSE), "NA values")
+  expect_equal(nrow(res$pvals), 2L)
+  expect_true(all(is.finite(res$pvals$raw_pval)))
+
+  # a single surviving column must stay a matrix
+  M2 <- matrix(rnorm(n * 2), n, 2, dimnames = list(NULL, c("g1", "g2")))
+  M2[1, 2] <- NA
+  expect_warning(res2 <- cit_gsa(M = M2, X = X, geneset = list(s = "g1"),
+    parallel = FALSE), "NA values")
+  expect_equal(nrow(res2$pvals), 1L)
+})
+
+test_that("the y-grid handles an all-zero Y without losing its lower endpoint", {
+  set.seed(1)
+  n <- 60
+  X <- data.frame(X = as.factor(rbinom(n, 1, 0.5)))
+
+  # ccdf() tolerates a constant Y by design (see NEWS for 1.1.0); the tests
+  # do not, and keep refusing it
+  for (Y in list(rep(0, n), rep(3, n))) {
+    for (sy in c(FALSE, TRUE)) {
+      expect_no_error(ccdf(Y, X, space_y = sy))
+      expect_error(cit_asymp(Y, X, space_y = sy), "one single value")
+    }
+  }
+
+  # the grid is unchanged on data that is not degenerate
+  g <- citcdf:::.cit_y_grid
+  set.seed(2)
+  Ya <- c(rnorm(40), rep(0, 10))
+  Yb <- rnorm(50)
+  expect_identical(g(Ya, TRUE, 10),
+    seq(min(Ya[Ya != 0]), max(Ya), length.out = 10))
+  expect_identical(g(Yb, TRUE, 10), seq(min(Yb), max(Yb), length.out = 10))
+  expect_identical(g(Ya, FALSE, 10), sort(unique(Ya)))
+})

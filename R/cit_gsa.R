@@ -230,7 +230,6 @@ cit_gsa <- function(M,
   stopifnot(inherits(geneset, "GSA.genesets") | inherits(geneset, "BiocSet") | is.character(geneset) | is.list(geneset))
 
 
-  M_colnames <- colnames(M)
   sets_id <- ifelse(!is.null(names(geneset)), names(geneset), seq_along(geneset))
 
 
@@ -239,9 +238,10 @@ cit_gsa <- function(M,
       "\nCurrently they are ignored in the computations but ",
       "you should think carefully about where do those NA/NaN ",
       "come from...")
-    M <- M[, colSums(is.na(M)) == 0]
+    M <- M[, colSums(is.na(M)) == 0, drop = FALSE]
   }
 
+  M_colnames <- colnames(M)
   r <- ncol(M)
   n <- nrow(M)
   stopifnot(nrow(X) == n)
