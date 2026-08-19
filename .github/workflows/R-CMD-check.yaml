@@ -46,6 +46,10 @@ jobs:
         with:
           extra-packages: any::rcmdcheck any::BiocSet any::quarto
           needs: check
+          
+      - name: Install the package for the Quarto vignette's R session
+        run: R CMD INSTALL --preclean --no-multiarch .
+        shell: bash
 
       - uses: r-lib/actions/check-r-package@v2
         with:
