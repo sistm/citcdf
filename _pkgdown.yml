@@ -2,29 +2,36 @@ url: https://sistm.github.io/citcdf/
 
 template:
   bootstrap: 5
-  # dark syntax highlighting to match the dark page background
-  theme: arrow-dark
+  light-switch: true
+  theme: arrow-light
+  theme-dark: arrow-dark
   bslib:
-    # --- logo palette -------------------------------------------------
-    # #1A9DD9 cyan  -> gradient start (light end)
-    # #29265B navy  -> gradient end   (dark end)
-    # #E6007E pink  -> accent cell
-    # #FFED00 yellow-> accent cells
-    # ------------------------------------------------------------------
-    bg: "#1C1A3F"        # a shade deeper than the logo navy, so the hex pops
-    fg: "#E8E6F2"
-    primary: "#1A9DD9"   # links + navbar/sidebar hover
-    secondary: "#E6007E"
+    # ---- logo palette -------------------------------------------------
+    # #1A9DD9 cyan    gradient start (light end)
+    # #29265B navy    gradient end   (dark end)
+    # #2B4F85 mid     gradient midpoint, the only stop dark enough for
+    #                 body-size links on white
+    # #E6007E magenta / #FFED00 yellow   accent cells
+    # -------------------------------------------------------------------
 
-    navbar-dark-bg: "#29265B"   # navbar in the logo's dark gradient stop
+    # ---- light mode: the base theme ----
+    bg: "#FFFFFF"
+    fg: "#1C1A3F"
+    primary: "#2B4F85"          # 8.20:1 on white
+    secondary: "#E6007E"        # 4.50:1 on white, accents only
+    code-color: "#C1006A"       # darkened logo magenta, 5.54:1
+    navbar-light-bg: "#EDF1F7"
 
-    # inline code, matched to the arrow-dark block background
-    code-bg: "#221F4D"
-    code-color: "#FFED00"
-
-    # borders lift off the background (bslib's derived gray-300 is too dim)
-    border-color: "#3E3B6B"
-    table-border-color: "#3E3B6B"
+    # ---- dark mode: Bootstrap 5.3 colour-mode overlay ----
+    body-bg-dark: "#1C1A3F"
+    body-color-dark: "#D4D2E0"       # 11.11:1
+    body-secondary-bg-dark: "#221F4D"
+    body-tertiary-bg-dark: "#232047"
+    link-color-dark: "#1A9DD9"       # the logo cyan, 5.41:1 here
+    link-hover-color-dark: "#5FBCE6"
+    border-color-dark: "#3E3B6B"     # bslib's derived gray is too dim
+    code-color-dark: "#FF6FB5"       # lightened logo magenta, 5.98:1
+    navbar-dark-bg: "#29265B"        # the logo's dark gradient stop
 
     base_font: {google: "Source Sans Pro"}
     heading_font: {google: "Source Sans Pro"}
@@ -33,4 +40,3 @@ template:
 authors:
   Boris P Hejblum:
     href: https://borishejblum.science
-    

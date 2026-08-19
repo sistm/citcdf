@@ -1,0 +1,65 @@
+// ---------------------------------------------------------------------------
+// Dark-mode fixes for things Bootstrap's colour modes don't reach.
+// Palette matches _pkgdown.yml / man/figures/logo.svg.
+// ---------------------------------------------------------------------------
+
+$citcdf-surface-dark: #221F4D;   // raised surface (= $body-secondary-bg-dark)
+$citcdf-border-dark:  #3E3B6B;   // = $border-color-dark
+
+// Bootstrap 5.3 has no $code-bg-dark, so inline code needs setting by hand.
+[data-bs-theme="dark"] code {
+  background-color: $citcdf-surface-dark;
+}
+
+// --- reactable -------------------------------------------------------------
+// reactable ships its own stylesheet and knows nothing about colour modes.
+// It hard-codes a white container plus light-grey borders, and never sets a
+// text colour (cells inherit). Every hard-coded value below is overridden.
+// Selectors are prefixed with [data-bs-theme="dark"] so they outrank
+// reactable's own rules without needing !important.
+[data-bs-theme="dark"] .Reactable {
+
+  background-color: $citcdf-surface-dark;
+  color: var(--bs-body-color);
+
+  // borders: reactable uses #e6e6e6 / #f2f2f2 and rgba(0,0,0,.05)
+  .rt-table        { border-color: $citcdf-border-dark; }
+  .rt-th {
+    color: var(--bs-emphasis-color);
+    border-bottom-color: $citcdf-border-dark;
+    border-left-color: rgba(255, 255, 255, .08);
+  }
+  .rt-td {
+    border-left-color: rgba(255, 255, 255, .08);
+    border-top-color: $citcdf-border-dark;
+  }
+  .rt-th-group:after { background-color: $citcdf-border-dark; }
+  .rt-td-filter      { border-bottom-color: $citcdf-border-dark; }
+  .rt-pagination     { border-top-color: $citcdf-border-dark; }
+
+  // row shading: reactable's rgba(0,0,0,...) is invisible on a dark surface
+  .rt-tr-striped              { background-color: rgba(255, 255, 255, .04); }
+  .rt-tr-striped-sticky       { background-color: lighten($citcdf-surface-dark, 4%); }
+  .rt-tr-highlight:hover      { background-color: rgba(255, 255, 255, .07); }
+  .rt-tr-highlight-sticky:hover { background-color: lighten($citcdf-surface-dark, 7%); }
+
+  // form controls inside the widget (search, filters, page jump/size)
+  .rt-search,
+  .rt-filter,
+  .rt-page-jump,
+  .rt-page-size-select {
+    background-color: var(--bs-body-bg);
+    color: var(--bs-body-color);
+    border-color: $citcdf-border-dark;
+  }
+  .rt-search:focus,
+  .rt-filter:focus { border-color: var(--bs-primary); }
+
+  .rt-page-button:hover,
+  .rt-page-button:active { background-color: rgba(255, 255, 255, .08); }
+  .rt-page-button:disabled:hover,
+  .rt-page-button:disabled:focus { background-color: transparent; }
+
+  // the expander triangle is drawn with a near-black border
+  .rt-expander:after { border-top-color: rgba(255, 255, 255, .8); }
+}
