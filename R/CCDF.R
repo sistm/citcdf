@@ -128,12 +128,6 @@ ccdf <- function(Y, X, Z = NULL, method = c("OLS", "logistic"),
 
   if (is.null(Z)) {
     n_Y <- length(Y)
-    # temp_order <- sort(Y,index.return=TRUE)$ix
-    # y <- sort(unique(Y))
-    # y_sort <- sort(Y)
-    # x_sort <- X[temp_order]
-    # modelmat <- model.matrix(Y~X)
-
 
     colnames(X) <- paste0("X", seq_len(ncol(X)))
     modelmat <- model.matrix(~., data = X)
@@ -211,10 +205,6 @@ ccdf <- function(Y, X, Z = NULL, method = c("OLS", "logistic"),
     cdf <- list()
 
     for (i in seq_len(length(y) - 1)) {
-      # new_data <- data.frame(X[w],Z[w])
-      # names(new_data) <- c("X","Z")
-
-      # cdf[[i]] <- rep(sum(indi_Y)/n_Y, sum(w))
 
       Ylow <- Y <= y[i]
 

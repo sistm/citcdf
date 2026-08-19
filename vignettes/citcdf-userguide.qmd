@@ -28,6 +28,7 @@ has_bnlearn <- requireNamespace("bnlearn", quietly = TRUE)
 has_seurat <- requireNamespace("SeuratObject", quietly = TRUE) &&
   utils::packageVersion("SeuratObject") >= "5.0.0"
 has_sessioninfo <- requireNamespace("sessioninfo", quietly = TRUE)
+has_reactable <- requireNamespace("reactable", quietly = TRUE)
 ```
 
 ![](../man/figures/logo.svg){width=139px}
@@ -36,7 +37,7 @@ has_sessioninfo <- requireNamespace("sessioninfo", quietly = TRUE)
 
 `citcdf` performs **c**onditional **i**ndependence **t**esting through
 conditional **c**umulative **d**istribution **f**unctions
-[@gauthier2026]. It addresses the following null hypothesis: 
+[@gauthier2021]. It addresses the following null hypothesis: 
 $$H_0: Y \perp\!\!\!\perp X \mid Z$$ 
 
 by testing whether $F_{Y \mid X, Z}(y) = F_{Y \mid Z}(y)$. The associated test statistic is computed across a grid of thresholds $\omega_1 < \dots < \omega_p$ spanning $Y$, where the indicator $\mathbb{1}_{Y_i \le \omega_j}$ is
@@ -232,13 +233,20 @@ res_perm <- cit_multi(M, X = X_pop, Z = Z_lib, test = "permutation",
 res_perm$n_perm
 ```
 
-```{r pbmc-perm-compare, eval = has_seurat}
+```{r pbmc-perm-compare, eval = has_seurat && has_reactable, echo = has_seurat && has_reactable}
 order_asymp <- rownames(res_adj$pvals[order(res_adj$pvals$adj_pval),])
 reactable::reactable(data.frame(asymptotic = signif(res_adj$pvals[order_asymp, "raw_pval"], 3),
            permutation = signif(res_perm$pvals[order_asymp, "raw_pval"], 3),
            row.names = order_asymp),
            defaultPageSize=15
 )
+```
+
+```{r pbmc-perm-compare-noreactable, eval = has_seurat && !has_reactable, echo = has_seurat && !has_reactable}
+order_asymp <- rownames(res_adj$pvals[order(res_adj$pvals$adj_pval),])
+knitr::kable(data.frame(asymptotic = signif(res_adj$pvals[order_asymp, "raw_pval"], 3),
+           permutation = signif(res_perm$pvals[order_asymp, "raw_pval"], 3),
+           row.names = order_asymp)[1:15,])
 ```
 
 The orderings nearly coincide. Individual p-values, as expected, differ: the permutation ones carry Monte Carlo noise and cannot fall below
@@ -253,11 +261,11 @@ Defaults differ: `cit_asymp()` and `cit_perm()` use the exhaustive grid, `cit_mu
 `parallel = interactive()`. Calls above set `parallel = FALSE` for reproducible
 builds. Drop it in real analyses, and set `n_cpus`.
 
-**Multiplicity.** `cit_multi()` returns Benjamini-Hochberg adjusted p-values in `adj_pval` for FDR control. `cit_asymp()` and `cit_perm()` are single-hypothesis functions and do not need such multiple-testing adjustment.
+[ ] **Multiplicity.** `cit_multi()` returns Benjamini-Hochberg adjusted p-values in `adj_pval` for FDR control. `cit_asymp()` and `cit_perm()` are single-hypothesis functions and do not need such multiple-testing adjustment.
 
-**Design.** The asymptotic test accepts several variables of interest (`ncol(X) > 1`) and several covariates (`ncol(Z) > 1`). The permutation test is less flexible accepting at most one covariate.
+[ ] **Design.** The asymptotic test accepts several variables of interest (`ncol(X) > 1`) and several covariates (`ncol(Z) > 1`). The permutation test is less flexible accepting at most one covariate.
 
-**Preprocessing.** Normalization remains the user's choice and responsibility.
+[ ] **Preprocessing.** Normalization remains the user's choice and responsibility.
 
 # Session information
 

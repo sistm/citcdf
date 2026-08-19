@@ -46,7 +46,7 @@
 #'
 #' @param n_cpus an integer indicating the number of cores to be used for the
 #' computations. Default is
-#' \code{max(1L, paralleldetectCores(logical = FALSE) - 1L, na.rm = TRUE)}.
+#' \code{max(1L, parallel::detectCores(logical = FALSE) - 1L, na.rm = TRUE)}.
 #' If \code{n_cpus = 1}, then sequential computations are used without any
 #' parallelization.
 #'
@@ -370,8 +370,6 @@ cit_multi <- function(M,
           },
           cl = par_clust))
       }
-
-      # res <- as.vector(unlist(res))
 
       df <- data.frame(raw_pval = res$raw_pval,
         adj_pval = p.adjust(res$raw_pval, method = "BH"),

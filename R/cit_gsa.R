@@ -109,7 +109,7 @@
 #'
 #' @param n_cpus an integer indicating the number of cores to be used for the
 #' computations. Default is
-#' \code{max(1L, paralleldetectCores(logical = FALSE) - 1L, na.rm = TRUE)}. If
+#' \code{max(1L, parallel::detectCores(logical = FALSE) - 1L, na.rm = TRUE)}. If
 #' \code{n_cpus = 1}, then sequential computations are used without any
 #' parallelization.
 #'
