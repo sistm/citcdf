@@ -373,7 +373,7 @@ responsibility.
      collate  C.UTF-8
      ctype    C.UTF-8
      tz       UTC
-     date     2026-08-18
+     date     2026-08-19
      pandoc   3.8.3 @ /opt/hostedtoolcache/pandoc/3.8.3/x64/ (via rmarkdown)
      quarto   NA
 
@@ -382,7 +382,7 @@ responsibility.
      bnlearn        5.2.1    [90m2026-07-17 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
      bslib          0.12.0   [90m2026-08-04 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
      cachem         1.1.0    [90m2024-05-16 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
-     citcdf       * 1.1.0    [90m2026-08-18 [39m  [90m[1] [39m  [1m [35mlocal [39m [22m
+     citcdf       * 1.1.0    [90m2026-08-19 [39m  [90m[1] [39m  [1m [35mlocal [39m [22m
      cli            3.6.6    [90m2026-04-09 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
      codetools      0.2-20   [90m2024-03-31 [39m  [90m[3] [39m  [90mCRAN (R 4.6.1) [39m
      DBI            1.3.0    [90m2026-02-25 [39m  [90m[1] [39m  [1m [35mRSPM [39m [22m
