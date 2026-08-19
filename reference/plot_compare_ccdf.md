@@ -108,18 +108,13 @@ monotonicity guarantee, and become hard to interpret graphically. For
 this reason, we provide the option to discretize `X` and `Z` for
 graphical representation, in order to ease the interpretation.
 
-When `X` or `Z` is continuous it is quartile-binned, the bin labels use
-the "less than or equal" sign (U+2264). The classic
-[`pdf`](https://rdrr.io/r/grDevices/pdf.html) device cannot encode that
-character: it will emits a `"conversion failure ... mbcsToSbcs"` warning
-and substitutes a dot. On-screen devices,
-[`png()`](https://rdrr.io/r/grDevices/png.html) and
-[`svg()`](https://rdrr.io/r/grDevices/cairo.html) are unaffected. To
-export to PDF, use the cairo device (if available, check with
-(`capabilities("cairo")`):
-
-
-    ggsave("fig.pdf", p, device = cairo_pdf)
+When `X` or `Z` is continuous it is quartile-binned, and the bin labels
+show the interval each bin spans using a "less than or equal" sign. That
+sign is drawn through
+[`plotmath`](https://rdrr.io/r/grDevices/plotmath.html) rather than as a
+literal character, so it renders identically on every device (including
+the classic [`pdf`](https://rdrr.io/r/grDevices/pdf.html) device).
+workaround is needed.
 
 ## A note on when `X` and `Z` are both factors
 
@@ -142,42 +137,37 @@ Xc <- data.frame(X = rnorm(n))
 Zf <- data.frame(Z = as.factor(rbinom(n, size = 1, prob = 0.5)))
 Zc <- data.frame(Z = rnorm(n))
 
-# 1. Z absent, X factor         -- CDF plus one CCDF step per level of X
+# Z absent, X factor         -- CDF plus one CCDF step per level of X
 plot_compare_ccdf(Y, Xf)
 
 
-# 2. Z absent, X continuous     -- CDF step plus CCDF points
+# Z absent, X continuous     -- CDF step plus CCDF points
 plot_compare_ccdf(Y, Xc)
 
 
-# 3. Z factor, X factor         -- panel B faceted by Z, steps
+# Z factor, X factor         -- panel B faceted by Z, steps
 plot_compare_ccdf(Y, Xf, Zf)
 
 
 # \donttest{
-# 4. Z factor, X continuous     -- panel B faceted by Z, points
+# Z factor, X continuous     -- panel B faceted by Z, points
 plot_compare_ccdf(Y, Xc, Zf)
 
 
-# 5. Z continuous, X factor     -- panel B not faceted
+# Z continuous, X factor     -- panel B not faceted
 plot_compare_ccdf(Y, Xf, Zc)
 
 
-# 6. Z continuous, X continuous -- a single panel, CDF plus both CCDFs
+# Z continuous, X continuous -- a single panel, CDF plus both CCDFs
 plot_compare_ccdf(Y, Xc, Zc)
 
 
-# a factor with more than two levels gets one colour per level
+# A factor with more than two levels gets one colour per level
 X3 <- data.frame(X = as.factor(sample(0:2, n, replace = TRUE)))
 plot_compare_ccdf(Y, X3, Zf)
 
 
-# the logistic method works for every case above
-plot_compare_ccdf(Y, Xf, Zf, method = "logistic")
-
-
-# force the interaction encoding even when X and Z are already factors
-# (removes the rare additive-model artifact noted above)
+# Forcing the interaction encoding even when X and Z are already factors
 plot_compare_ccdf(Y, Xf, Zf, discretize = TRUE)
 
 # }
