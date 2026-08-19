@@ -254,18 +254,18 @@ The orderings nearly coincide. Individual p-values, as expected, differ: the per
 
 # Practical considerations
 
-[ ] **Threshold grid:** `space_y = FALSE` places a threshold at every distinct value of `Y`, while `space_y = TRUE` uses a regular grid of `number_y` points instead, at a cost independent of `n`.  
+ - [ ] **Threshold grid:** `space_y = FALSE` places a threshold at every distinct value of `Y`, while `space_y = TRUE` uses a regular grid of `number_y` points instead, at a cost independent of `n`.  
 Defaults differ: `cit_asymp()` and `cit_perm()` use the exhaustive grid, `cit_multi()` uses `number_y = 10`. Expect small numerical differences between a single call and a `cit_multi()` run.
 
-[ ] **Parallelism.** `cit_multi()` parallelises over outcomes and defaults to
+ - [ ] **Parallelism.** `cit_multi()` parallelises over outcomes and defaults to
 `parallel = interactive()`. Calls above set `parallel = FALSE` for reproducible
 builds. Drop it in real analyses, and set `n_cpus`.
 
-[ ] **Multiplicity.** `cit_multi()` returns Benjamini-Hochberg adjusted p-values in `adj_pval` for FDR control. `cit_asymp()` and `cit_perm()` are single-hypothesis functions and do not need such multiple-testing adjustment.
+ - [ ] **Multiplicity.** `cit_multi()` returns Benjamini-Hochberg adjusted p-values in `adj_pval` for FDR control. `cit_asymp()` and `cit_perm()` are single-hypothesis functions and do not need such multiple-testing adjustment.
 
-[ ] **Design.** The asymptotic test accepts several variables of interest (`ncol(X) > 1`) and several covariates (`ncol(Z) > 1`). The permutation test is less flexible accepting at most one covariate.
+ - [ ] **Design.** The asymptotic test accepts several variables of interest (`ncol(X) > 1`) and several covariates (`ncol(Z) > 1`). The permutation test is less flexible accepting at most one covariate.
 
-[ ] **Preprocessing.** Normalization remains the user's choice and responsibility.
+ - [ ] **Preprocessing.** Normalization remains the user's choice and responsibility.
 
 # Session information
 
