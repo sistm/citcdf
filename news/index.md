@@ -2,6 +2,8 @@
 
 ## citcdf 1.1.0
 
+CRAN release: 2026-08-21
+
 - [`perm_cont()`](https://sistm.github.io/citcdf/reference/perm_cont.md):
 
   - now draws **without replacement**, so the conditional permutation

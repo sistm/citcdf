@@ -42,7 +42,7 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.1.0" id="citcdf-110">citcdf 1.1.0<a class="anchor" aria-label="anchor" href="#citcdf-110"></a></h2>
+<h2 class="pkg-version" data-toc-text="1.1.0" id="citcdf-110">citcdf 1.1.0<a class="anchor" aria-label="anchor" href="#citcdf-110"></a></h2><p class="text-muted">CRAN release: 2026-08-21</p>
 <ul><li>
 <p><code><a href="../reference/perm_cont.html">perm_cont()</a></code>:</p>
 <ul><li>now draws <strong>without replacement</strong>, so the conditional permutation <code>X_star</code> is a genuine permutation of <code>X</code> (rather than a re-sample) and preserves <code>X</code>’s empirical marginal distribution. Because this changes both the RNG stream and the null distribution, permutation p-values from <code><a href="../reference/cit_perm.html">cit_perm()</a></code>,<code><a href="../reference/cit_multi.html">cit_multi()</a></code> and <code><a href="../reference/cit_gsa.html">cit_gsa()</a></code> will differ from previous versions. Of note, previous scheme could be anti-conservative, and some limiting cases were badly handled.</li>
