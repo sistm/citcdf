@@ -1,7 +1,7 @@
 Package: citcdf
 Type: Package
 Title: Conditional Independence Testing with Cumulative Distribution Functions
-Version: 1.1.0
+Version: 1.1.1.9000
 Authors@R: c(person("Denis", "Agniel", role = c("aut"),
                     email = "denis.agniel@gmail.com"),
 	           person("Kalidou", "Ba", role = c("ctb"),
