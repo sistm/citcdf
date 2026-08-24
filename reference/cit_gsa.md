@@ -215,7 +215,7 @@ Z <- data.frame(Z = rnorm(n))
 cit_gsa(M = M, X = X, Z = Z, geneset = geneset,
   test = "asymptotic", parallel = FALSE)$pvals
 #>             raw_pval   adj_pval test_statistic
-#> responder 0.01583112 0.03166225       73.69177
+#> responder 0.01583113 0.03166225       73.69177
 #> null      0.88263643 0.88263643       61.42700
 
 # \donttest{

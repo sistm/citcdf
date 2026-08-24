@@ -7,20 +7,24 @@
 `citcdf` performs **c**onditional **i**ndependence **t**esting through
 conditional **c**umulative **d**istribution **f**unctions ([Gauthier et
 al. 2021](#ref-gauthier2021)). It addresses the following null
-hypothesis: H_0: Y \perp\\\\\\\perp X \mid Z
+hypothesis:
+``` math
+H_0: Y \perp\!\!\!\perp X \mid Z
+```
 
-by testing whether F\_{Y \mid X, Z}(y) = F\_{Y \mid Z}(y). The
+by testing whether $`F_{Y \mid X, Z}(y) = F_{Y \mid Z}(y)`$. The
 associated test statistic is computed across a grid of thresholds
-\omega_1 \< \dots \< \omega_p spanning Y, where the indicator
-\mathbb{1}\_{Y_i \le \omega_j} is regressed on both X and Z at each
-threshold j. Under H_0, the coefficients \beta_j carried by X are all
-null, and thus `citcdf` test statistic is the sum of squares whose
-asymptotic distribution is then a weighted mixture of \chi^2_1.
+$`\omega_1 < \dots < \omega_p`$ spanning $`Y`$, where the indicator
+$`\mathbb{1}_{Y_i \le \omega_j}`$ is regressed on both $`X`$ and $`Z`$
+at each threshold $`j`$. Under $`H_0`$, the coefficients $`\beta_j`$
+carried by $`X`$ are all null, and thus `citcdf` test statistic is the
+sum of squares whose asymptotic distribution is then a weighted mixture
+of $`\chi^2_1`$.
 
-No distributional assumption is made on Y, and in that sense `citcdf` is
-*distribution-free*. It is therefore robust to zero-inflation,
-multi-modality and skewness that typical occur in single-cell RNA-seq
-data.
+No distributional assumption is made on $`Y`$, and in that sense
+`citcdf` is *distribution-free*. It is therefore robust to
+zero-inflation, multi-modality and skewness that typical occur in
+single-cell RNA-seq data.
 
 ### 1.1 Main user functions
 
@@ -73,7 +77,8 @@ str(marks)
 
 ### 2.2 Asymptotic test with `cit_asymp()`
 
-Y is the statistics mark, X the mechanics mark. Without conditioning:
+$`Y`$ is the statistics mark, $`X`$ the mechanics mark. Without
+conditioning:
 
 ``` r
 
@@ -137,21 +142,22 @@ and `score` counts the permutations reaching the observed statistic: the
 `(score + 1) / (n_perm + 1)` (so `n_perm` also fixes the smallest
 reachable p-value, ie. `1/(n_perm +1)`.
 
-Permuting X freely would destroy its association with Z and test the
-wrong null.
+Permuting $`X`$ freely would destroy its association with $`Z`$ and test
+the wrong null.
 [`X_perm()`](https://sistm.github.io/citcdf/reference/X_perm.md)
-computes design permutations conditionally on Z:
+computes design permutations conditionally on $`Z`$:
 
-- Z discrete: permutes within each strata of Z
-- Z continuous: permutes by matching observations on the fitted value of
-  X given Z, following Berrett et al. ([2020](#ref-berrett2020)) (see
+- $`Z`$ discrete: permutes within each strata of $`Z`$
+- $`Z`$ continuous: permutes by matching observations on the fitted
+  value of $`X`$ given $`Z`$, following Berrett et al.
+  ([2020](#ref-berrett2020)) (see
   [`?perm_cont`](https://sistm.github.io/citcdf/reference/perm_cont.md))
 
 ``` r
 
 cit_perm(Y, X, Z = Z, n_perm = 1000)
 #>   score  raw_pval test_statistic
-#> 1   498 0.4985015     0.01850231
+#> 1   523 0.5234765     0.01850231
 ```
 
 Both tests agree on both hypotheses.
@@ -164,8 +170,9 @@ only accepts a single covariate column when `Z` is not `NULL`. Multiple
 ### 2.4 Visualization
 
 [`plot_compare_ccdf()`](https://sistm.github.io/citcdf/reference/plot_compare_ccdf.md)
-displays what the statistic compares: the CCDF of Y given X against its
-marginal counterpart. The further apart the 2 are, the larger D:
+displays what the statistic compares: the CCDF of $`Y`$ given $`X`$
+against its marginal counterpart. The further apart the 2 are, the
+larger $`D`$:
 
 ``` r
 
