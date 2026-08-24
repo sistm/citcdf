@@ -11,7 +11,8 @@
 <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
 <link rel="icon" sizes="any" href="../favicon.ico">
 <link rel="manifest" href="../site.webmanifest">
-<script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!-- katex math --><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script><script src="../katex-auto.js"></script><script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/Source_Sans_Pro-0.4.10/font.css" rel="stylesheet">
 <link href="../deps/Source_Code_Pro-0.4.10/font.css" rel="stylesheet">
@@ -32,7 +33,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">citcdf</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.1.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -76,7 +77,7 @@
       <p class="author">Boris Hejblum</p>
       <p class="date">2026-08-24</p>
 
-      <small class="dont-index">Source: <a href="https://github.com/sistm/citcdf/blob/v1.1.0/vignettes/citcdf-userguide.qmd" class="external-link"><code>vignettes/citcdf-userguide.qmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/sistm/citcdf/blob/main/vignettes/citcdf-userguide.qmd" class="external-link"><code>vignettes/citcdf-userguide.qmd</code></a></small>
       <div class="d-none name"><code></code></div>
     </div>
 
@@ -90,9 +91,9 @@
 <span class="header-section-number">1</span> Overview of <code>citcdf</code>
 <a class="anchor" aria-label="anchor" href="#overview-of-citcdf"></a>
 </h2>
-<p><code>citcdf</code> performs <strong>c</strong>onditional <strong>i</strong>ndependence <strong>t</strong>esting through conditional <strong>c</strong>umulative <strong>d</strong>istribution <strong>f</strong>unctions <span class="citation" data-cites="gauthier2021">(<a href="#ref-gauthier2021" role="doc-biblioref">Gauthier et al. 2021</a>)</span>. It addresses the following null hypothesis: <math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>H</mi><mn>0</mn></msub><mo>:</mo><mi>Y</mi><mo>⟂</mo><mspace width="-0.167em"></mspace><mspace width="-0.167em"></mspace><mspace width="-0.167em"></mspace><mo>⟂</mo><mi>X</mi><mo>∣</mo><mi>Z</mi></mrow><annotation encoding="application/x-tex">H_0: Y \perp\!\!\!\perp X \mid Z</annotation></semantics></math></p>
-<p>by testing whether <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>F</mi><mrow><mi>Y</mi><mo>∣</mo><mi>X</mi><mo>,</mo><mi>Z</mi></mrow></msub><mo stretchy="false" form="prefix">(</mo><mi>y</mi><mo stretchy="false" form="postfix">)</mo><mo>=</mo><msub><mi>F</mi><mrow><mi>Y</mi><mo>∣</mo><mi>Z</mi></mrow></msub><mo stretchy="false" form="prefix">(</mo><mi>y</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">F_{Y \mid X, Z}(y) = F_{Y \mid Z}(y)</annotation></semantics></math>. The associated test statistic is computed across a grid of thresholds <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ω</mi><mn>1</mn></msub><mo>&lt;</mo><mi>…</mi><mo>&lt;</mo><msub><mi>ω</mi><mi>p</mi></msub></mrow><annotation encoding="application/x-tex">\omega_1 &lt; \dots &lt; \omega_p</annotation></semantics></math> spanning <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Y</mi><annotation encoding="application/x-tex">Y</annotation></semantics></math>, where the indicator <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mn mathvariant="double-struck">𝟙</mn><mrow><msub><mi>Y</mi><mi>i</mi></msub><mo>≤</mo><msub><mi>ω</mi><mi>j</mi></msub></mrow></msub><annotation encoding="application/x-tex">\mathbb{1}_{Y_i \le \omega_j}</annotation></semantics></math> is regressed on both <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>X</mi><annotation encoding="application/x-tex">X</annotation></semantics></math> and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Z</mi><annotation encoding="application/x-tex">Z</annotation></semantics></math> at each threshold <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>j</mi><annotation encoding="application/x-tex">j</annotation></semantics></math>. Under <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>H</mi><mn>0</mn></msub><annotation encoding="application/x-tex">H_0</annotation></semantics></math>, the coefficients <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>β</mi><mi>j</mi></msub><annotation encoding="application/x-tex">\beta_j</annotation></semantics></math> carried by <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>X</mi><annotation encoding="application/x-tex">X</annotation></semantics></math> are all null, and thus <code>citcdf</code> test statistic is the sum of squares whose asymptotic distribution is then a weighted mixture of <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>χ</mi><mn>1</mn><mn>2</mn></msubsup><annotation encoding="application/x-tex">\chi^2_1</annotation></semantics></math>.</p>
-<p>No distributional assumption is made on <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Y</mi><annotation encoding="application/x-tex">Y</annotation></semantics></math>, and in that sense <code>citcdf</code> is <em>distribution-free</em>. It is therefore robust to zero-inflation, multi-modality and skewness that typical occur in single-cell RNA-seq data.</p>
+<p><code>citcdf</code> performs <strong>c</strong>onditional <strong>i</strong>ndependence <strong>t</strong>esting through conditional <strong>c</strong>umulative <strong>d</strong>istribution <strong>f</strong>unctions <span class="citation" data-cites="gauthier2021">(<a href="#ref-gauthier2021" role="doc-biblioref">Gauthier et al. 2021</a>)</span>. It addresses the following null hypothesis: <span class="math display">H_0: Y \perp\!\!\!\perp X \mid Z</span></p>
+<p>by testing whether <span class="math inline">F_{Y \mid X, Z}(y) = F_{Y \mid Z}(y)</span>. The associated test statistic is computed across a grid of thresholds <span class="math inline">\omega_1 &lt; \dots &lt; \omega_p</span> spanning <span class="math inline">Y</span>, where the indicator <span class="math inline">\mathbb{1}_{Y_i \le \omega_j}</span> is regressed on both <span class="math inline">X</span> and <span class="math inline">Z</span> at each threshold <span class="math inline">j</span>. Under <span class="math inline">H_0</span>, the coefficients <span class="math inline">\beta_j</span> carried by <span class="math inline">X</span> are all null, and thus <code>citcdf</code> test statistic is the sum of squares whose asymptotic distribution is then a weighted mixture of <span class="math inline">\chi^2_1</span>.</p>
+<p>No distributional assumption is made on <span class="math inline">Y</span>, and in that sense <code>citcdf</code> is <em>distribution-free</em>. It is therefore robust to zero-inflation, multi-modality and skewness that typical occur in single-cell RNA-seq data.</p>
 <section class="level2" data-number="1.1"><h3 data-number="1.1" id="main-user-functions">
 <span class="header-section-number">1.1</span> Main user functions<a class="anchor" aria-label="anchor" href="#main-user-functions"></a>
 </h3>
@@ -135,7 +136,7 @@
 <span class="header-section-number">2.2</span> Asymptotic test with <code>cit_asymp()</code>
 <a class="anchor" aria-label="anchor" href="#asymptotic-test-with-cit_asymp"></a>
 </h3>
-<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Y</mi><annotation encoding="application/x-tex">Y</annotation></semantics></math> is the statistics mark, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>X</mi><annotation encoding="application/x-tex">X</annotation></semantics></math> the mechanics mark. Without conditioning:</p>
+<p><span class="math inline">Y</span> is the statistics mark, <span class="math inline">X</span> the mechanics mark. Without conditioning:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">Y</span> <span class="op">&lt;-</span> <span class="va">marks</span><span class="op">$</span><span class="va">STAT</span></span>
@@ -177,13 +178,13 @@ It remains valid for skewed, zero-inflated or multi-modal outcomes.</p>
 <span><span class="co">#&gt; 1     0 0.000999001      0.1797552</span></span></code></pre></div>
 </div>
 <p><code>test_statistic</code> remains identical to the one returned by <code><a href="../reference/cit_asymp.html">cit_asymp()</a></code>, and <code>score</code> counts the permutations reaching the observed statistic: the (unbiased) permutation p-value is then computed as <code>(score + 1) / (n_perm + 1)</code> (so <code>n_perm</code> also fixes the smallest reachable p-value, ie. <code>1/(n_perm +1)</code>.</p>
-<p>Permuting <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>X</mi><annotation encoding="application/x-tex">X</annotation></semantics></math> freely would destroy its association with <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Z</mi><annotation encoding="application/x-tex">Z</annotation></semantics></math> and test the wrong null. <code><a href="../reference/X_perm.html">X_perm()</a></code> computes design permutations conditionally on <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Z</mi><annotation encoding="application/x-tex">Z</annotation></semantics></math>:</p>
+<p>Permuting <span class="math inline">X</span> freely would destroy its association with <span class="math inline">Z</span> and test the wrong null. <code><a href="../reference/X_perm.html">X_perm()</a></code> computes design permutations conditionally on <span class="math inline">Z</span>:</p>
 <ul>
 <li>
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Z</mi><annotation encoding="application/x-tex">Z</annotation></semantics></math> discrete: permutes within each strata of <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Z</mi><annotation encoding="application/x-tex">Z</annotation></semantics></math>
+<span class="math inline">Z</span> discrete: permutes within each strata of <span class="math inline">Z</span>
 </li>
 <li>
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Z</mi><annotation encoding="application/x-tex">Z</annotation></semantics></math> continuous: permutes by matching observations on the fitted value of <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>X</mi><annotation encoding="application/x-tex">X</annotation></semantics></math> given <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Z</mi><annotation encoding="application/x-tex">Z</annotation></semantics></math>, following <span class="citation" data-cites="berrett2020">Berrett et al. (<a href="#ref-berrett2020" role="doc-biblioref">2020</a>)</span> (see <code><a href="../reference/perm_cont.html">?perm_cont</a></code>)</li>
+<span class="math inline">Z</span> continuous: permutes by matching observations on the fitted value of <span class="math inline">X</span> given <span class="math inline">Z</span>, following <span class="citation" data-cites="berrett2020">Berrett et al. (<a href="#ref-berrett2020" role="doc-biblioref">2020</a>)</span> (see <code><a href="../reference/perm_cont.html">?perm_cont</a></code>)</li>
 </ul>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb7"><pre class="downlit sourceCode r">
@@ -196,7 +197,7 @@ It remains valid for skewed, zero-inflated or multi-modal outcomes.</p>
 </section><section class="level2" data-number="2.4"><h3 data-number="2.4" id="visualization">
 <span class="header-section-number">2.4</span> Visualization<a class="anchor" aria-label="anchor" href="#visualization"></a>
 </h3>
-<p><code><a href="../reference/plot_compare_ccdf.html">plot_compare_ccdf()</a></code> displays what the statistic compares: the CCDF of <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Y</mi><annotation encoding="application/x-tex">Y</annotation></semantics></math> given <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>X</mi><annotation encoding="application/x-tex">X</annotation></semantics></math> against its marginal counterpart. The further apart the 2 are, the larger <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>D</mi><annotation encoding="application/x-tex">D</annotation></semantics></math>:</p>
+<p><code><a href="../reference/plot_compare_ccdf.html">plot_compare_ccdf()</a></code> displays what the statistic compares: the CCDF of <span class="math inline">Y</span> given <span class="math inline">X</span> against its marginal counterpart. The further apart the 2 are, the larger <span class="math inline">D</span>:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_compare_ccdf.html">plot_compare_ccdf</a></span><span class="op">(</span>Y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>STAT <span class="op">=</span> <span class="va">Y</span><span class="op">)</span>, X <span class="op">=</span> <span class="va">X</span><span class="op">)</span></span></code></pre></div>
@@ -357,65 +358,65 @@ Defaults differ: <code><a href="../reference/cit_asymp.html">cit_asymp()</a></co
  quarto   1.10.18 @ /usr/local/bin/quarto
 
 ─ Packages ───────────────────────────────────────────────────────────────────
- package      * version date (UTC) lib source
- bnlearn        5.2.1   2026-07-17 [1] RSPM
- citcdf       * 1.1.0   2026-08-24 [1] local
- cli            3.6.6   2026-04-09 [1] RSPM
- codetools      0.2-20  2024-03-31 [3] CRAN (R 4.6.1)
- DBI            1.3.0   2026-02-25 [1] RSPM
- digest         0.6.39  2025-11-19 [1] RSPM
- dotCall64      1.2     2024-10-04 [1] RSPM
- dplyr          1.2.1   2026-04-03 [1] RSPM
- evaluate       1.0.5   2025-08-27 [1] RSPM
- farver         2.1.2   2024-05-13 [1] RSPM
- fastmap        1.2.0   2024-05-15 [1] RSPM
- future         1.75.0  2026-07-20 [1] RSPM
- future.apply   1.20.2  2026-02-20 [1] RSPM
- generics       0.1.4   2025-05-09 [1] RSPM
- ggplot2        4.0.3   2026-04-22 [1] RSPM
- globals        0.19.1  2026-03-13 [1] RSPM
- glue           1.8.1   2026-04-17 [1] RSPM
- gtable         0.3.6   2024-10-25 [1] RSPM
- htmltools      0.5.9   2025-12-04 [1] RSPM
- htmlwidgets    1.6.4   2023-12-06 [1] RSPM
- jsonlite       2.0.0   2025-03-27 [1] RSPM
- knitr          1.51    2025-12-20 [1] RSPM
- labeling       0.4.3   2023-08-29 [1] RSPM
- lattice        0.22-9  2026-02-09 [3] CRAN (R 4.6.1)
- lifecycle      1.0.5   2026-01-08 [1] RSPM
- listenv        1.0.0   2026-06-22 [1] RSPM
- magrittr       2.0.5   2026-04-04 [1] RSPM
- Matrix         1.7-5   2026-03-21 [3] CRAN (R 4.6.1)
- mitools        2.4     2019-04-26 [1] RSPM
- otel           0.2.0   2025-08-29 [1] RSPM
- parallelly     1.48.0  2026-06-29 [1] RSPM
- patchwork      1.3.2   2025-08-25 [1] RSPM
- pbapply        1.7-4   2025-07-20 [1] RSPM
- pillar         1.11.1  2025-09-17 [1] RSPM
- pkgconfig      2.0.3   2019-09-22 [1] RSPM
- progressr      1.0.0   2026-07-04 [1] RSPM
- R6             2.6.1   2025-02-15 [1] RSPM
- RColorBrewer   1.1-3   2022-04-03 [1] RSPM
- Rcpp           1.1.2   2026-07-05 [1] RSPM
- reactable      0.4.5   2025-12-01 [1] RSPM
- reactR         0.6.1   2024-09-14 [1] RSPM
- rlang          1.3.0   2026-07-05 [1] RSPM
- rmarkdown      2.31    2026-03-26 [1] RSPM
- S7             0.2.2   2026-04-22 [1] RSPM
- scales         1.4.0   2025-04-24 [1] RSPM
- sessioninfo    1.2.4   2026-06-04 [1] any (@1.2.4)
- SeuratObject   5.4.0   2026-04-11 [1] RSPM
- sp             2.2-3   2026-07-19 [1] RSPM
- spam           2.11-4  2026-05-29 [1] RSPM
- survey         4.5     2026-02-24 [1] RSPM
- survival       3.8-6   2026-01-16 [3] CRAN (R 4.6.1)
- tibble         3.3.1   2026-01-11 [1] RSPM
- tidyselect     1.2.1   2024-03-11 [1] RSPM
- vctrs          0.7.3   2026-04-11 [1] RSPM
- viridisLite    0.4.3   2026-02-04 [1] RSPM
- withr          3.0.3   2026-06-19 [1] RSPM
- xfun           0.60    2026-07-09 [1] RSPM
- yaml           2.3.12  2025-12-10 [1] RSPM
+ package      * version    date (UTC) lib source
+ bnlearn        5.2.1      2026-07-17 [1] RSPM
+ citcdf       * 1.1.1.9000 2026-08-24 [1] local
+ cli            3.6.6      2026-04-09 [1] RSPM
+ codetools      0.2-20     2024-03-31 [3] CRAN (R 4.6.1)
+ DBI            1.3.0      2026-02-25 [1] RSPM
+ digest         0.6.39     2025-11-19 [1] RSPM
+ dotCall64      1.2        2024-10-04 [1] RSPM
+ dplyr          1.2.1      2026-04-03 [1] RSPM
+ evaluate       1.0.5      2025-08-27 [1] RSPM
+ farver         2.1.2      2024-05-13 [1] RSPM
+ fastmap        1.2.0      2024-05-15 [1] RSPM
+ future         1.75.0     2026-07-20 [1] RSPM
+ future.apply   1.20.2     2026-02-20 [1] RSPM
+ generics       0.1.4      2025-05-09 [1] RSPM
+ ggplot2        4.0.3      2026-04-22 [1] RSPM
+ globals        0.19.1     2026-03-13 [1] RSPM
+ glue           1.8.1      2026-04-17 [1] RSPM
+ gtable         0.3.6      2024-10-25 [1] RSPM
+ htmltools      0.5.9      2025-12-04 [1] RSPM
+ htmlwidgets    1.6.4      2023-12-06 [1] RSPM
+ jsonlite       2.0.0      2025-03-27 [1] RSPM
+ knitr          1.51       2025-12-20 [1] RSPM
+ labeling       0.4.3      2023-08-29 [1] RSPM
+ lattice        0.22-9     2026-02-09 [3] CRAN (R 4.6.1)
+ lifecycle      1.0.5      2026-01-08 [1] RSPM
+ listenv        1.0.0      2026-06-22 [1] RSPM
+ magrittr       2.0.5      2026-04-04 [1] RSPM
+ Matrix         1.7-5      2026-03-21 [3] CRAN (R 4.6.1)
+ mitools        2.4        2019-04-26 [1] RSPM
+ otel           0.2.0      2025-08-29 [1] RSPM
+ parallelly     1.48.0     2026-06-29 [1] RSPM
+ patchwork      1.3.2      2025-08-25 [1] RSPM
+ pbapply        1.7-4      2025-07-20 [1] RSPM
+ pillar         1.11.1     2025-09-17 [1] RSPM
+ pkgconfig      2.0.3      2019-09-22 [1] RSPM
+ progressr      1.0.0      2026-07-04 [1] RSPM
+ R6             2.6.1      2025-02-15 [1] RSPM
+ RColorBrewer   1.1-3      2022-04-03 [1] RSPM
+ Rcpp           1.1.2      2026-07-05 [1] RSPM
+ reactable      0.4.5      2025-12-01 [1] RSPM
+ reactR         0.6.1      2024-09-14 [1] RSPM
+ rlang          1.3.0      2026-07-05 [1] RSPM
+ rmarkdown      2.31       2026-03-26 [1] RSPM
+ S7             0.2.2      2026-04-22 [1] RSPM
+ scales         1.4.0      2025-04-24 [1] RSPM
+ sessioninfo    1.2.4      2026-06-04 [1] any (@1.2.4)
+ SeuratObject   5.4.0      2026-04-11 [1] RSPM
+ sp             2.2-3      2026-07-19 [1] RSPM
+ spam           2.11-4     2026-05-29 [1] RSPM
+ survey         4.5        2026-02-24 [1] RSPM
+ survival       3.8-6      2026-01-16 [3] CRAN (R 4.6.1)
+ tibble         3.3.1      2026-01-11 [1] RSPM
+ tidyselect     1.2.1      2024-03-11 [1] RSPM
+ vctrs          0.7.3      2026-04-11 [1] RSPM
+ viridisLite    0.4.3      2026-02-04 [1] RSPM
+ withr          3.0.3      2026-06-19 [1] RSPM
+ xfun           0.60       2026-07-09 [1] RSPM
+ yaml           2.3.12     2025-12-10 [1] RSPM
 
  [1] /home/runner/work/_temp/Library
  [2] /opt/R/4.6.1/lib/R/site-library

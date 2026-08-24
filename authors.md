@@ -17,7 +17,7 @@
 ## Citation
 
 Source:
-[`inst/CITATION`](https://github.com/sistm/citcdf/blob/v1.1.0/inst/CITATION)
+[`inst/CITATION`](https://github.com/sistm/citcdf/blob/main/inst/CITATION)
 
 Gauthier M, Agniel D, Fallet S, Ba K, Thiébaut R, Hejblum BP (2021).
 “Distribution-free complex hypothesis testing for single-cell RNA-seq
