@@ -1,6 +1,7 @@
 url: https://sistm.github.io/citcdf/
 
 template:
+  math-rendering: katex
   bootstrap: 5
   light-switch: true
   theme: arrow-light
