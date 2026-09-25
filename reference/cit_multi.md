@@ -163,7 +163,7 @@ res_asymp_unadj <- cit_multi(M = data.frame(Y = Y),
   X = data.frame(X = X),
   test = "asymptotic", parallel = FALSE)
 mean(res_asymp_unadj$pvals$raw_pval < 0.05)
-#> [1] 0.108
+#> [1] 0.128
 hist(res_asymp_unadj$pvals$raw_pval)
 
 
@@ -172,7 +172,7 @@ res_asymp_adj <- cit_multi(M = data.frame(Y = Y),
   Z = data.frame(Z = Z),
   test = "asymptotic", parallel = FALSE)
 mean(res_asymp_adj$pvals$raw_pval < 0.05)
-#> [1] 0.046
+#> [1] 0.06
 hist(res_asymp_adj$pvals$raw_pval)
 
 
@@ -193,7 +193,7 @@ res_asymp_unadj <- cit_multi(M = data.frame(Y = Y),
   X = data.frame(X1 = X1, X2 = X2),
   test = "asymptotic", parallel = FALSE)
 mean(res_asymp_unadj$pvals$raw_pval < 0.05)
-#> [1] 0.76
+#> [1] 0.782
 hist(res_asymp_unadj$pvals$raw_pval)
 
 
@@ -202,7 +202,7 @@ res_asymp_adj <- cit_multi(M = data.frame(Y = Y),
   Z = data.frame(Z1 = Z1, Z2 = Z2),
   test = "asymptotic", parallel = FALSE)
 mean(res_asymp_adj$pvals$raw_pval < 0.05)
-#> [1] 0.042
+#> [1] 0.086
 hist(res_asymp_adj$pvals$raw_pval)
 
 

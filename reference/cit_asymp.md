@@ -99,5 +99,5 @@ hist(pvals_sim) # well calibrated p-values are uniform under the null
 
 quantile(pvals_sim)
 #>           0%          25%          50%          75%         100% 
-#> 0.0002470792 0.2409864033 0.4958293345 0.7513432132 0.9999476695 
+#> 8.859362e-07 2.114344e-01 4.677940e-01 7.248391e-01 9.997464e-01 
 ```

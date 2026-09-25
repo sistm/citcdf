@@ -182,17 +182,19 @@ is <code>TRUE</code>. Default is <code>10</code>.</p></dd>
     <p>The gene-set statistic is the sum of per-gene statistics. For the
 permutation test, it is computed with each single permutation of X shared and
 applied across all genes in a set (so inter-gene correlation is preserved).</p>
-<p>For the asymptotic test, the null covariance of the stacked threshold
-indicators is estimated empirically (<code>crossprod(temp) / n</code>).
-The closed form \(min(p_i, p_j) - p_i p_j\) used by
-<code><a href="cit_asymp.html">cit_asymp</a></code> only holds within a gene (because the
-product of two threshold indicators of the same <code>Y</code> is itself an
-indicator). Across two genes, that same expectation is their joint distribution
-function, which the marginal proportions do not determine as there is
-inter-gene correlation present.
-The empirical estimator coincides with the closed form on the within-gene
-diagonal blocks, and additionally supplies the between-gene blocks which
-carry the inter-gene correlation needed by the summed gene-set statistic.</p>
+<p>For the asymptotic test, the p-value is obtained from the asymptotic null
+distribution of the statistic, a weighted sum of independent
+\(\chi^2_1\), whose weights are the eigenvalues of a
+heteroskedasticity-robust sandwich estimate of the covariance of the
+OLS coefficients of <code>X</code>, computed jointly over all thresholds and all
+genes of the set. The between-gene blocks carry the inter-gene correlation
+needed by the summed gene-set statistic. This estimator remains valid when
+<code>Z</code> affects the expression (the conditional variance of the binary
+threshold indicators then depends on the covariates).</p>
+<p>The test assumes that the conditional CDF of <code>Y</code> is linear in <code>Z</code>.
+For a continuous <code>Z</code> with a nonlinear effect, pass in a flexible basis
+(e.g. the columns of <code>splines::ns(z, df = 3)</code>)
+in <code>Z</code>; otherwise the test can become anti-conservative.</p>
 <p>The <code>space_y</code> / <code>number_y</code> grid controls both the
 resolution of the statistic and its computational cost. See
 <code><a href="cit_multi.html">cit_multi</a></code> for details on this trade-off.</p>
@@ -216,33 +218,33 @@ resolution of the statistic and its computational cost. See
 <span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">cit_gsa</span><span class="op">(</span>M <span class="op">=</span> <span class="va">M</span>, X <span class="op">=</span> <span class="va">X</span>, geneset <span class="op">=</span> <span class="va">geneset</span>,</span></span>
 <span class="r-in"><span>  test <span class="op">=</span> <span class="st">"asymptotic"</span>, parallel <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">res</span><span class="op">$</span><span class="va">pvals</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>            raw_pval   adj_pval test_statistic</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> responder 0.0199274 0.03985479       71.07193</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> null      0.8877189 0.88771885       60.42345</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             raw_pval   adj_pval test_statistic</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> responder 0.01601267 0.03202534       71.07193</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> null      0.88079517 0.88079517       60.42345</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Single gene shifts are too small to be detected on their own,</span></span></span>
 <span class="r-in"><span><span class="co"># but together the set is significant.</span></span></span>
 <span class="r-in"><span><span class="va">per_gene</span> <span class="op">&lt;-</span> <span class="fu"><a href="cit_multi.html">cit_multi</a></span><span class="op">(</span>M <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">M</span><span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span><span class="op">)</span>, X <span class="op">=</span> <span class="va">X</span>,</span></span>
 <span class="r-in"><span>  test <span class="op">=</span> <span class="st">"asymptotic"</span>, parallel <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">per_gene</span><span class="op">$</span><span class="va">pvals</span><span class="op">$</span><span class="va">adj_pval</span><span class="op">)</span>  <span class="co"># no single gene survives the correction</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.1505369</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.1271652</span>
 <span class="r-in"><span><span class="va">res</span><span class="op">$</span><span class="va">pvals</span><span class="op">[</span><span class="st">"responder"</span>, <span class="op">]</span>      <span class="co"># the set does</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>            raw_pval   adj_pval test_statistic</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> responder 0.0199274 0.03985479       71.07193</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             raw_pval   adj_pval test_statistic</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> responder 0.01601267 0.03202534       71.07193</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># a single gene set may be given as a plain character vector of M colnames</span></span></span>
 <span class="r-in"><span><span class="fu">cit_gsa</span><span class="op">(</span>M <span class="op">=</span> <span class="va">M</span>, X <span class="op">=</span> <span class="va">X</span>, geneset <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"g"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  test <span class="op">=</span> <span class="st">"asymptotic"</span>, parallel <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">$</span><span class="va">pvals</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    raw_pval  adj_pval test_statistic</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 0.0199274 0.0199274       71.07193</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     raw_pval   adj_pval test_statistic</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 0.01601267 0.01601267       71.07193</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># adjusting for a covariate</span></span></span>
 <span class="r-in"><span><span class="va">Z</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>Z <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">cit_gsa</span><span class="op">(</span>M <span class="op">=</span> <span class="va">M</span>, X <span class="op">=</span> <span class="va">X</span>, Z <span class="op">=</span> <span class="va">Z</span>, geneset <span class="op">=</span> <span class="va">geneset</span>,</span></span>
 <span class="r-in"><span>  test <span class="op">=</span> <span class="st">"asymptotic"</span>, parallel <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">$</span><span class="va">pvals</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             raw_pval   adj_pval test_statistic</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> responder 0.01583113 0.03166225       73.69177</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> null      0.88263643 0.88263643       61.42700</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> responder 0.01221076 0.02442151       73.69177</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> null      0.85823508 0.85823508       61.42700</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="co"># The permutation test applies each single permutation of X to every gene of a</span></span></span>
@@ -259,8 +261,8 @@ resolution of the statistic and its computational cost. See
 <span class="r-in"><span>  geneset <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>partly_measured <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"g"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span>, <span class="st">"absent1"</span><span class="op">)</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  test <span class="op">=</span> <span class="st">"asymptotic"</span>, parallel <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">$</span><span class="va">pvals</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span> Some genes from geneset partly_measured are not observed in expression data</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                  raw_pval  adj_pval test_statistic</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> partly_measured 0.1075917 0.1075917       30.46563</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                   raw_pval   adj_pval test_statistic</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> partly_measured 0.09671056 0.09671056       30.46563</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>

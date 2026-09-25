@@ -152,18 +152,20 @@ permutation test, it is computed with each single permutation of X
 shared and applied across all genes in a set (so inter-gene correlation
 is preserved).
 
-For the asymptotic test, the null covariance of the stacked threshold
-indicators is estimated empirically (`crossprod(temp) / n`). The closed
-form \\min(p_i, p_j) - p_i p_j\\ used by
-[`cit_asymp`](https://sistm.github.io/citcdf/reference/cit_asymp.md)
-only holds within a gene (because the product of two threshold
-indicators of the same `Y` is itself an indicator). Across two genes,
-that same expectation is their joint distribution function, which the
-marginal proportions do not determine as there is inter-gene correlation
-present. The empirical estimator coincides with the closed form on the
-within-gene diagonal blocks, and additionally supplies the between-gene
-blocks which carry the inter-gene correlation needed by the summed
-gene-set statistic.
+For the asymptotic test, the p-value is obtained from the asymptotic
+null distribution of the statistic, a weighted sum of independent
+\\\chi^2_1\\, whose weights are the eigenvalues of a
+heteroskedasticity-robust sandwich estimate of the covariance of the OLS
+coefficients of `X`, computed jointly over all thresholds and all genes
+of the set. The between-gene blocks carry the inter-gene correlation
+needed by the summed gene-set statistic. This estimator remains valid
+when `Z` affects the expression (the conditional variance of the binary
+threshold indicators then depends on the covariates).
+
+The test assumes that the conditional CDF of `Y` is linear in `Z`. For a
+continuous `Z` with a nonlinear effect, pass in a flexible basis (e.g.
+the columns of `splines::ns(z, df = 3)`) in `Z`; otherwise the test can
+become anti-conservative.
 
 The `space_y` / `number_y` grid controls both the resolution of the
 statistic and its computational cost. See
@@ -190,33 +192,33 @@ geneset <- list(responder = paste0("g", 1:10), null = paste0("g", 11:30))
 res <- cit_gsa(M = M, X = X, geneset = geneset,
   test = "asymptotic", parallel = FALSE)
 res$pvals
-#>            raw_pval   adj_pval test_statistic
-#> responder 0.0199274 0.03985479       71.07193
-#> null      0.8877189 0.88771885       60.42345
+#>             raw_pval   adj_pval test_statistic
+#> responder 0.01601267 0.03202534       71.07193
+#> null      0.88079517 0.88079517       60.42345
 
 # Single gene shifts are too small to be detected on their own,
 # but together the set is significant.
 per_gene <- cit_multi(M = as.data.frame(M[, 1:10]), X = X,
   test = "asymptotic", parallel = FALSE)
 min(per_gene$pvals$adj_pval)  # no single gene survives the correction
-#> [1] 0.1505369
+#> [1] 0.1271652
 res$pvals["responder", ]      # the set does
-#>            raw_pval   adj_pval test_statistic
-#> responder 0.0199274 0.03985479       71.07193
+#>             raw_pval   adj_pval test_statistic
+#> responder 0.01601267 0.03202534       71.07193
 
 # a single gene set may be given as a plain character vector of M colnames
 cit_gsa(M = M, X = X, geneset = paste0("g", 1:10),
   test = "asymptotic", parallel = FALSE)$pvals
-#>    raw_pval  adj_pval test_statistic
-#> 1 0.0199274 0.0199274       71.07193
+#>     raw_pval   adj_pval test_statistic
+#> 1 0.01601267 0.01601267       71.07193
 
 # adjusting for a covariate
 Z <- data.frame(Z = rnorm(n))
 cit_gsa(M = M, X = X, Z = Z, geneset = geneset,
   test = "asymptotic", parallel = FALSE)$pvals
 #>             raw_pval   adj_pval test_statistic
-#> responder 0.01583113 0.03166225       73.69177
-#> null      0.88263643 0.88263643       61.42700
+#> responder 0.01221076 0.02442151       73.69177
+#> null      0.85823508 0.85823508       61.42700
 
 # \donttest{
 # The permutation test applies each single permutation of X to every gene of a
@@ -233,7 +235,7 @@ cit_gsa(M = M, X = X,
   geneset = list(partly_measured = c(paste0("g", 1:5), "absent1")),
   test = "asymptotic", parallel = FALSE)$pvals
 #> Warning:  Some genes from geneset partly_measured are not observed in expression data
-#>                  raw_pval  adj_pval test_statistic
-#> partly_measured 0.1075917 0.1075917       30.46563
+#>                   raw_pval   adj_pval test_statistic
+#> partly_measured 0.09671056 0.09671056       30.46563
 # }
 ```

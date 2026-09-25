@@ -82,7 +82,7 @@ X <- data.frame(MECH = marks$MECH)
 
 cit_asymp(Y, X)
 #>       raw_pval test_statistic
-#> 1 0.0003640664      0.1797552
+#> 1 5.001697e-05      0.1797552
 ```
 
 Conditioning on the algebra mark asks whether mechanics adds anything
@@ -94,7 +94,7 @@ Z <- data.frame(ALG = marks$ALG)
 
 cit_asymp(Y, X, Z)
 #>    raw_pval test_statistic
-#> 1 0.6204986     0.01850231
+#> 1 0.5260487     0.01850231
 ```
 
 The evidence disappears.
@@ -232,7 +232,7 @@ res_adj <- cit_multi(M, X = X_pop, Z = Z_lib, test = "asymptotic",
 c(unadjusted = sum(res_unadj$pvals$adj_pval < 0.05),
   adjusted   = sum(res_adj$pvals$adj_pval < 0.05))
 #> unadjusted   adjusted 
-#>         89         55
+#>        136         95
 ```
 
 Conditioning on library size withdraws a third of the hits. The
@@ -242,11 +242,11 @@ strongest signals — canonical monocyte markers — survive:
 
 head(res_adj$pvals[order(res_adj$pvals$raw_pval), ], 5)
 #>            raw_pval     adj_pval test_statistic
-#> S100A8 1.951411e-11 4.488246e-09       246.5594
-#> S100A9 7.526161e-11 8.655085e-09       250.5153
-#> TYMP   3.219987e-08 2.468657e-06       256.8253
-#> AIF1   9.697369e-08 5.430011e-06       205.6298
-#> IFITM3 1.180437e-07 5.430011e-06       195.7231
+#> S100A9 4.556528e-16 1.048001e-13       250.5153
+#> TYMP   2.078237e-14 2.389972e-12       256.8253
+#> S100A8 4.170902e-14 3.197692e-12       246.5594
+#> AIF1   1.228914e-11 7.066258e-10       205.6298
+#> CST3   6.849770e-11 3.150894e-09       180.3064
 ```
 
 `res_adj` is a list containing:
@@ -359,21 +359,21 @@ responsibility.
     ─ Session info ───────────────────────────────────────────────────────────────
      setting  value
      version  R version 4.6.1 (2026-06-24)
-     os       Ubuntu 24.04.4 LTS
+     os       Ubuntu 24.04.5 LTS
      system   x86_64, linux-gnu
      ui       X11
      language en-US
      collate  C.UTF-8
      ctype    C.UTF-8
      tz       UTC
-     date     2026-08-24
+     date     2026-09-25
      pandoc   3.8.3 @ /opt/hostedtoolcache/pandoc/3.8.3/x64/ (via rmarkdown)
      quarto   1.10.18 @ /usr/local/bin/quarto
 
     ─ Packages ───────────────────────────────────────────────────────────────────
      package      * version    date (UTC) lib source
      bnlearn        5.2.1      2026-07-17 [1] RSPM
-     citcdf       * 1.1.1.9000 2026-08-24 [1] local
+     citcdf       * 1.1.1.9000 2026-09-25 [1] local
      cli            3.6.6      2026-04-09 [1] RSPM
      codetools      0.2-20     2024-03-31 [3] CRAN (R 4.6.1)
      DBI            1.3.0      2026-02-25 [1] RSPM
@@ -383,7 +383,7 @@ responsibility.
      evaluate       1.0.5      2025-08-27 [1] RSPM
      farver         2.1.2      2024-05-13 [1] RSPM
      fastmap        1.2.0      2024-05-15 [1] RSPM
-     future         1.75.0     2026-07-20 [1] RSPM
+     future         1.76.0     2026-09-24 [1] RSPM
      future.apply   1.20.2     2026-02-20 [1] RSPM
      generics       0.1.4      2025-05-09 [1] RSPM
      ggplot2        4.0.3      2026-04-22 [1] RSPM
@@ -393,18 +393,18 @@ responsibility.
      htmltools      0.5.9      2025-12-04 [1] RSPM
      htmlwidgets    1.6.4      2023-12-06 [1] RSPM
      jsonlite       2.0.0      2025-03-27 [1] RSPM
-     knitr          1.51       2025-12-20 [1] RSPM
+     knitr          1.52       2026-09-06 [1] RSPM
      labeling       0.4.3      2023-08-29 [1] RSPM
      lattice        0.22-9     2026-02-09 [3] CRAN (R 4.6.1)
      lifecycle      1.0.5      2026-01-08 [1] RSPM
      listenv        1.0.0      2026-06-22 [1] RSPM
      magrittr       2.0.5      2026-04-04 [1] RSPM
      Matrix         1.7-5      2026-03-21 [3] CRAN (R 4.6.1)
-     mitools        2.4        2019-04-26 [1] RSPM
+     mitools        2.7        2026-08-31 [1] RSPM
      otel           0.2.0      2025-08-29 [1] RSPM
      parallelly     1.48.0     2026-06-29 [1] RSPM
      patchwork      1.3.2      2025-08-25 [1] RSPM
-     pbapply        1.7-4      2025-07-20 [1] RSPM
+     pbapply        1.7-5      2026-09-01 [1] RSPM
      pillar         1.11.1     2025-09-17 [1] RSPM
      pkgconfig      2.0.3      2019-09-22 [1] RSPM
      progressr      1.0.0      2026-07-04 [1] RSPM
@@ -414,10 +414,10 @@ responsibility.
      reactable      0.4.5      2025-12-01 [1] RSPM
      reactR         0.6.1      2024-09-14 [1] RSPM
      rlang          1.3.0      2026-07-05 [1] RSPM
-     rmarkdown      2.31       2026-03-26 [1] RSPM
+     rmarkdown      2.32       2026-09-01 [1] RSPM
      S7             0.2.2      2026-04-22 [1] RSPM
      scales         1.4.0      2025-04-24 [1] RSPM
-     sessioninfo    1.2.4      2026-06-04 [1] any (@1.2.4)
+     sessioninfo    1.2.4      2026-06-04 [1] RSPM
      SeuratObject   5.4.0      2026-04-11 [1] RSPM
      sp             2.2-3      2026-07-19 [1] RSPM
      spam           2.11-4     2026-05-29 [1] RSPM
@@ -428,7 +428,7 @@ responsibility.
      vctrs          0.7.3      2026-04-11 [1] RSPM
      viridisLite    0.4.3      2026-02-04 [1] RSPM
      withr          3.0.3      2026-06-19 [1] RSPM
-     xfun           0.60       2026-07-09 [1] RSPM
+     xfun           0.61       2026-09-16 [1] RSPM
      yaml           2.3.12     2025-12-10 [1] RSPM
 
      [1] /home/runner/work/_temp/Library
