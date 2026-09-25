@@ -87,5 +87,42 @@
   # crossprod(modelmat) is invariant under row permutation when Z is absent,
   # so its inverse (restricted to the X rows) is reusable for every permuted design.
   XtXinv_X <- if (is.null(Z)) solve(crossprod(modelmat))[indexes_X, , drop = FALSE] else NULL
-  list(modelmat = modelmat, indexes_X = indexes_X, H = H, XtXinv_X = XtXinv_X)
+
+  # compute the QR decomposition  of the full design (reused for the OLS
+  # residuals of every gene/threshold in the sandwich variance .cit_sandwich_ev()).
+  list(modelmat = modelmat, indexes_X = indexes_X, H = H, XtXinv_X = XtXinv_X,
+    qr = qr(modelmat))
+}
+
+# Eigenvalues of the heteroskedasticity-robust sandwich)estimate of the
+# asymptotic covariance Sigma.
+# Only the eigenvalues are needed and the test statistic is a squared norm, so
+# the ordering of the columns of U is irrelevant.
+# When U has more columns than rows, the non-zero eigenvalues are obtained from
+# the n x n Gram matrix U U^T / n instead (same non-zero spectrum, cheaper).
+#
+# D: n x m matrix of threshold indicators (m = thresholds x genes).
+.cit_sandwich_ev <- function(D, design) {
+  n <- nrow(D)
+  E <- qr.resid(design$qr, D)                  # n x m, residuals D - W beta_hat
+  G <- t(design$H)                             # n x K, row i = gamma_i
+
+  U <- do.call(cbind, lapply(seq_len(ncol(G)),
+    FUN = function(k) {
+      G[, k] * E
+    }))
+
+  if (ncol(U) <= n) {
+    S <- crossprod(U)
+  } else {
+    S <- tcrossprod(U)
+  }
+
+  ev <- eigen(S / n, symmetric = TRUE, only.values = TRUE)$values
+
+  # Sigma_hat is Positive Semi-Definite: clip round-off negatives and drop the
+  # numerically null part of the spectrum (does not contribute to the chi-square
+  # mixture).
+  return(ev[ev > max(ev) * 1e-10])
+
 }

@@ -42,7 +42,10 @@ test_that("cit_asymp and cit_perm report the SAME observed statistic", {
   a <- cit_asymp(Y, X, space_y = FALSE)
   p <- cit_perm(Y, X, NULL, X_star = Xs, n_perm = 30, space_y = FALSE)
 
-  expect_identical(a$test_statistic, p$test_statistic)
+  # same definition (same y-grid, same design); cit_asymp() computes H %*% D
+  # while cit_perm() uses cumulative sums over the sorted Y, so the two agree up
+  # to floating-point rounding only. A grid mismatch would differ by far more.
+  expect_equal(a$test_statistic, p$test_statistic, tolerance = 1e-12)
 })
 
 test_that("X_perm preserves X's type: class and levels for a factor, values for a numeric", {

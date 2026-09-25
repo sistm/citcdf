@@ -73,7 +73,7 @@ cit_asymp <- function(Y, X, Z = NULL, space_y = FALSE, number_y = 10,
                       design = NULL) {
   # Quantities that depend only on (X, Z), not on Y. Callers looping over many
   # genes (cit_multi) build this once and pass it in; a direct call computes it
-  # on demand, so the public behaviour is unchanged.
+  # on the fly.
   n_Y_all <- length(Y)
   stopifnot(nrow(X) == n_Y_all)
   stopifnot(is.null(Z) || nrow(Z) == n_Y_all)
@@ -82,34 +82,30 @@ cit_asymp <- function(Y, X, Z = NULL, space_y = FALSE, number_y = 10,
     design <- .cit_design(X, Z, n_Y_all)
   }
   H <- design$H
-  # computing the test statistic
-  # depends on Y: has to be recomputed for each gene
-  Y <- as.numeric(Y) # is this really necessary ??
-  oY <- order(Y)
-  y <- .cit_y_grid(Y, space_y, number_y)
-  p <- length(y) # number of thresholds used
 
-  index_jumps <- findInterval(y[-p], Y[oY])
-  beta <- c(apply(X = H[, oY, drop = FALSE], MARGIN = 1, FUN = cumsum)[index_jumps, , drop = FALSE]) / n_Y_all
+
+  # threshold indicators D (n x (p-1)): depend on Y, so it needs to be
+  # recomputed for each gene.
+  Y <- as.numeric(Y) # is this really necessary ?? Or should it be part of .cit_check_Y(Y) ?
+  y <- .cit_y_grid(Y, space_y, number_y)
+  p <- length(y) # number of thresholds used; the last one (D == 1) is dropped
+  D <- outer(Y, y[-p], "<=") * 1
+
+  # computing the test statistic ----
+  # beta_hat^X = (W'W)^{-1} W' D restricted to the X rows = H D / n
+  beta <- (H %*% D) / n_Y_all
   test_stat <- sum(beta^2) * n_Y_all
 
-  # Computing the variance ----
-  prop <- index_jumps / n_Y_all
-
-  B <- prop - prop %x% t(prop)
-  Bsym  <- B * upper.tri(B, diag = TRUE) + t(B * upper.tri(B, diag = FALSE))
-  Sigma <- (tcrossprod(H) / n_Y_all) %x% Bsym
-
-  decomp <- eigen(Sigma, symmetric = TRUE, only.values = TRUE)
-
+  # Computing the eigen values from the empirical variance ----
+  ev <- .cit_sandwich_ev(D, design)
 
   # computing the pvalue ----
-  pval <- try(survey::pchisqsum(test_stat, lower.tail = FALSE, df = rep(1, ncol(Sigma)),
-    a = decomp$values, method = "saddlepoint"),
+  pval <- try(survey::pchisqsum(test_stat, lower.tail = FALSE, df = rep(1, length(ev)),
+    a = ev, method = "saddlepoint"),
   silent = TRUE)
   if (inherits(pval, "try-error")) {
-    pval <- try(survey::pchisqsum(test_stat, lower.tail = FALSE, df = rep(1, ncol(Sigma)),
-      a = decomp$values, method = "satterthwaite"),
+    pval <- try(survey::pchisqsum(test_stat, lower.tail = FALSE, df = rep(1, length(ev)),
+      a = ev, method = "satterthwaite"),
     silent = TRUE)
     if (inherits(pval, "try-error")) {
       pval <- NA

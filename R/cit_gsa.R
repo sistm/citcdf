@@ -145,17 +145,20 @@
 #' permutation test, it is computed with each single permutation of X shared and
 #' applied across all genes in a set (so inter-gene correlation is preserved).
 #'
-#' For the asymptotic test, the null covariance of the stacked threshold
-#' indicators is estimated empirically (\code{crossprod(temp) / n}).
-#' The closed form \eqn{min(p_i, p_j) - p_i p_j} used by
-#' \code{\link{cit_asymp}} only holds within a gene (because the
-#' product of two threshold indicators of the same \code{Y} is itself an
-#' indicator). Across two genes, that same expectation is their joint distribution
-#' function, which the marginal proportions do not determine as there is
-#' inter-gene correlation present.
-#' The empirical estimator coincides with the closed form on the within-gene
-#' diagonal blocks, and additionally supplies the between-gene blocks which
-#' carry the inter-gene correlation needed by the summed gene-set statistic.
+#' For the asymptotic test, the p-value is obtained from the asymptotic null
+#' distribution of the statistic, a weighted sum of independent
+#' \eqn{\chi^2_1}, whose weights are the eigenvalues of a
+#' heteroskedasticity-robust sandwich estimate of the covariance of the
+#' OLS coefficients of \code{X}, computed jointly over all thresholds and all
+#' genes of the set. The between-gene blocks carry the inter-gene correlation
+#' needed by the summed gene-set statistic. This estimator remains valid when
+#' \code{Z} affects the expression (the conditional variance of the binary
+#' threshold indicators then depends on the covariates).
+#'
+#' The test assumes that the conditional CDF of \code{Y} is linear in \code{Z}.
+#' For a continuous \code{Z} with a nonlinear effect, pass in a flexible basis
+#' (e.g. the columns of \code{splines::ns(z, df = 3)})
+#' in \code{Z}; otherwise the test can become anti-conservative.
 #'
 #' The \code{space_y} / \code{number_y} grid controls both the
 #' resolution of the statistic and its computational cost. See
@@ -414,7 +417,8 @@ cit_gsa <- function(M,
 
     # design depends only on X and Z, and is not gene specific: compute it only once !
     n_Y_all <- nrow(M)
-    H <- .cit_design(X, Z, n_Y_all)$H
+    design <- .cit_design(X, Z, n_Y_all)
+    H <- design$H
 
 
     if (length(geneset) < 3) {
@@ -427,7 +431,6 @@ cit_gsa <- function(M,
 
       # Initialisation for each gene in the gene set
       # test_stat_gs <- NULL
-      prop_gs <- list()
       indi_pi_gs <- list()
 
 
@@ -451,45 +454,26 @@ cit_gsa <- function(M,
 
         for (i in seq_along(measured_genes)) { # 2 -- each genes in the gene set k ----
 
-          Y <- M[, measured_genes[i]]
-          oY <- order(Y)
+          Y <- as.numeric(M[, measured_genes[i]])
 
-
-          # 1) Test statistic computation ----
+          # 1) Threshold indicators (used by both the statistic and the variance) ----
           y <- .cit_y_grid(Y, space_y, number_y)
           p <- length(y)
-
-          index_jumps <- findInterval(y[-p], Y[oY])
-          beta <- c(apply(X = H[, oY, drop = FALSE], MARGIN = 1, FUN = cumsum)[index_jumps, , drop = FALSE]) / n_Y_all # same number than thresholds
-          test_stat <- sum(beta^2) * n_Y_all
-
-          test_stat_gs[i] <- test_stat # test statistic for each genes in the gene set
-
-
-          # 2) Pi computation ----
           indi_pi <- outer(Y, y[-p], "<=") * 1
-
           indi_pi_gs[[i]] <- indi_pi
-          prop <- colMeans(indi_pi)
-          prop_gs[[i]] <- prop # prop for each genes in the gene set
+
+          # 2) Gene-level test statistic: beta_hat^X = H D / n ----
+          beta <- (H %*% indi_pi) / n_Y_all
+          test_stat_gs[i] <- sum(beta^2) * n_Y_all
 
         }
 
 
         indi_pi_gs_tab <- do.call(cbind, indi_pi_gs)
-        prop_gs_vec <- unlist(prop_gs)
-        n_g_t <- length(prop_gs_vec)
 
-        # 3) Sigma matrix creation ----
-        n_gs_vec <- nrow(indi_pi_gs_tab)
-        temp <- indi_pi_gs_tab - matrix(prop_gs_vec, nrow = n_gs_vec, ncol = n_g_t, byrow = TRUE)
-
-        # `temp` is already centred, so crossprod(temp)/n_gs_vec IS the geneset covariance
-        covmat <- crossprod(temp) / n_gs_vec
-
-        ev_H   <- eigen(tcrossprod(H), symmetric = TRUE, only.values = TRUE)$values
-        ev_cov <- eigen(covmat, symmetric = TRUE, only.values = TRUE)$values
-        ev     <- as.vector(outer(ev_H, ev_cov)) / n
+        # 3) Eigenvalues of Sigma_hat ----
+        # (sandwich estimator of the covariance over both genes and thresholds)
+        ev <- .cit_sandwich_ev(indi_pi_gs_tab, design)
 
         pval <- survey::pchisqsum(sum(test_stat_gs), lower.tail = FALSE,
           df = rep(1, length(ev)),

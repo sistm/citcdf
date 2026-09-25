@@ -113,17 +113,20 @@ The gene-set statistic is the sum of per-gene statistics. For the
 permutation test, it is computed with each single permutation of X shared and
 applied across all genes in a set (so inter-gene correlation is preserved).
 
-For the asymptotic test, the null covariance of the stacked threshold
-indicators is estimated empirically (\code{crossprod(temp) / n}).
-The closed form \eqn{min(p_i, p_j) - p_i p_j} used by
-\code{\link{cit_asymp}} only holds within a gene (because the
-product of two threshold indicators of the same \code{Y} is itself an
-indicator). Across two genes, that same expectation is their joint distribution
-function, which the marginal proportions do not determine as there is
-inter-gene correlation present.
-The empirical estimator coincides with the closed form on the within-gene
-diagonal blocks, and additionally supplies the between-gene blocks which
-carry the inter-gene correlation needed by the summed gene-set statistic.
+For the asymptotic test, the p-value is obtained from the asymptotic null
+distribution of the statistic, a weighted sum of independent
+\eqn{\chi^2_1}, whose weights are the eigenvalues of a
+heteroskedasticity-robust sandwich estimate of the covariance of the
+OLS coefficients of \code{X}, computed jointly over all thresholds and all
+genes of the set. The between-gene blocks carry the inter-gene correlation
+needed by the summed gene-set statistic. This estimator remains valid when
+\code{Z} affects the expression (the conditional variance of the binary
+threshold indicators then depends on the covariates).
+
+The test assumes that the conditional CDF of \code{Y} is linear in \code{Z}.
+For a continuous \code{Z} with a nonlinear effect, pass in a flexible basis
+(e.g. the columns of \code{splines::ns(z, df = 3)})
+in \code{Z}; otherwise the test can become anti-conservative.
 
 The \code{space_y} / \code{number_y} grid controls both the
 resolution of the statistic and its computational cost. See
