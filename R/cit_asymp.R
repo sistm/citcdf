@@ -28,6 +28,16 @@
 #' Default is \code{NULL}, in which case they are computed from \code{X} and
 #' \code{Z}. Users should not be using this argument
 #'
+#' @param variance a character string, the estimator of the covariance
+#' of the OLS coefficients of \code{X} that gives the weights of the
+#' asymptotic \eqn{\chi^2} mixture. Either \describe{
+#'   \item{\code{"sandwich"}}{(default) use the heteroskedasticity-robust
+#'   sandwich estimator, valid with or without \code{Z}.}
+#'   \item{\code{"independent"}}{the factorized
+#'   estimator only valid only when \code{Z} is NULL \code{Y} and
+#'   \code{Z} are independent ; too conservative when \code{Z} actually affects \code{Y}.}
+#' }
+#'
 #' @importFrom survey pchisqsum
 #'
 #' @details The \code{space_y} / \code{number_y} grid controls both the
@@ -70,7 +80,12 @@
 #' quantile(pvals_sim)
 #'
 cit_asymp <- function(Y, X, Z = NULL, space_y = FALSE, number_y = 10,
-                      design = NULL) {
+                      design = NULL, variance = c("sandwich", "independent")) {
+  variance <- match.arg(variance)
+  # when 'design' is supplied from `cit_multi`, it has already warned once
+  if (variance == "independent" && is.null(design)) {
+    .cit_warn_independent()
+  }
   # Quantities that depend only on (X, Z), not on Y. Callers looping over many
   # genes (cit_multi) build this once and pass it in; a direct call computes it
   # on the fly.
@@ -97,7 +112,9 @@ cit_asymp <- function(Y, X, Z = NULL, space_y = FALSE, number_y = 10,
   test_stat <- sum(beta^2) * n_Y_all
 
   # Computing the eigen values from the empirical variance ----
-  ev <- .cit_sandwich_ev(D, design)
+  ev <- switch(variance,
+    sandwich    = .cit_sandwich_ev(D, design),
+    independent = .cit_independent_ev(D, design))
 
   # computing the pvalue ----
   pval <- try(survey::pchisqsum(test_stat, lower.tail = FALSE, df = rep(1, length(ev)),

@@ -141,6 +141,16 @@
 #'   the object as the result of a gene set analysis.
 #' }
 #'
+#' @param variance a character string, the estimator of the covariance
+#' of the OLS coefficients of \code{X} that gives the weights of the
+#' asymptotic \eqn{\chi^2} mixture. Either \describe{
+#'   \item{\code{"sandwich"}}{(default) use the heteroskedasticity-robust
+#'   sandwich estimator, valid with or without \code{Z}.}
+#'   \item{\code{"independent"}}{the factorized
+#'   estimator only valid only when \code{Z} is NULL \code{Y} and
+#'   \code{Z} are independent ; too conservative when \code{Z} actually affects \code{Y}.}
+#' }
+#'
 #' @details The gene-set statistic is the sum of per-gene statistics. For the
 #' permutation test, it is computed with each single permutation of X shared and
 #' applied across all genes in a set (so inter-gene correlation is preserved).
@@ -163,6 +173,7 @@
 #' The \code{space_y} / \code{number_y} grid controls both the
 #' resolution of the statistic and its computational cost. See
 #' \code{\link{cit_multi}} for details on this trade-off.
+#'
 #'
 #' @seealso \code{\link{cit_multi}}, \code{\link{plot.cit_gsa}}
 #'
@@ -221,8 +232,10 @@ cit_gsa <- function(M,
                     n_cpus = max(1L, detectCores(logical = FALSE) - 1L, na.rm = TRUE),
                     adaptive = FALSE,
                     space_y = TRUE,
-                    number_y = 10) {
+                    number_y = 10,
+                    variance = c("sandwich", "independent")) {
   # checks
+  variance <- match.arg(variance)
 
   stopifnot(is.data.frame(M) | is.matrix(M))
   stopifnot(is.data.frame(X))
@@ -419,6 +432,9 @@ cit_gsa <- function(M,
     n_Y_all <- nrow(M)
     design <- .cit_design(X, Z, n_Y_all)
     H <- design$H
+    if (variance == "independent") {
+      .cit_warn_independent()
+    }
 
 
     if (length(geneset) < 3) {
@@ -472,8 +488,10 @@ cit_gsa <- function(M,
         indi_pi_gs_tab <- do.call(cbind, indi_pi_gs)
 
         # 3) Eigenvalues of Sigma_hat ----
-        # (sandwich estimator of the covariance over both genes and thresholds)
-        ev <- .cit_sandwich_ev(indi_pi_gs_tab, design)
+        # estimator of the covariance over both the genes and the thresholds
+        ev <- switch(variance,
+          sandwich    = .cit_sandwich_ev(indi_pi_gs_tab, design),
+          independent = .cit_independent_ev(indi_pi_gs_tab, design))
 
         pval <- survey::pchisqsum(sum(test_stat_gs), lower.tail = FALSE,
           df = rep(1, length(ev)),

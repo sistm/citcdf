@@ -126,3 +126,22 @@
   return(ev[ev > max(ev) * 1e-10])
 
 }
+
+# Eigenvalues of the factorized covariance (H H'/n) %x% Cov(D) used until
+# citcdf 1.1.x (variance = "independent"). Only valid when the
+# indicators D are independent of both X and Z. Within a gene it equals the former closed form min(p_j, p_j') - p_j p_j', and it also supplies the between-gene blocks.
+.cit_independent_ev <- function(D, design) {
+  n <- nrow(D)
+  Dc <- D - matrix(colMeans(D), nrow = n, ncol = ncol(D), byrow = TRUE)
+  ev_H <- eigen(tcrossprod(design$H) / n, symmetric = TRUE, only.values = TRUE)$values
+  ev_D <- eigen(crossprod(Dc) / n, symmetric = TRUE, only.values = TRUE)$values
+
+  return(as.vector(outer(ev_H, ev_D)))
+}
+
+.cit_warn_independent <- function() {
+  warning("variance = \"independent\" is deprecated and will be removed in a ",
+    "future release.\n  It is only valid when the outcome is independent of ",
+    "both X and Z, and is very conservative when Z affects the outcome. ",
+    "Use variance = \"sandwich\" (the default).", call. = FALSE)
+}

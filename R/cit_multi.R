@@ -88,6 +88,16 @@
 #' \code{max(Y)}. Raising \code{number_y} brings p-values
 #' closer towards their \code{space_y = FALSE} values.
 #'
+#' @param variance a character string, the estimator of the covariance
+#' of the OLS coefficients of \code{X} that gives the weights of the
+#' asymptotic \eqn{\chi^2} mixture. Either \describe{
+#'   \item{\code{"sandwich"}}{(default) use the heteroskedasticity-robust
+#'   sandwich estimator, valid with or without \code{Z}.}
+#'   \item{\code{"independent"}}{the factorized
+#'   estimator only valid only when \code{Z} is NULL \code{Y} and
+#'   \code{Z} are independent ; too conservative when \code{Z} actually affects \code{Y}.}
+#' }
+#'
 #' @seealso \code{\link{cit_asymp}}, \code{\link{cit_perm}}, \code{\link{ccdf}}
 #'
 #' @references Gauthier M, Agniel D, Thiébaut R & Hejblum BP (2021).
@@ -169,8 +179,10 @@ cit_multi <- function(M,
                       n_cpus = max(1L, detectCores(logical = FALSE) - 1L, na.rm = TRUE),
                       adaptive = TRUE,
                       space_y = TRUE,
-                      number_y = 10) {
+                      number_y = 10,
+                      variance = c("sandwich", "independent")) {
   # check
+  variance <- match.arg(variance)
   if (is.matrix(M)) {
     M <- as.data.frame(M)
   }
@@ -384,12 +396,16 @@ cit_multi <- function(M,
     # model.matrix / crossprod / solve / H depend only on (X, Z): build once,
     # not once per gene.
     design <- .cit_design(X, Z, n)
+    if (variance == "independent") {
+      .cit_warn_independent()
+    }
     res <- do.call("rbind", pbapply::pblapply(seq_len(r),
       function(j) {
         cit_asymp(M[, j], X, Z,
           space_y = space_y,
           number_y = number_y,
-          design = design)
+          design = design,
+          variance = variance)
       },
       cl = par_clust)
     )

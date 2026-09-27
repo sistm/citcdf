@@ -4,7 +4,15 @@
 \alias{cit_asymp}
 \title{Asymptotic test for conditional independence}
 \usage{
-cit_asymp(Y, X, Z = NULL, space_y = FALSE, number_y = 10, design = NULL)
+cit_asymp(
+  Y,
+  X,
+  Z = NULL,
+  space_y = FALSE,
+  number_y = 10,
+  design = NULL,
+  variance = c("sandwich", "independent")
+)
 }
 \arguments{
 \item{Y}{a numeric vector of length \code{n} to test for conditional independence
@@ -32,6 +40,16 @@ to loop-call over many genes while building the model matrix, and computing its
 cross-product and its inverse only once.
 Default is \code{NULL}, in which case they are computed from \code{X} and
 \code{Z}. Users should not be using this argument}
+
+\item{variance}{a character string, the estimator of the covariance
+of the OLS coefficients of \code{X} that gives the weights of the
+asymptotic \eqn{\chi^2} mixture. Either \describe{
+  \item{\code{"sandwich"}}{(default) use the heteroskedasticity-robust
+  sandwich estimator, valid with or without \code{Z}.}
+  \item{\code{"independent"}}{the factorized
+  estimator only valid only when \code{Z} is NULL \code{Y} and
+  \code{Z} are independent ; too conservative when \code{Z} actually affects \code{Y}.}
+}}
 }
 \value{
 A data frame with the following elements:

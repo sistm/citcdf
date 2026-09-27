@@ -16,7 +16,8 @@ cit_multi(
   n_cpus = max(1L, detectCores(logical = FALSE) - 1L, na.rm = TRUE),
   adaptive = TRUE,
   space_y = TRUE,
-  number_y = 10
+  number_y = 10,
+  variance = c("sandwich", "independent")
 )
 }
 \arguments{
@@ -77,6 +78,16 @@ observed expression value is used as a distinct threshold. Default is \code{TRUE
 \item{number_y}{an integer value indicating the number of y thresholds (and therefore
 the number of regressions) to perform the test. Only used if \code{space_y}
 is \code{TRUE}. Default is \code{10}.}
+
+\item{variance}{a character string, the estimator of the covariance
+of the OLS coefficients of \code{X} that gives the weights of the
+asymptotic \eqn{\chi^2} mixture. Either \describe{
+  \item{\code{"sandwich"}}{(default) use the heteroskedasticity-robust
+  sandwich estimator, valid with or without \code{Z}.}
+  \item{\code{"independent"}}{the factorized
+  estimator only valid only when \code{Z} is NULL \code{Y} and
+  \code{Z} are independent ; too conservative when \code{Z} actually affects \code{Y}.}
+}}
 }
 \value{
 A list with the following elements:\itemize{
