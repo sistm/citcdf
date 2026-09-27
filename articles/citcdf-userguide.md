@@ -151,7 +151,7 @@ computes design permutations conditionally on Z:
 
 cit_perm(Y, X, Z = Z, n_perm = 1000)
 #>   score  raw_pval test_statistic
-#> 1   523 0.5234765     0.01850231
+#> 1   498 0.4985015     0.01850231
 ```
 
 Both tests agree on both hypotheses.
@@ -366,14 +366,14 @@ responsibility.
      collate  C.UTF-8
      ctype    C.UTF-8
      tz       UTC
-     date     2026-09-25
+     date     2026-09-27
      pandoc   3.8.3 @ /opt/hostedtoolcache/pandoc/3.8.3/x64/ (via rmarkdown)
      quarto   1.10.18 @ /usr/local/bin/quarto
 
     ─ Packages ───────────────────────────────────────────────────────────────────
      package      * version    date (UTC) lib source
      bnlearn        5.2.1      2026-07-17 [1] RSPM
-     citcdf       * 1.1.1.9000 2026-09-25 [1] local
+     citcdf       * 1.1.1.9000 2026-09-27 [1] local
      cli            3.6.6      2026-04-09 [1] RSPM
      codetools      0.2-20     2024-03-31 [3] CRAN (R 4.6.1)
      DBI            1.3.0      2026-02-25 [1] RSPM

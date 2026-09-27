@@ -5,7 +5,15 @@ Test the conditional independence of Y and X given Z.
 ## Usage
 
 ``` r
-cit_asymp(Y, X, Z = NULL, space_y = FALSE, number_y = 10, design = NULL)
+cit_asymp(
+  Y,
+  X,
+  Z = NULL,
+  space_y = FALSE,
+  number_y = 10,
+  design = NULL,
+  variance = c("sandwich", "independent")
+)
 ```
 
 ## Arguments
@@ -47,6 +55,23 @@ cit_asymp(Y, X, Z = NULL, space_y = FALSE, number_y = 10, design = NULL)
   computing its cross-product and its inverse only once. Default is
   `NULL`, in which case they are computed from `X` and `Z`. Users should
   not be using this argument
+
+- variance:
+
+  a character string, the estimator of the covariance of the OLS
+  coefficients of `X` that gives the weights of the asymptotic
+  \\\chi^2\\ mixture. Either
+
+  `"sandwich"`
+
+  :   (default) use the heteroskedasticity-robust sandwich estimator,
+      valid with or without `Z`.
+
+  `"independent"`
+
+  :   the factorized estimator only valid only when `Z` is NULL `Y` and
+      `Z` are independent ; too conservative when `Z` actually affects
+      `Y`.
 
 ## Value
 

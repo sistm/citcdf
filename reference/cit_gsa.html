@@ -61,7 +61,8 @@
 <span>  n_cpus <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="fl">1L</span>, <span class="fu">detectCores</span><span class="op">(</span>logical <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">-</span> <span class="fl">1L</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
 <span>  adaptive <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  space_y <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  number_y <span class="op">=</span> <span class="fl">10</span></span>
+<span>  number_y <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>  variance <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sandwich"</span>, <span class="st">"independent"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -156,6 +157,22 @@ observed expression value is used as a distinct threshold. Default is <code>TRUE
 <dd><p>an integer value indicating the number of y thresholds (and therefore
 the number of regressions) to perform the test. Only used if <code>space_y</code>
 is <code>TRUE</code>. Default is <code>10</code>.</p></dd>
+
+
+<dt id="arg-variance">variance<a class="anchor" aria-label="anchor" href="#arg-variance"></a></dt>
+<dd><p>a character string, the estimator of the covariance
+of the OLS coefficients of <code>X</code> that gives the weights of the
+asymptotic \(\chi^2\) mixture. Either</p><dl><dt><code>"sandwich"</code></dt>
+<dd><p>(default) use the heteroskedasticity-robust
+  sandwich estimator, valid with or without <code>Z</code>.</p></dd>
+
+  <dt><code>"independent"</code></dt>
+<dd><p>the factorized
+  estimator only valid only when <code>Z</code> is NULL <code>Y</code> and
+  <code>Z</code> are independent ; too conservative when <code>Z</code> actually affects <code>Y</code>.</p></dd>
+
+
+</dl></dd>
 
 </dl></div>
     <div class="section level2">

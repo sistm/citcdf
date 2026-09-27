@@ -18,7 +18,8 @@ cit_gsa(
   n_cpus = max(1L, detectCores(logical = FALSE) - 1L, na.rm = TRUE),
   adaptive = FALSE,
   space_y = TRUE,
-  number_y = 10
+  number_y = 10,
+  variance = c("sandwich", "independent")
 )
 ```
 
@@ -120,6 +121,23 @@ cit_gsa(
   an integer value indicating the number of y thresholds (and therefore
   the number of regressions) to perform the test. Only used if `space_y`
   is `TRUE`. Default is `10`.
+
+- variance:
+
+  a character string, the estimator of the covariance of the OLS
+  coefficients of `X` that gives the weights of the asymptotic
+  \\\chi^2\\ mixture. Either
+
+  `"sandwich"`
+
+  :   (default) use the heteroskedasticity-robust sandwich estimator,
+      valid with or without `Z`.
+
+  `"independent"`
+
+  :   the factorized estimator only valid only when `Z` is NULL `Y` and
+      `Z` are independent ; too conservative when `Z` actually affects
+      `Y`.
 
 ## Value
 
