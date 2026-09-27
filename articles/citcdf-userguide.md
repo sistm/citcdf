@@ -151,7 +151,7 @@ computes design permutations conditionally on Z:
 
 cit_perm(Y, X, Z = Z, n_perm = 1000)
 #>   score  raw_pval test_statistic
-#> 1   498 0.4985015     0.01850231
+#> 1   523 0.5234765     0.01850231
 ```
 
 Both tests agree on both hypotheses.
@@ -371,65 +371,65 @@ responsibility.
      quarto   1.10.18 @ /usr/local/bin/quarto
 
     ─ Packages ───────────────────────────────────────────────────────────────────
-     package      * version    date (UTC) lib source
-     bnlearn        5.2.1      2026-07-17 [1] RSPM
-     citcdf       * 1.1.1.9000 2026-09-27 [1] local
-     cli            3.6.6      2026-04-09 [1] RSPM
-     codetools      0.2-20     2024-03-31 [3] CRAN (R 4.6.1)
-     DBI            1.3.0      2026-02-25 [1] RSPM
-     digest         0.6.39     2025-11-19 [1] RSPM
-     dotCall64      1.2        2024-10-04 [1] RSPM
-     dplyr          1.2.1      2026-04-03 [1] RSPM
-     evaluate       1.0.5      2025-08-27 [1] RSPM
-     farver         2.1.2      2024-05-13 [1] RSPM
-     fastmap        1.2.0      2024-05-15 [1] RSPM
-     future         1.76.0     2026-09-24 [1] RSPM
-     future.apply   1.20.2     2026-02-20 [1] RSPM
-     generics       0.1.4      2025-05-09 [1] RSPM
-     ggplot2        4.0.3      2026-04-22 [1] RSPM
-     globals        0.19.1     2026-03-13 [1] RSPM
-     glue           1.8.1      2026-04-17 [1] RSPM
-     gtable         0.3.6      2024-10-25 [1] RSPM
-     htmltools      0.5.9      2025-12-04 [1] RSPM
-     htmlwidgets    1.6.4      2023-12-06 [1] RSPM
-     jsonlite       2.0.0      2025-03-27 [1] RSPM
-     knitr          1.52       2026-09-06 [1] RSPM
-     labeling       0.4.3      2023-08-29 [1] RSPM
-     lattice        0.22-9     2026-02-09 [3] CRAN (R 4.6.1)
-     lifecycle      1.0.5      2026-01-08 [1] RSPM
-     listenv        1.0.0      2026-06-22 [1] RSPM
-     magrittr       2.0.5      2026-04-04 [1] RSPM
-     Matrix         1.7-5      2026-03-21 [3] CRAN (R 4.6.1)
-     mitools        2.7        2026-08-31 [1] RSPM
-     otel           0.2.0      2025-08-29 [1] RSPM
-     parallelly     1.48.0     2026-06-29 [1] RSPM
-     patchwork      1.3.2      2025-08-25 [1] RSPM
-     pbapply        1.7-5      2026-09-01 [1] RSPM
-     pillar         1.11.1     2025-09-17 [1] RSPM
-     pkgconfig      2.0.3      2019-09-22 [1] RSPM
-     progressr      1.0.0      2026-07-04 [1] RSPM
-     R6             2.6.1      2025-02-15 [1] RSPM
-     RColorBrewer   1.1-3      2022-04-03 [1] RSPM
-     Rcpp           1.1.2      2026-07-05 [1] RSPM
-     reactable      0.4.5      2025-12-01 [1] RSPM
-     reactR         0.6.1      2024-09-14 [1] RSPM
-     rlang          1.3.0      2026-07-05 [1] RSPM
-     rmarkdown      2.32       2026-09-01 [1] RSPM
-     S7             0.2.2      2026-04-22 [1] RSPM
-     scales         1.4.0      2025-04-24 [1] RSPM
-     sessioninfo    1.2.4      2026-06-04 [1] RSPM
-     SeuratObject   5.4.0      2026-04-11 [1] RSPM
-     sp             2.2-3      2026-07-19 [1] RSPM
-     spam           2.11-4     2026-05-29 [1] RSPM
-     survey         4.5        2026-02-24 [1] RSPM
-     survival       3.8-6      2026-01-16 [3] CRAN (R 4.6.1)
-     tibble         3.3.1      2026-01-11 [1] RSPM
-     tidyselect     1.2.1      2024-03-11 [1] RSPM
-     vctrs          0.7.3      2026-04-11 [1] RSPM
-     viridisLite    0.4.3      2026-02-04 [1] RSPM
-     withr          3.0.3      2026-06-19 [1] RSPM
-     xfun           0.61       2026-09-16 [1] RSPM
-     yaml           2.3.12     2025-12-10 [1] RSPM
+     package      * version date (UTC) lib source
+     bnlearn        5.2.1   2026-07-17 [1] RSPM
+     citcdf       * 1.2.0   2026-09-27 [1] local
+     cli            3.6.6   2026-04-09 [1] RSPM
+     codetools      0.2-20  2024-03-31 [3] CRAN (R 4.6.1)
+     DBI            1.3.0   2026-02-25 [1] RSPM
+     digest         0.6.39  2025-11-19 [1] RSPM
+     dotCall64      1.2     2024-10-04 [1] RSPM
+     dplyr          1.2.1   2026-04-03 [1] RSPM
+     evaluate       1.0.5   2025-08-27 [1] RSPM
+     farver         2.1.2   2024-05-13 [1] RSPM
+     fastmap        1.2.0   2024-05-15 [1] RSPM
+     future         1.76.0  2026-09-24 [1] RSPM
+     future.apply   1.20.2  2026-02-20 [1] RSPM
+     generics       0.1.4   2025-05-09 [1] RSPM
+     ggplot2        4.0.3   2026-04-22 [1] RSPM
+     globals        0.19.1  2026-03-13 [1] RSPM
+     glue           1.8.1   2026-04-17 [1] RSPM
+     gtable         0.3.6   2024-10-25 [1] RSPM
+     htmltools      0.5.9   2025-12-04 [1] RSPM
+     htmlwidgets    1.6.4   2023-12-06 [1] RSPM
+     jsonlite       2.0.0   2025-03-27 [1] RSPM
+     knitr          1.52    2026-09-06 [1] RSPM
+     labeling       0.4.3   2023-08-29 [1] RSPM
+     lattice        0.22-9  2026-02-09 [3] CRAN (R 4.6.1)
+     lifecycle      1.0.5   2026-01-08 [1] RSPM
+     listenv        1.0.0   2026-06-22 [1] RSPM
+     magrittr       2.0.5   2026-04-04 [1] RSPM
+     Matrix         1.7-5   2026-03-21 [3] CRAN (R 4.6.1)
+     mitools        2.7     2026-08-31 [1] RSPM
+     otel           0.2.0   2025-08-29 [1] RSPM
+     parallelly     1.48.0  2026-06-29 [1] RSPM
+     patchwork      1.3.2   2025-08-25 [1] RSPM
+     pbapply        1.7-5   2026-09-01 [1] RSPM
+     pillar         1.11.1  2025-09-17 [1] RSPM
+     pkgconfig      2.0.3   2019-09-22 [1] RSPM
+     progressr      1.0.0   2026-07-04 [1] RSPM
+     R6             2.6.1   2025-02-15 [1] RSPM
+     RColorBrewer   1.1-3   2022-04-03 [1] RSPM
+     Rcpp           1.1.2   2026-07-05 [1] RSPM
+     reactable      0.4.5   2025-12-01 [1] RSPM
+     reactR         0.6.1   2024-09-14 [1] RSPM
+     rlang          1.3.0   2026-07-05 [1] RSPM
+     rmarkdown      2.32    2026-09-01 [1] RSPM
+     S7             0.2.2   2026-04-22 [1] RSPM
+     scales         1.4.0   2025-04-24 [1] RSPM
+     sessioninfo    1.2.4   2026-06-04 [1] RSPM
+     SeuratObject   5.4.0   2026-04-11 [1] RSPM
+     sp             2.2-3   2026-07-19 [1] RSPM
+     spam           2.11-4  2026-05-29 [1] RSPM
+     survey         4.5     2026-02-24 [1] RSPM
+     survival       3.8-6   2026-01-16 [3] CRAN (R 4.6.1)
+     tibble         3.3.1   2026-01-11 [1] RSPM
+     tidyselect     1.2.1   2024-03-11 [1] RSPM
+     vctrs          0.7.3   2026-04-11 [1] RSPM
+     viridisLite    0.4.3   2026-02-04 [1] RSPM
+     withr          3.0.3   2026-06-19 [1] RSPM
+     xfun           0.61    2026-09-16 [1] RSPM
+     yaml           2.3.12  2025-12-10 [1] RSPM
 
      [1] /home/runner/work/_temp/Library
      [2] /opt/R/4.6.1/lib/R/site-library

@@ -1,6 +1,22 @@
 # Changelog
 
-## citcdf 1.1.1.9000 (development version)
+## citcdf 1.2.0
+
+- **Covariance** in asymptotic tests
+  ([`cit_asymp()`](https://sistm.github.io/citcdf/reference/cit_asymp.md),
+  [`cit_multi()`](https://sistm.github.io/citcdf/reference/cit_multi.md),
+  [`cit_gsa()`](https://sistm.github.io/citcdf/reference/cit_gsa.md)) is
+  now estimated with a *heteroskedasticity-robust sandwich estimator* by
+  default. Former factorized estimator was only valid if `Y` is
+  independent of both `X` and `Z`, and was too conservative when `Z`
+  actually affects `Y`. Test statistics are unchanged but asymptotic
+  p-values change. A new argument `variance`  
+  is either `"sandwich"` (the new default) or `"independent"` (older
+  estimator for backward compatibility with citcdf 1.1.0 results).
+
+- New argument `residuals`: `"full"` (default, like before) or
+  `"restricted"` (null-model, score-type, more conservative) residuals
+  in the sandwich estimator.
 
 ## citcdf 1.1.0
 
