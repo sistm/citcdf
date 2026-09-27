@@ -151,6 +151,20 @@
 #'   \code{Z} are independent ; too conservative when \code{Z} actually affects \code{Y}.}
 #' }
 #'
+#' @param residuals a character string indicating which residuals are used in
+#' the sandwich estimator (ignored when \code{variance = "independent"}). Either \describe{
+#'   \item{\code{"full"}}{(default) residuals of the linear model including
+#'   \code{X} (Wald-type). Consistent for the variance of the \code{X}
+#'   coefficients under the null hypothesis and under the alternative.}
+#'   \item{\code{"restricted"}}{residuals of the null model without
+#'   \code{X} (score-type). Consistent under the null hypothesis only: under
+#'   the alternative the effect of \code{X} is counted as noise, which can
+#'   decrease power. Can be quite conservative in small samples, especially if
+#'   a level of a factor from \code{X} contains few observations. Can serve as
+#'   a conservative sensitivity analysis.}
+#' }
+#' Only used by the asymptotic test.
+#'
 #' @details The gene-set statistic is the sum of per-gene statistics. For the
 #' permutation test, it is computed with each single permutation of X shared and
 #' applied across all genes in a set (so inter-gene correlation is preserved).
@@ -233,9 +247,11 @@ cit_gsa <- function(M,
                     adaptive = FALSE,
                     space_y = TRUE,
                     number_y = 10,
-                    variance = c("sandwich", "independent")) {
+                    variance = c("sandwich", "independent"),
+                    residuals = c("full", "restricted")) {
   # checks
   variance <- match.arg(variance)
+  residuals <- match.arg(residuals)
 
   stopifnot(is.data.frame(M) | is.matrix(M))
   stopifnot(is.data.frame(X))
@@ -490,7 +506,7 @@ cit_gsa <- function(M,
         # 3) Eigenvalues of Sigma_hat ----
         # estimator of the covariance over both the genes and the thresholds
         ev <- switch(variance,
-          sandwich    = .cit_sandwich_ev(indi_pi_gs_tab, design),
+          sandwich    = .cit_sandwich_ev(indi_pi_gs_tab, design, residuals),
           independent = .cit_independent_ev(indi_pi_gs_tab, design))
 
         pval <- survey::pchisqsum(sum(test_stat_gs), lower.tail = FALSE,

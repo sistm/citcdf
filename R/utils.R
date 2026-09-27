@@ -88,23 +88,29 @@
   # so its inverse (restricted to the X rows) is reusable for every permuted design.
   XtXinv_X <- if (is.null(Z)) solve(crossprod(modelmat))[indexes_X, , drop = FALSE] else NULL
 
-  # compute the QR decomposition  of the full design (reused for the OLS
-  # residuals of every gene/threshold in the sandwich variance .cit_sandwich_ev()).
+  # compute the QR decomposition of the full design (1, X, Z) and of the null
+  # design (1, Z) (reused for the OLS residuals of every gene/threshold in the
+  # sandwich variance .cit_sandwich_ev(), for residuals = "full" and
+  # "restricted" respectively).
   list(modelmat = modelmat, indexes_X = indexes_X, H = H, XtXinv_X = XtXinv_X,
-    qr = qr(modelmat))
+    qr = qr(modelmat), qr0 = qr(modelmat[, -indexes_X, drop = FALSE]))
 }
 
-# Eigenvalues of the heteroskedasticity-robust sandwich)estimate of the
-# asymptotic covariance Sigma.
+# Eigenvalues of the heteroskedasticity-robust sandwich estimate of the
+# asymptotic covariance Sigma, computed from the OLS residuals of the threshold
+# indicators D on the full design (1, X, Z) if residuals = "full", or on the
+# null design (1, Z) if residuals = "restricted".
 # Only the eigenvalues are needed and the test statistic is a squared norm, so
 # the ordering of the columns of U is irrelevant.
 # When U has more columns than rows, the non-zero eigenvalues are obtained from
 # the n x n Gram matrix U U^T / n instead (same non-zero spectrum, cheaper).
 #
 # D: n x m matrix of threshold indicators (m = thresholds x genes).
-.cit_sandwich_ev <- function(D, design) {
+.cit_sandwich_ev <- function(D, design, residuals = c("full", "restricted")) {
+  residuals <- match.arg(residuals)
   n <- nrow(D)
-  E <- qr.resid(design$qr, D)                  # n x m, residuals D - W beta_hat
+  qr_resid <- switch(residuals, full = design$qr, restricted = design$qr0)
+  E <- qr.resid(qr_resid, D)                   # n x m residuals
   G <- t(design$H)                             # n x K, row i = gamma_i
 
   U <- do.call(cbind, lapply(seq_len(ncol(G)),

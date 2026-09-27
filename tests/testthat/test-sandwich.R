@@ -58,3 +58,44 @@ test_that("asymptotic tests hold their level when Z affects Y (heteroskedastic e
   # the former factorised variance gave ~0.005 here (see NEWS)
   expect_true(all(lvl > 0.025 & lvl < 0.08))
 })
+
+test_that("residuals = 'restricted' uses the null-model residuals", {
+  set.seed(13)
+  n <- 120
+  z <- rnorm(n)
+  X <- data.frame(X = factor(sample(c("a", "b", "c"), n, TRUE)))
+  Y <- z + (X$X == "b") + rnorm(n)
+  D <- outer(Y, c(-1, 0, 1, 2), "<=") * 1
+  for (Z in list(NULL, data.frame(Z = z))) {
+    design <- .cit_design(X, Z, n)
+    W0 <- if (is.null(Z)) matrix(1, n) else model.matrix(~., Z)
+    E0 <- residuals(lm(D ~ W0 - 1))
+    G <- t(design$H)
+    U <- do.call(cbind, lapply(seq_len(ncol(G)), function(k) G[, k] * E0))
+    ref <- eigen(crossprod(U) / n, symmetric = TRUE, only.values = TRUE)$values
+    ev <- .cit_sandwich_ev(D, design, residuals = "restricted")
+    expect_equal(ev, ref[seq_along(ev)], tolerance = 1e-8)
+    # under this alternative, restricted residuals inflate the variance
+    expect_gt(sum(ev), sum(.cit_sandwich_ev(D, design, residuals = "full")))
+  }
+})
+
+test_that("the residuals argument is passed through and leaves the statistic unchanged", {
+  set.seed(14)
+  n <- 100
+  X <- data.frame(X = rnorm(n)); Z <- data.frame(Z = rnorm(n))
+  M <- matrix(rnorm(n * 3), n, dimnames = list(NULL, paste0("g", 1:3)))
+  a_f <- cit_asymp(M[, 1], X, Z, residuals = "full")
+  a_r <- cit_asymp(M[, 1], X, Z, residuals = "restricted")
+  expect_equal(a_f$test_statistic, a_r$test_statistic)
+  expect_false(isTRUE(all.equal(a_f$raw_pval, a_r$raw_pval)))
+  m_r <- cit_multi(M, X, Z, parallel = FALSE, residuals = "restricted")$pvals
+  expect_equal(m_r$raw_pval[1],
+    cit_asymp(M[, 1], X, Z, space_y = TRUE, residuals = "restricted")$raw_pval)
+  g_f <- cit_gsa(M, X, Z, geneset = colnames(M), parallel = FALSE)$pvals
+  g_r <- cit_gsa(M, X, Z, geneset = colnames(M), parallel = FALSE,
+    residuals = "restricted")$pvals
+  expect_equal(g_f$test_statistic, g_r$test_statistic)
+  expect_false(isTRUE(all.equal(g_f$raw_pval, g_r$raw_pval)))
+  expect_error(cit_asymp(M[, 1], X, Z, residuals = "foo"))
+})

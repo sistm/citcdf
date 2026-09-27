@@ -98,6 +98,20 @@
 #'   \code{Z} are independent ; too conservative when \code{Z} actually affects \code{Y}.}
 #' }
 #'
+#' @param residuals a character string indicating which residuals are used in
+#' the sandwich estimator (ignored when \code{variance = "independent"}). Either \describe{
+#'   \item{\code{"full"}}{(default) residuals of the linear model including
+#'   \code{X} (Wald-type). Consistent for the variance of the \code{X}
+#'   coefficients under the null hypothesis and under the alternative.}
+#'   \item{\code{"restricted"}}{residuals of the null model without
+#'   \code{X} (score-type). Consistent under the null hypothesis only: under
+#'   the alternative the effect of \code{X} is counted as noise, which can
+#'   decrease power. Can be quite conservative in small samples, especially if
+#'   a level of a factor from \code{X} contains few observations. Can serve as
+#'   a conservative sensitivity analysis.}
+#' }
+#' Only used by the asymptotic test.
+#'
 #' @seealso \code{\link{cit_asymp}}, \code{\link{cit_perm}}, \code{\link{ccdf}}
 #'
 #' @references Gauthier M, Agniel D, Thiébaut R & Hejblum BP (2021).
@@ -180,9 +194,11 @@ cit_multi <- function(M,
                       adaptive = TRUE,
                       space_y = TRUE,
                       number_y = 10,
-                      variance = c("sandwich", "independent")) {
+                      variance = c("sandwich", "independent"),
+                      residuals = c("full", "restricted")) {
   # check
   variance <- match.arg(variance)
+  residuals <- match.arg(residuals)
   if (is.matrix(M)) {
     M <- as.data.frame(M)
   }
@@ -405,7 +421,8 @@ cit_multi <- function(M,
           space_y = space_y,
           number_y = number_y,
           design = design,
-          variance = variance)
+          variance = variance,
+          residuals = residuals)
       },
       cl = par_clust)
     )

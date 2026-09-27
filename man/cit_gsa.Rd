@@ -18,7 +18,8 @@ cit_gsa(
   adaptive = FALSE,
   space_y = TRUE,
   number_y = 10,
-  variance = c("sandwich", "independent")
+  variance = c("sandwich", "independent"),
+  residuals = c("full", "restricted")
 )
 }
 \arguments{
@@ -95,6 +96,20 @@ asymptotic \eqn{\chi^2} mixture. Either \describe{
   estimator only valid only when \code{Z} is NULL \code{Y} and
   \code{Z} are independent ; too conservative when \code{Z} actually affects \code{Y}.}
 }}
+
+\item{residuals}{a character string indicating which residuals are used in
+the sandwich estimator (ignored when \code{variance = "independent"}). Either \describe{
+  \item{\code{"full"}}{(default) residuals of the linear model including
+  \code{X} (Wald-type). Consistent for the variance of the \code{X}
+  coefficients under the null hypothesis and under the alternative.}
+  \item{\code{"restricted"}}{residuals of the null model without
+  \code{X} (score-type). Consistent under the null hypothesis only: under
+  the alternative the effect of \code{X} is counted as noise, which can
+  decrease power. Can be quite conservative in small samples, especially if
+  a level of a factor from \code{X} contains few observations. Can serve as
+  a conservative sensitivity analysis.}
+}
+Only used by the asymptotic test.}
 }
 \value{
 A list with the following elements:\itemize{
