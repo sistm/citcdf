@@ -61,7 +61,8 @@
 <span>  adaptive <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  space_y <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  number_y <span class="op">=</span> <span class="fl">10</span>,</span>
-<span>  variance <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sandwich"</span>, <span class="st">"independent"</span><span class="op">)</span></span>
+<span>  variance <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sandwich"</span>, <span class="st">"independent"</span><span class="op">)</span>,</span>
+<span>  residuals <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"full"</span>, <span class="st">"restricted"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -165,6 +166,25 @@ asymptotic \(\chi^2\) mixture. Either</p><dl><dt><code>"sandwich"</code></dt>
 
 
 </dl></dd>
+
+
+<dt id="arg-residuals">residuals<a class="anchor" aria-label="anchor" href="#arg-residuals"></a></dt>
+<dd><p>a character string indicating which residuals are used in
+the sandwich estimator (ignored when <code>variance = "independent"</code>). Either</p><dl><dt><code>"full"</code></dt>
+<dd><p>(default) residuals of the linear model including
+  <code>X</code> (Wald-type). Consistent for the variance of the <code>X</code>
+  coefficients under the null hypothesis and under the alternative.</p></dd>
+
+  <dt><code>"restricted"</code></dt>
+<dd><p>residuals of the null model without
+  <code>X</code> (score-type). Consistent under the null hypothesis only: under
+  the alternative the effect of <code>X</code> is counted as noise, which can
+  decrease power. Can be quite conservative in small samples, especially if
+  a level of a factor from <code>X</code> contains few observations. Can serve as
+  a conservative sensitivity analysis.</p></dd>
+
+
+</dl><p>Only used by the asymptotic test.</p></dd>
 
 </dl></div>
     <div class="section level2">

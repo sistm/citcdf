@@ -18,7 +18,8 @@ cit_multi(
   adaptive = TRUE,
   space_y = TRUE,
   number_y = 10,
-  variance = c("sandwich", "independent")
+  variance = c("sandwich", "independent"),
+  residuals = c("full", "restricted")
 )
 ```
 
@@ -121,6 +122,28 @@ cit_multi(
   :   the factorized estimator only valid only when `Z` is NULL `Y` and
       `Z` are independent ; too conservative when `Z` actually affects
       `Y`.
+
+- residuals:
+
+  a character string indicating which residuals are used in the sandwich
+  estimator (ignored when `variance = "independent"`). Either
+
+  `"full"`
+
+  :   (default) residuals of the linear model including `X` (Wald-type).
+      Consistent for the variance of the `X` coefficients under the null
+      hypothesis and under the alternative.
+
+  `"restricted"`
+
+  :   residuals of the null model without `X` (score-type). Consistent
+      under the null hypothesis only: under the alternative the effect
+      of `X` is counted as noise, which can decrease power. Can be quite
+      conservative in small samples, especially if a level of a factor
+      from `X` contains few observations. Can serve as a conservative
+      sensitivity analysis.
+
+  Only used by the asymptotic test.
 
 ## Value
 
