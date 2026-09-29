@@ -41,7 +41,7 @@ conditional **c**umulative **d**istribution **f**unctions
 $$H_0: Y \perp\!\!\!\perp X \mid Z$$ 
 
 by testing whether $F_{Y \mid X, Z}(y) = F_{Y \mid Z}(y)$. The associated test statistic is computed across a grid of thresholds $\omega_1 < \dots < \omega_p$ spanning $Y$, where the indicator $\mathbb{1}_{Y_i \le \omega_j}$ is
-regressed on both $X$ and $Z$ at each threshold $j$. Under $H_0$, the coefficients $\beta_j$ carried by $X$ are all null, and thus `citcdf` test statistic is the sum of squares whose asymptotic distribution is then a weighted mixture of $\chi^2_1$.
+regressed on both $X$ and $Z$ at each threshold $j$. Under $H_0$, the coefficients $\beta_j$ carried by $X$ are all null, and thus `citcdf` test statistic is the sum of squares whose asymptotic distribution is then a weighted mixture of $\chi^2_1$ (whose weights are the eigenvalues of the covariance of the $\beta_j$).
 
 No distributional assumption is made on $Y$, and in that sense `citcdf` is *distribution-free*. It is therefore robust to zero-inflation, multi-modality and skewness that typical occur in single-cell RNA-seq data.
 
@@ -249,8 +249,8 @@ knitr::kable(data.frame(asymptotic = signif(res_adj$pvals[order_asymp, "raw_pval
            row.names = order_asymp)[1:15,])
 ```
 
-The orderings nearly coincide. Individual p-values, as expected, differ: the permutation ones carry Monte Carlo noise and cannot fall below
-`1 / (total permutations + 1)`.
+The orderings largely agree, while individual p-values differ (as expected: the permutation ones carry Monte Carlo noise and cannot fall below
+$\frac{1}{n_{\text{total permutations}} + 1}$).
 
 # Practical considerations
 
@@ -261,9 +261,13 @@ Defaults differ: `cit_asymp()` and `cit_perm()` use the exhaustive grid, `cit_mu
 `parallel = interactive()`. Calls above set `parallel = FALSE` for reproducible
 builds. Drop it in real analyses, and set `n_cpus`.
 
- - [ ] **Multiplicity.** `cit_multi()` returns Benjamini-Hochberg adjusted p-values in `adj_pval` for FDR control. `cit_asymp()` and `cit_perm()` are single-hypothesis functions and do not need such multiple-testing adjustment.
+ - [ ] **Multiple testing** `cit_multi()` returns Benjamini-Hochberg adjusted p-values in `adj_pval` for FDR control. `cit_asymp()` and `cit_perm()` are single-hypothesis functions and do not need such multiple-testing adjustment.
 
  - [ ] **Design.** The asymptotic test accepts several variables of interest (`ncol(X) > 1`) and several covariates (`ncol(Z) > 1`). The permutation test is less flexible accepting at most one covariate.
+
+ - [ ] **Asymptotic covariance estimate.** The asymptotic tests use a sandwich estimator by default. `residuals = "restricted"` gives a more conservative version. `variance = "independent"` neglects the impact of $Z$ on $Y$ (that reproduce results from `citcdf` 1.1.0 earlier version), also leading to an overly-conservative asymptotic test.
+
+ - [ ] **Adjustment on `Z`.** The asymptotic test assumes the linear effect of $Z$ on the conditional CDF of $Y$ is well specified. That assumption can be further relaxed in practice for a continuous $Z$ by using, for instance, a cubic natural spline basis on the columns of Z with `splines::ns(z, df = 3)`.
 
  - [ ] **Preprocessing.** Normalization remains the user's choice and responsibility.
 
