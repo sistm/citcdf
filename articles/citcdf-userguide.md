@@ -15,7 +15,8 @@ associated test statistic is computed across a grid of thresholds
 \mathbb{1}\_{Y_i \le \omega_j} is regressed on both X and Z at each
 threshold j. Under H_0, the coefficients \beta_j carried by X are all
 null, and thus `citcdf` test statistic is the sum of squares whose
-asymptotic distribution is then a weighted mixture of \chi^2_1.
+asymptotic distribution is then a weighted mixture of \chi^2_1 (whose
+weights are the eigenvalues of the covariance of the \beta_j).
 
 No distributional assumption is made on Y, and in that sense `citcdf` is
 *distribution-free*. It is therefore robust to zero-inflation,
@@ -313,9 +314,9 @@ reactable::reactable(data.frame(asymptotic = signif(res_adj$pvals[order_asymp, "
 )
 ```
 
-The orderings nearly coincide. Individual p-values, as expected, differ:
-the permutation ones carry Monte Carlo noise and cannot fall below
-`1 / (total permutations + 1)`.
+The orderings largely agree, while individual p-values differ (as
+expected: the permutation ones carry Monte Carlo noise and cannot fall
+below \frac{1}{n\_{\text{total permutations}} + 1}).
 
 ## 4 Practical considerations
 
@@ -338,7 +339,7 @@ parallelises over outcomes and defaults to `parallel = interactive()`.
 Calls above set `parallel = FALSE` for reproducible builds. Drop it in
 real analyses, and set `n_cpus`.
 
-**Multiplicity.**
+**Multiple testing**
 [`cit_multi()`](https://sistm.github.io/citcdf/reference/cit_multi.md)
 returns Benjamini-Hochberg adjusted p-values in `adj_pval` for FDR
 control.
@@ -350,6 +351,18 @@ adjustment.
 **Design.** The asymptotic test accepts several variables of interest
 (`ncol(X) > 1`) and several covariates (`ncol(Z) > 1`). The permutation
 test is less flexible accepting at most one covariate.
+
+**Asymptotic covariance estimate.** The asymptotic tests use a sandwich
+estimator by default. `residuals = "restricted"` gives a more
+conservative version. `variance = "independent"` neglects the impact of
+Z on Y (that reproduce results from `citcdf` 1.1.0 earlier version),
+also leading to an overly-conservative asymptotic test.
+
+**Adjustment on `Z`.** The asymptotic test assumes the linear effect of
+Z on the conditional CDF of Y is well specified. That assumption can be
+further relaxed in practice for a continuous Z by using, for instance, a
+cubic natural spline basis on the columns of Z with
+`splines::ns(z, df = 3)`.
 
 **Preprocessing.** Normalization remains the user’s choice and
 responsibility.
@@ -366,14 +379,14 @@ responsibility.
      collate  C.UTF-8
      ctype    C.UTF-8
      tz       UTC
-     date     2026-09-27
+     date     2026-09-29
      pandoc   3.8.3 @ /opt/hostedtoolcache/pandoc/3.8.3/x64/ (via rmarkdown)
      quarto   1.10.18 @ /usr/local/bin/quarto
 
     ─ Packages ───────────────────────────────────────────────────────────────────
      package      * version date (UTC) lib source
      bnlearn        5.2.1   2026-07-17 [1] RSPM
-     citcdf       * 1.2.0   2026-09-27 [1] local
+     citcdf       * 1.2.0   2026-09-29 [1] local
      cli            3.6.6   2026-04-09 [1] RSPM
      codetools      0.2-20  2024-03-31 [3] CRAN (R 4.6.1)
      DBI            1.3.0   2026-02-25 [1] RSPM
