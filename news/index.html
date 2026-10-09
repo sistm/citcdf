@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">citcdf</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -42,10 +42,11 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.2.0" id="citcdf-120">citcdf 1.2.0<a class="anchor" aria-label="anchor" href="#citcdf-120"></a></h2>
+<h2 class="pkg-version" data-toc-text="1.2.1" id="citcdf-121">citcdf 1.2.1<a class="anchor" aria-label="anchor" href="#citcdf-121"></a></h2>
 <ul><li><p><strong>Covariance</strong> in asymptotic tests (<code><a href="../reference/cit_asymp.html">cit_asymp()</a></code>, <code><a href="../reference/cit_multi.html">cit_multi()</a></code>, <code><a href="../reference/cit_gsa.html">cit_gsa()</a></code>) is now estimated with a <em>heteroskedasticity-robust sandwich estimator</em> by default. Former factorized estimator was only valid if <code>Y</code> is independent of both <code>X</code> and <code>Z</code>, and was too conservative when <code>Z</code> actually affects <code>Y</code>. Test statistics are unchanged but asymptotic p-values change. A new argument <code>variance</code><br>
 is either <code>"sandwich"</code> (the new default) or <code>"independent"</code> (older estimator for backward compatibility with citcdf 1.1.0 results).</p></li>
 <li><p>New argument <code>residuals</code>: <code>"full"</code> (default, like before) or <code>"restricted"</code> (null-model, score-type, more conservative) residuals in the sandwich estimator.</p></li>
+<li><p>New argument <code>small_sample_corr</code> in asymptotic tests, correcting the <em>anti-conservativeness</em> of the sandwich estimator in small samples or with many covariates: <code>"HC2"</code> (residuals divided by <code>sqrt(1 - leverage)</code>), <code>"HC1"</code> (estimator multiplied by <code>n/(n-d)</code>) or <code>"none"</code> (as in 1.2.0). <strong>Default is <code>"HC2"</code> in <code><a href="../reference/cit_asymp.html">cit_asymp()</a></code> and <code><a href="../reference/cit_multi.html">cit_multi()</a></code></strong> and <code>"none"</code> in <code><a href="../reference/cit_gsa.html">cit_gsa()</a></code>.</p></li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.1.0" id="citcdf-110">citcdf 1.1.0<a class="anchor" aria-label="anchor" href="#citcdf-110"></a></h2><p class="text-muted">CRAN release: 2026-08-21</p>

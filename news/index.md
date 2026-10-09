@@ -1,6 +1,6 @@
 # Changelog
 
-## citcdf 1.2.0
+## citcdf 1.2.1
 
 - **Covariance** in asymptotic tests
   ([`cit_asymp()`](https://sistm.github.io/citcdf/reference/cit_asymp.md),
@@ -17,6 +17,17 @@
 - New argument `residuals`: `"full"` (default, like before) or
   `"restricted"` (null-model, score-type, more conservative) residuals
   in the sandwich estimator.
+
+- New argument `small_sample_corr` in asymptotic tests, correcting the
+  *anti-conservativeness* of the sandwich estimator in small samples or
+  with many covariates: `"HC2"` (residuals divided by
+  `sqrt(1 - leverage)`), `"HC1"` (estimator multiplied by `n/(n-d)`) or
+  `"none"` (as in 1.2.0). **Default is `"HC2"` in
+  [`cit_asymp()`](https://sistm.github.io/citcdf/reference/cit_asymp.md)
+  and
+  [`cit_multi()`](https://sistm.github.io/citcdf/reference/cit_multi.md)**
+  and `"none"` in
+  [`cit_gsa()`](https://sistm.github.io/citcdf/reference/cit_gsa.md).
 
 ## citcdf 1.1.0
 

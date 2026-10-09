@@ -83,7 +83,7 @@ X <- data.frame(MECH = marks$MECH)
 
 cit_asymp(Y, X)
 #>       raw_pval test_statistic
-#> 1 5.001697e-05      0.1797552
+#> 1 7.123049e-05      0.1797552
 ```
 
 Conditioning on the algebra mark asks whether mechanics adds anything
@@ -95,7 +95,7 @@ Z <- data.frame(ALG = marks$ALG)
 
 cit_asymp(Y, X, Z)
 #>    raw_pval test_statistic
-#> 1 0.5260487     0.01850231
+#> 1 0.5566318     0.01850231
 ```
 
 The evidence disappears.
@@ -120,7 +120,7 @@ bnlearn::ci.test("STAT", "MECH", "ALG", data = marks, test = "cor")$p.value
 ### 2.3 Permutation test with `cit_perm()`
 
 The asymptotic null distribution requires a reasonable sample size. For
-small `n`,
+small `n` (below 30) and at most one covariate,
 [`cit_perm()`](https://sistm.github.io/citcdf/reference/cit_perm.md)
 calibrates the same observed statistic against a permutation null:
 
@@ -152,7 +152,7 @@ computes design permutations conditionally on Z:
 
 cit_perm(Y, X, Z = Z, n_perm = 1000)
 #>   score  raw_pval test_statistic
-#> 1   498 0.4985015     0.01850231
+#> 1   523 0.5234765     0.01850231
 ```
 
 Both tests agree on both hypotheses.
@@ -233,7 +233,7 @@ res_adj <- cit_multi(M, X = X_pop, Z = Z_lib, test = "asymptotic",
 c(unadjusted = sum(res_unadj$pvals$adj_pval < 0.05),
   adjusted   = sum(res_adj$pvals$adj_pval < 0.05))
 #> unadjusted   adjusted 
-#>        136         95
+#>        134         87
 ```
 
 Conditioning on library size withdraws a third of the hits. The
@@ -243,11 +243,11 @@ strongest signals — canonical monocyte markers — survive:
 
 head(res_adj$pvals[order(res_adj$pvals$raw_pval), ], 5)
 #>            raw_pval     adj_pval test_statistic
-#> S100A9 4.556528e-16 1.048001e-13       250.5153
-#> TYMP   2.078237e-14 2.389972e-12       256.8253
-#> S100A8 4.170902e-14 3.197692e-12       246.5594
-#> AIF1   1.228914e-11 7.066258e-10       205.6298
-#> CST3   6.849770e-11 3.150894e-09       180.3064
+#> S100A9 2.774752e-15 6.381929e-13       250.5153
+#> TYMP   2.228322e-13 1.934174e-11       256.8253
+#> S100A8 2.522836e-13 1.934174e-11       246.5594
+#> AIF1   4.167981e-11 2.396589e-09       205.6298
+#> CST3   3.651514e-10 1.599055e-08       180.3064
 ```
 
 `res_adj` is a list containing:
@@ -353,10 +353,30 @@ adjustment.
 test is less flexible accepting at most one covariate.
 
 **Asymptotic covariance estimate.** The asymptotic tests use a sandwich
-estimator by default. `residuals = "restricted"` gives a more
-conservative version. `variance = "independent"` neglects the impact of
-Z on Y (that reproduce results from `citcdf` 1.1.0 earlier version),
-also leading to an overly-conservative asymptotic test.
+estimator by default. `residuals = "restricted"` is more conservative
+and still needs a small-sample correction with many covariates
+(`d/n > 0.1`). `variance = "independent"` neglects the impact of Z on Y
+(reproducing results from `citcdf` 1.1.0 earlier version), also leading
+to an overly-conservative asymptotic test.
+
+**Small samples and/or many covariates.** The sandwich estimator
+under-estimate the variance when `n` is small relative to `d`, the
+number of model coefficients (intercept, `X` and `Z`) that comes into
+the computation of the residuals, which can make the asymptotic test
+slightly anti-conservative. `small_sample_corr` corrects this: `"HC2"`
+divides each residual by `sqrt(1 - leverage)` (default in
+[`cit_asymp()`](https://sistm.github.io/citcdf/reference/cit_asymp.md)
+and
+[`cit_multi()`](https://sistm.github.io/citcdf/reference/cit_multi.md)),
+`"HC1"` multiplies the estimator by `n/(n-d)` (while `"none"` does
+nothing). The test can still remain a bit anti-conservative when
+`n < 30` or when a level of a factor in `X` has very few observations
+(less than 10), in which case `residuals = "restricted"` can help but
+has little power. In
+[`cit_gsa()`](https://sistm.github.io/citcdf/reference/cit_gsa.md) these
+corrections are unnecessary and overly conservative, so the default is
+`"none"`: only use one when `d/n > 0.1`. The permutation test is the
+right solution for small `n` (below 30), but not with many covariates.
 
 **Adjustment on `Z`.** The asymptotic test assumes the linear effect of
 Z on the conditional CDF of Y is well specified. That assumption can be
@@ -379,14 +399,14 @@ responsibility.
      collate  C.UTF-8
      ctype    C.UTF-8
      tz       UTC
-     date     2026-09-29
+     date     2026-10-09
      pandoc   3.8.3 @ /opt/hostedtoolcache/pandoc/3.8.3/x64/ (via rmarkdown)
-     quarto   1.10.18 @ /usr/local/bin/quarto
+     quarto   1.10.19 @ /usr/local/bin/quarto
 
     ─ Packages ───────────────────────────────────────────────────────────────────
      package      * version date (UTC) lib source
      bnlearn        5.2.1   2026-07-17 [1] RSPM
-     citcdf       * 1.2.0   2026-09-29 [1] local
+     citcdf       * 1.2.1   2026-10-09 [1] local
      cli            3.6.6   2026-04-09 [1] RSPM
      codetools      0.2-20  2024-03-31 [3] CRAN (R 4.6.1)
      DBI            1.3.0   2026-02-25 [1] RSPM
@@ -410,7 +430,7 @@ responsibility.
      labeling       0.4.3   2023-08-29 [1] RSPM
      lattice        0.22-9  2026-02-09 [3] CRAN (R 4.6.1)
      lifecycle      1.0.5   2026-01-08 [1] RSPM
-     listenv        1.0.0   2026-06-22 [1] RSPM
+     listenv        1.1.0   2026-10-04 [1] RSPM
      magrittr       2.0.5   2026-04-04 [1] RSPM
      Matrix         1.7-5   2026-03-21 [3] CRAN (R 4.6.1)
      mitools        2.7     2026-08-31 [1] RSPM

@@ -19,7 +19,8 @@ cit_multi(
   space_y = TRUE,
   number_y = 10,
   variance = c("sandwich", "independent"),
-  residuals = c("full", "restricted")
+  residuals = c("full", "restricted"),
+  small_sample_corr = c("HC2", "HC1", "none")
 )
 ```
 
@@ -138,10 +139,46 @@ cit_multi(
 
   :   residuals of the null model without `X` (score-type). Consistent
       under the null hypothesis only: under the alternative the effect
-      of `X` is counted as noise, which can decrease power. Can be quite
-      conservative in small samples, especially if a level of a factor
-      from `X` contains few observations. Can serve as a conservative
+      of `X` is counted as noise, which can decrease power. Somewhat
+      better calibrated than `"full"` in some small samples settings but
+      very conservative with unbalanced levels of a factor from `X`. Not
+      recommended as primary analysis, but can serve as a conservative
       sensitivity analysis.
+
+  Only used by the asymptotic test.
+
+- small_sample_corr:
+
+  a character string indicating the small-sample correction of the
+  sandwich estimator to be used (ignored when
+  `variance = "independent"`). OLS residuals underestimate the errors,
+  which makes the asymptotic test anti-conservative when `n` is small
+  relative to `d` (i.e. small samples or many covariates), the number of
+  coefficients of the model that appear in the residual computations.
+  Can be ither:
+
+  `"HC2"` (default)
+
+  :   each residual is divided by \\\sqrt{1 - h_i}\\, where the leverage
+      \\h_i = W_i^\top (W^\top W)^{-1} W_i\\ measures how much
+      observation \\i\\ pulls the fit towards itself (\\W\\ being the
+      design matrix of `X` and `Z`, with intercept). In the case of a
+      leverage of 1, the `"HC1"` correction is used instead for that
+      residual (and a warning is issued).
+
+  `"HC1"`
+
+  :   uniform correction where the estimator is multiplied by `n/(n-d)`.
+
+  `"none"`
+
+  :   no correction
+
+  (Long & Ervin, 2000). A warning is issued when `n < 30` or a level of
+  a factor from `X` has fewer than 10 observations (the asymptotic test
+  can then remain anti-conservative).
+
+  Default is `"HC2"`.
 
   Only used by the asymptotic test.
 
@@ -183,6 +220,12 @@ expression analysis, *bioRxiv* 445165.
 [doi:10.1101/2021.05.21.445165](https://doi.org/10.1101/2021.05.21.445165)
 .
 
+Long JS & Ervin LH (2000). Using heteroscedasticity consistent standard
+errors in the linear regression model, *The American Statistician*
+54(3):217-224.
+[doi:10.1080/00031305.2000.10474549](https://doi.org/10.1080/00031305.2000.10474549)
+.
+
 ## See also
 
 [`cit_asymp`](https://sistm.github.io/citcdf/reference/cit_asymp.md),
@@ -204,7 +247,7 @@ res_asymp_unadj <- cit_multi(M = data.frame(Y = Y),
   X = data.frame(X = X),
   test = "asymptotic", parallel = FALSE)
 mean(res_asymp_unadj$pvals$raw_pval < 0.05)
-#> [1] 0.128
+#> [1] 0.118
 hist(res_asymp_unadj$pvals$raw_pval)
 
 
@@ -213,7 +256,7 @@ res_asymp_adj <- cit_multi(M = data.frame(Y = Y),
   Z = data.frame(Z = Z),
   test = "asymptotic", parallel = FALSE)
 mean(res_asymp_adj$pvals$raw_pval < 0.05)
-#> [1] 0.06
+#> [1] 0.054
 hist(res_asymp_adj$pvals$raw_pval)
 
 
@@ -234,7 +277,7 @@ res_asymp_unadj <- cit_multi(M = data.frame(Y = Y),
   X = data.frame(X1 = X1, X2 = X2),
   test = "asymptotic", parallel = FALSE)
 mean(res_asymp_unadj$pvals$raw_pval < 0.05)
-#> [1] 0.782
+#> [1] 0.758
 hist(res_asymp_unadj$pvals$raw_pval)
 
 
@@ -243,7 +286,7 @@ res_asymp_adj <- cit_multi(M = data.frame(Y = Y),
   Z = data.frame(Z1 = Z1, Z2 = Z2),
   test = "asymptotic", parallel = FALSE)
 mean(res_asymp_adj$pvals$raw_pval < 0.05)
-#> [1] 0.086
+#> [1] 0.056
 hist(res_asymp_adj$pvals$raw_pval)
 
 
