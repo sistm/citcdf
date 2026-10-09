@@ -106,10 +106,37 @@
 #'   \item{\code{"restricted"}}{residuals of the null model without
 #'   \code{X} (score-type). Consistent under the null hypothesis only: under
 #'   the alternative the effect of \code{X} is counted as noise, which can
-#'   decrease power. Can be quite conservative in small samples, especially if
-#'   a level of a factor from \code{X} contains few observations. Can serve as
-#'   a conservative sensitivity analysis.}
+#'   decrease power. Somewhat better calibrated than \code{"full"} in some
+#'   small samples settings but very conservative with unbalanced levels of
+#'   a factor from \code{X}. Not recommended as primary analysis, but can serve
+#'   as a conservative sensitivity analysis.}
 #' }
+#' Only used by the asymptotic test.
+#'
+#' @param small_sample_corr a character string indicating the small-sample
+#' correction of the sandwich estimator to be used (ignored when
+#' \code{variance = "independent"}). OLS residuals underestimate the errors,
+#' which makes the asymptotic test anti-conservative when \code{n} is small
+#' relative to \code{d} (i.e. small samples or many covariates), the number
+#' of coefficients of the model that appear in the residual computations.
+#' Can be ither:
+#' \describe{
+#'   \item{\code{"HC2"} (default)}{each residual is divided by
+#'   \eqn{\sqrt{1 - h_i}}, where the leverage
+#'   \eqn{h_i = W_i^\top (W^\top W)^{-1} W_i} measures how much observation
+#'   \eqn{i} pulls the fit towards itself (\eqn{W} being the design matrix of
+#'   \code{X} and \code{Z}, with intercept). In the case of a
+#'   leverage of 1, the \code{"HC1"} correction is used instead for that
+#'   residual (and a warning is issued).}
+#'   \item{\code{"HC1"}}{uniform correction where the estimator is multiplied by \code{n/(n-d)}.}
+#'   \item{\code{"none"}}{no correction}
+#' }
+#' (Long & Ervin, 2000). A warning is issued when \code{n < 30} or a level of
+#' a factor from \code{X} has fewer than 10 observations (the
+#' asymptotic test can then remain anti-conservative).
+#'
+#' Default is \code{"HC2"}.
+#'
 #' Only used by the asymptotic test.
 #'
 #' @seealso \code{\link{cit_asymp}}, \code{\link{cit_perm}}, \code{\link{ccdf}}
@@ -118,6 +145,11 @@
 #' Distribution-free complex hypothesis testing for single-cell RNA-seq
 #' differential expression analysis, \emph{bioRxiv} 445165.
 #' \doi{10.1101/2021.05.21.445165}.
+#'
+#' Long JS & Ervin LH (2000). Using heteroscedasticity consistent standard
+#' errors in the linear regression model,
+#' \emph{The American Statistician} 54(3):217-224.
+#' \doi{10.1080/00031305.2000.10474549}.
 #'
 #' @export
 #'
@@ -195,10 +227,12 @@ cit_multi <- function(M,
                       space_y = TRUE,
                       number_y = 10,
                       variance = c("sandwich", "independent"),
-                      residuals = c("full", "restricted")) {
+                      residuals = c("full", "restricted"),
+                      small_sample_corr = c("HC2", "HC1", "none")) {
   # check
   variance <- match.arg(variance)
   residuals <- match.arg(residuals)
+  small_sample_corr <- match.arg(small_sample_corr)
   if (is.matrix(M)) {
     M <- as.data.frame(M)
   }
@@ -414,6 +448,8 @@ cit_multi <- function(M,
     design <- .cit_design(X, Z, n)
     if (variance == "independent") {
       .cit_warn_independent()
+    } else {
+      .cit_check_sandwich(n, design, X, residuals, small_sample_corr)
     }
     res <- do.call("rbind", pbapply::pblapply(seq_len(r),
       function(j) {
@@ -422,7 +458,8 @@ cit_multi <- function(M,
           number_y = number_y,
           design = design,
           variance = variance,
-          residuals = residuals)
+          residuals = residuals,
+          small_sample_corr = small_sample_corr)
       },
       cl = par_clust)
     )

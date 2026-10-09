@@ -17,7 +17,7 @@
 
   nz <- Y[Y != 0]
   from <- ifelse(length(nz) == 0L, min(Y), min(nz))
-  seq(from = from, to = max(Y), length.out = number_y)
+  return(seq(from = from, to = max(Y), length.out = number_y))
 }
 
 # Degenerate-outcome guard. A Y with only one single value has no conditional
@@ -92,8 +92,14 @@
   # design (1, Z) (reused for the OLS residuals of every gene/threshold in the
   # sandwich variance .cit_sandwich_ev(), for residuals = "full" and
   # "restricted" respectively).
-  list(modelmat = modelmat, indexes_X = indexes_X, H = H, XtXinv_X = XtXinv_X,
-    qr = qr(modelmat), qr0 = qr(modelmat[, -indexes_X, drop = FALSE]))
+  # lev and lev0 are the leverages of the two designs.
+  qr_full <- qr(modelmat)
+  qr_null <- qr(modelmat[, -indexes_X, drop = FALSE])
+
+  return(list(modelmat = modelmat, indexes_X = indexes_X, H = H,
+    XtXinv_X = XtXinv_X, qr = qr_full, qr0 = qr_null,
+    lev = rowSums(qr.Q(qr_full)^2), lev0 = rowSums(qr.Q(qr_null)^2))
+  )
 }
 
 # Eigenvalues of the heteroskedasticity-robust sandwich estimate of the
@@ -104,13 +110,31 @@
 # the ordering of the columns of U is irrelevant.
 # When U has more columns than rows, the non-zero eigenvalues are obtained from
 # the n x n Gram matrix U U^T / n instead (same non-zero spectrum, cheaper).
+# small_sample_corr = "HC1" multiplies Sigma_hat by n / (n - d), with d the
+# number of coefficients of the model used when computing the residuals.
+# small_sample_corr = "HC2" divides each row of the residuals by
+# sqrt(1 - h_i) instead (h_i being the observation levergae).
 #
 # D: n x m matrix of threshold indicators (m = thresholds x genes).
-.cit_sandwich_ev <- function(D, design, residuals = c("full", "restricted")) {
+.cit_sandwich_ev <- function(D, design, residuals = c("full", "restricted"),
+                             small_sample_corr = c("none", "HC1", "HC2")) {
   residuals <- match.arg(residuals)
+  small_sample_corr <- match.arg(small_sample_corr)
   n <- nrow(D)
   qr_resid <- switch(residuals, full = design$qr, restricted = design$qr0)
+
+  # d: number of coefficients of the model used for the residuals
+  d <- qr_resid$rank
+  d_expected <- switch(residuals,
+    full = ncol(design$modelmat),
+    restricted = ncol(design$modelmat) - length(design$indexes_X))
+  stopifnot(d == d_expected, n > d)
+
   E <- qr.resid(qr_resid, D)                   # n x m residuals
+  if (small_sample_corr == "HC2") {
+    lev <- switch(residuals, full = design$lev, restricted = design$lev0)
+    E <- E * sqrt(.cit_hc2_weights(lev, n, d))
+  }
   G <- t(design$H)                             # n x K, row i = gamma_i
 
   U <- do.call(cbind, lapply(seq_len(ncol(G)),
@@ -125,6 +149,10 @@
   }
 
   ev <- eigen(S / n, symmetric = TRUE, only.values = TRUE)$values
+
+  if (small_sample_corr == "HC1") {
+    ev <- ev * n / (n - d)
+  }
 
   # Sigma_hat is Positive Semi-Definite: clip round-off negatives and drop the
   # numerically null part of the spectrum (does not contribute to the chi-square
@@ -143,6 +171,99 @@
   ev_D <- eigen(crossprod(Dc) / n, symmetric = TRUE, only.values = TRUE)$values
 
   return(as.vector(outer(ev_H, ev_D)))
+}
+
+# Warns when a level of a factor in X has fewer than 10 observations.
+.cit_check_small_levels <- function(X) {
+  X <- as.data.frame(X)
+  counts <- unlist(lapply(X, FUN = function(x) {
+    if (is.factor(x) || is.character(x)) {
+      return(min(table(droplevels(as.factor(x)))))
+    }
+    return(NULL)
+  }))
+
+  if (length(counts) > 0 && min(counts) < 10) {
+    warning("The asymptotic test is anti-conservative when a level of X has ",
+      "few observations (here ", min(counts), "), regardless of n. Consider ",
+      "residuals = \"restricted\" (conservative).", call. = FALSE)
+  }
+
+  return(invisible(NULL))
+}
+
+# Warns when the sandwich estimator is unreliable: n small relative to the
+# number d of coefficients of the model used for the residuals (d/n > 0.05 for
+# a single outcome with full residuals, d/n > 0.1 otherwise), or single
+# outcome with full residuals and n < 30. The permutation test is only
+# suggested with few coefficients. Messages when a correction is used for a
+# gene set without need.
+.cit_check_small_sample <- function(n, d, small_sample_corr, gene_set = FALSE,
+                                    restricted = FALSE) {
+  corrected <- small_sample_corr != "none"
+  needed <- d / n > ifelse(gene_set || restricted, 0.1, 0.05)
+  tiny <- n < 30 && !gene_set && !restricted
+  if (d <= 3) {
+    perm <- " Consider the permutation test."
+  } else {
+    perm <- ""
+  }
+
+  if (!corrected && (needed || tiny)) {
+    warning("The asymptotic test is anti-conservative with n = ", n,
+      " observations for ", d, " model coefficients. Consider ",
+      "small_sample_corr = \"HC2\".", call. = FALSE)
+  } else if (corrected && tiny) {
+    warning("The asymptotic test can remain anti-conservative with n = ", n,
+      " < 30, even with small_sample_corr = \"", small_sample_corr, "\".",
+      perm, call. = FALSE)
+  } else if (corrected && gene_set && !needed) {
+    message("small_sample_corr = \"", small_sample_corr, "\" is conservative ",
+      "for gene sets and reduces power: it is only needed when d/n > 0.1 ",
+      "(here d = ", d, ", n = ", n, ").")
+  }
+
+  return(invisible(NULL))
+}
+
+# HC2 weights 1 / (1 - leverage), replaced by n / (n - d) for a leverage of 1.
+.cit_hc2_weights <- function(lev, n, d) {
+  w <- rep(n / (n - d), length(lev))
+  below_1 <- 1 - lev > sqrt(.Machine$double.eps)
+  w[below_1] <- 1 / (1 - lev[below_1])
+  return(w)
+}
+
+# Warns when observations have a leverage of 1.
+.cit_check_leverage <- function(lev) {
+  n_lev1 <- sum(1 - lev <= sqrt(.Machine$double.eps))
+  if (n_lev1 > 0) {
+    warning(n_lev1, " observation(s) with a leverage of 1 (e.g. alone in a ",
+      "level of a factor): their HC2 weight is replaced by n/(n-d), and the ",
+      "asymptotic test is anti-conservative.", call. = FALSE)
+  }
+
+  return(invisible(NULL))
+}
+
+# Checks of the sandwich estimator, run once per call.
+.cit_check_sandwich <- function(n, design, X, residuals, small_sample_corr,
+                                gene_set = FALSE) {
+  if (residuals == "full") {
+    .cit_check_small_sample(n, design$qr$rank, small_sample_corr,
+      gene_set = gene_set)
+    .cit_check_small_levels(X)
+    lev <- design$lev
+  } else {
+    .cit_check_small_sample(n, design$qr0$rank, small_sample_corr,
+      gene_set = gene_set, restricted = TRUE)
+    lev <- design$lev0
+  }
+  if (small_sample_corr == "HC2") {
+    .cit_check_leverage(lev)
+  }
+
+  return(invisible(NULL))
 }
 
 .cit_warn_independent <- function() {

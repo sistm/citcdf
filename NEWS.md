@@ -1,4 +1,4 @@
-# citcdf 1.2.0
+# citcdf 1.2.1
 
 * **Covariance** in asymptotic tests (`cit_asymp()`, `cit_multi()`, `cit_gsa()`) 
   is now estimated with a *heteroskedasticity-robust sandwich estimator* by default. 
@@ -10,6 +10,12 @@
 
 * New argument `residuals`: `"full"` (default, like before) or `"restricted"` 
   (null-model, score-type, more conservative) residuals in the sandwich estimator.
+  
+* New argument `small_sample_corr` in asymptotic tests, correcting the
+  *anti-conservativeness* of the sandwich estimator in small samples or with
+  many covariates: `"HC2"` (residuals divided by `sqrt(1 - leverage)`), `"HC1"`
+  (estimator multiplied by `n/(n-d)`) or `"none"` (as in 1.2.0). **Default is
+  `"HC2"` in `cit_asymp()` and `cit_multi()`** and `"none"` in `cit_gsa()`.
 
 
 

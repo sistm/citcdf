@@ -111,8 +111,8 @@ bnlearn::ci.test("STAT", "MECH", "ALG", data = marks, test = "cor")$p.value
 ## Permutation test with `cit_perm()`
 
 The asymptotic null distribution requires a reasonable sample size. For small
-`n`, `cit_perm()` calibrates the same observed statistic against a permutation
-null:
+`n` (below 30) and at most one covariate, `cit_perm()` calibrates the same
+observed statistic against a permutation null:
 
 ```{r perm-uncond, eval = has_bnlearn}
 cit_perm(Y, X, n_perm = 1000)
@@ -265,7 +265,9 @@ builds. Drop it in real analyses, and set `n_cpus`.
 
  - [ ] **Design.** The asymptotic test accepts several variables of interest (`ncol(X) > 1`) and several covariates (`ncol(Z) > 1`). The permutation test is less flexible accepting at most one covariate.
 
- - [ ] **Asymptotic covariance estimate.** The asymptotic tests use a sandwich estimator by default. `residuals = "restricted"` gives a more conservative version. `variance = "independent"` neglects the impact of $Z$ on $Y$ (that reproduce results from `citcdf` 1.1.0 earlier version), also leading to an overly-conservative asymptotic test.
+ - [ ] **Asymptotic covariance estimate.** The asymptotic tests use a sandwich estimator by default. `residuals = "restricted"` is more conservative and still needs a small-sample correction with many covariates (`d/n > 0.1`). `variance = "independent"` neglects the impact of $Z$ on $Y$ (reproducing results from `citcdf` 1.1.0 earlier version), also leading to an overly-conservative asymptotic test.
+
+ - [ ] **Small samples and/or many covariates.** The sandwich estimator under-estimate the variance when `n` is small relative to `d`, the number of model coefficients (intercept, `X` and `Z`) that comes into the computation of the residuals, which can make the asymptotic test slightly anti-conservative. `small_sample_corr` corrects this: `"HC2"` divides each residual by `sqrt(1 - leverage)` (default in `cit_asymp()` and `cit_multi()`), `"HC1"` multiplies the estimator by `n/(n-d)` (while `"none"` does nothing). The test can still remain a bit anti-conservative when `n < 30` or when a level of a factor in `X` has very few observations (less than 10), in which case `residuals = "restricted"` can help but has little power. In `cit_gsa()` these corrections are unnecessary and overly conservative, so the default is `"none"`: only use one when `d/n > 0.1`. The permutation test is the right solution for small `n` (below 30), but not with many covariates.
 
  - [ ] **Adjustment on `Z`.** The asymptotic test assumes the linear effect of $Z$ on the conditional CDF of $Y$ is well specified. That assumption can be further relaxed in practice for a continuous $Z$ by using, for instance, a cubic natural spline basis on the columns of Z with `splines::ns(z, df = 3)`.
 

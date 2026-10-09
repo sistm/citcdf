@@ -99,3 +99,125 @@ test_that("the residuals argument is passed through and leaves the statistic unc
   expect_false(isTRUE(all.equal(g_f$raw_pval, g_r$raw_pval)))
   expect_error(cit_asymp(M[, 1], X, Z, residuals = "foo"))
 })
+
+test_that("small_sample_corr = \"HC1\" and \"HC2\" rescale the sandwich estimator", {
+  set.seed(15)
+  n <- 50
+  X <- data.frame(X = factor(sample(c("a", "b", "c"), n, TRUE)))
+  Z <- data.frame(Z1 = rnorm(n), Z2 = rnorm(n))
+  D <- outer(rnorm(n), c(-1, 0, 1), "<=") * 1
+  design <- .cit_design(X, Z, n)
+  # d = 5 for the full model (1, X, Z), 3 for the null model (1, Z)
+  expect_equal(.cit_sandwich_ev(D, design, "full", small_sample_corr = "HC1"),
+    .cit_sandwich_ev(D, design, "full") * n / (n - 5))
+  expect_equal(.cit_sandwich_ev(D, design, "restricted", small_sample_corr = "HC1"),
+    .cit_sandwich_ev(D, design, "restricted") * n / (n - 3))
+
+  # HC2: brute-force Sigma_hat with residuals divided by sqrt(1 - leverage)
+  W <- design$modelmat
+  G <- t(design$H)
+  for (res in c("full", "restricted")) {
+    W_res <- switch(res, full = W, restricted = W[, -design$indexes_X])
+    P <- W_res %*% solve(crossprod(W_res), t(W_res))
+    E <- (D - P %*% D) / sqrt(1 - diag(P))
+    U <- do.call(cbind, lapply(seq_len(ncol(G)), FUN = function(k) {
+      G[, k] * E
+    }))
+    ev_ref <- eigen(crossprod(U) / n, symmetric = TRUE, only.values = TRUE)$values
+    ev <- .cit_sandwich_ev(D, design, res, small_sample_corr = "HC2")
+    expect_equal(ev, ev_ref[seq_along(ev)])
+  }
+  expect_equal(design$lev, unname(diag(W %*% solve(crossprod(W), t(W)))))
+})
+
+test_that("small_sample_corr defaults and is passed through", {
+  set.seed(16)
+  n <- 100
+  X <- data.frame(X = rnorm(n)); Z <- data.frame(Z = rnorm(n))
+  M <- matrix(rnorm(n * 3), n, dimnames = list(NULL, paste0("g", 1:3)))
+  a <- lapply(c(none = "none", HC1 = "HC1", HC2 = "HC2"), FUN = function(corr) {
+    cit_asymp(M[, 1], X, Z, space_y = TRUE, small_sample_corr = corr)
+  })
+  # "HC2" is the default for a single outcome
+  expect_identical(cit_asymp(M[, 1], X, Z, space_y = TRUE), a$HC2)
+  expect_equal(a$none$test_statistic, a$HC2$test_statistic)
+  expect_gt(a$HC1$raw_pval, a$none$raw_pval)
+  expect_gt(a$HC2$raw_pval, a$none$raw_pval)
+  expect_false(isTRUE(all.equal(a$HC1$raw_pval, a$HC2$raw_pval)))
+  expect_equal(cit_multi(M, X, Z, parallel = FALSE)$pvals$raw_pval[1],
+    a$HC2$raw_pval)
+  expect_equal(cit_multi(M, X, Z, parallel = FALSE,
+    small_sample_corr = "HC1")$pvals$raw_pval[1], a$HC1$raw_pval)
+  # "none" is the default for gene sets
+  g <- lapply(c(none = "none", HC1 = "HC1", HC2 = "HC2"), FUN = function(corr) {
+    suppressMessages(cit_gsa(M, X, Z, geneset = colnames(M), parallel = FALSE,
+      small_sample_corr = corr)$pvals)
+  })
+  expect_identical(cit_gsa(M, X, Z, geneset = colnames(M), parallel = FALSE)$pvals,
+    g$none)
+  expect_gt(g$HC1$raw_pval, g$none$raw_pval)
+  expect_gt(g$HC2$raw_pval, g$none$raw_pval)
+  expect_error(cit_asymp(M[, 1], X, Z, small_sample_corr = "yes"))
+  expect_error(cit_asymp(M[, 1], X, Z, small_sample_corr = TRUE))
+})
+
+test_that("small-sample warnings and message are issued when relevant", {
+  set.seed(17)
+  n <- 40
+  X <- data.frame(X = rnorm(n)); Z <- data.frame(Z = rnorm(n))
+  M <- matrix(rnorm(n * 3), n, dimnames = list(NULL, paste0("g", 1:3)))
+  n_warn <- function(expr) {
+    sum(grepl("anti-conservative", testthat::capture_warnings(expr)))
+  }
+  # single outcome: d/n = 3/40 > 0.05
+  expect_equal(n_warn(cit_asymp(M[, 1], X, Z, small_sample_corr = "none")), 1)
+  expect_equal(n_warn(cit_multi(M, X, Z, parallel = FALSE,
+    small_sample_corr = "none")), 1)
+  expect_no_warning(cit_asymp(M[, 1], X, Z))
+  expect_no_warning(cit_asymp(M[, 1], X, Z, small_sample_corr = "HC1"))
+  expect_no_warning(cit_asymp(M[, 1], X, Z, residuals = "restricted",
+    small_sample_corr = "none"))
+  expect_warning(cit_asymp(M[1:20, 1], X[1:20, , drop = FALSE],
+    Z[1:20, , drop = FALSE]), "permutation test")
+  # gene set: d/n = 3/40 < 0.1, then 5/40 > 0.1
+  expect_no_warning(cit_gsa(M, X, Z, geneset = colnames(M), parallel = FALSE))
+  expect_message(cit_gsa(M, X, Z, geneset = colnames(M), parallel = FALSE,
+    small_sample_corr = "HC1"), "reduces power")
+  Z3 <- data.frame(Z1 = rnorm(n), Z2 = rnorm(n), Z3 = rnorm(n))
+  expect_warning(cit_gsa(M, X, Z3, geneset = colnames(M), parallel = FALSE),
+    "anti-conservative")
+  expect_no_message(cit_gsa(M, X, Z3, geneset = colnames(M), parallel = FALSE,
+    small_sample_corr = "HC2"))
+  # restricted residuals: d/n = 4/20 > 0.1
+  expect_equal(n_warn(cit_asymp(M[1:20, 1], X[1:20, , drop = FALSE],
+    Z3[1:20, ], residuals = "restricted", small_sample_corr = "none")), 1)
+  # the permutation test is not suggested with many covariates
+  w <- testthat::capture_warnings(cit_asymp(M[1:20, 1], X[1:20, , drop = FALSE],
+    Z3[1:20, ]))
+  expect_true(grepl("n = 20 < 30", w) && !grepl("permutation", w))
+})
+
+test_that("a warning is issued when a level of X has few observations", {
+  set.seed(18)
+  n <- 100
+  Y <- rnorm(n)
+  X <- data.frame(X = factor(rep(c("a", "b"), c(5, n - 5))))
+  expect_warning(cit_asymp(Y, X), "few observations \\(here 5\\)")
+  expect_no_warning(cit_asymp(Y, X, residuals = "restricted"))
+  expect_no_warning(cit_asymp(Y, data.frame(X = factor(rep(c("a", "b"), n / 2)))))
+})
+
+test_that("a leverage of 1 gets the HC1 weight under HC2, with a warning", {
+  set.seed(19)
+  n <- 60
+  Y <- rnorm(n)
+  X <- data.frame(X = factor(rep(c("a", "b", "c"), c(1, 29, 30))))
+  design <- .cit_design(X, NULL, n)
+  expect_equal(.cit_hc2_weights(design$lev, n, 3),
+    c(n / (n - 3), rep(c(29 / 28, 30 / 29), c(29, 30))))
+  w <- testthat::capture_warnings(p_hc2 <- cit_asymp(Y, X)$raw_pval)
+  expect_true(any(grepl("1 observation\\(s\\) with a leverage of 1", w)))
+  expect_true(is.finite(p_hc2))
+  w <- testthat::capture_warnings(cit_asymp(Y, X, small_sample_corr = "HC1"))
+  expect_false(any(grepl("leverage", w)))
+})
