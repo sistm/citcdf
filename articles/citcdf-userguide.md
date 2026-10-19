@@ -37,7 +37,7 @@ statistic:
   asymptotic or permutation test
 - [`cit_gsa()`](https://sistm.github.io/citcdf/reference/cit_gsa.md):
   test several gene sets at once (with a Benjamini-Hochberg adjustment),
-  either asymptotic or permutation test. See the associate vignette.
+  either asymptotic or permutation test. See the associated vignette.
 
 ### 1.2 Inputs
 
@@ -155,7 +155,7 @@ computes design permutations conditionally on Z:
 
 cit_perm(Y, X, Z = Z, n_perm = 1000)
 #>   score  raw_pval test_statistic
-#> 1   498 0.4985015     0.01850231
+#> 1   523 0.5234765     0.01850231
 ```
 
 Both tests agree on both hypotheses.
