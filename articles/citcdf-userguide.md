@@ -35,6 +35,9 @@ statistic:
 - [`cit_multi()`](https://sistm.github.io/citcdf/reference/cit_multi.md):
   many outcomes at once (with a Benjamini-Hochberg adjustment), either
   asymptotic or permutation test
+- [`cit_gsa()`](https://sistm.github.io/citcdf/reference/cit_gsa.md):
+  test several gene sets at once (with a Benjamini-Hochberg adjustment),
+  either asymptotic or permutation test. See the associate vignette.
 
 ### 1.2 Inputs
 
