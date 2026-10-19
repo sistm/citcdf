@@ -297,8 +297,12 @@ cit_gsa <- function(M,
   stopifnot(inherits(geneset, "GSA.genesets") | inherits(geneset, "BiocSet") | is.character(geneset) | is.list(geneset))
 
 
-  sets_id <- ifelse(!is.null(names(geneset)), names(geneset), seq_along(geneset))
-
+  #sets_id <- ifelse(!is.null(names(geneset)), names(geneset), seq_along(geneset))
+  if(!is.null(names(geneset))){
+    sets_id <- names(geneset)
+  } else {
+    sets_id <- seq_along(geneset)
+  }
 
   if (anyNA(M)) {
     warning("'M' contains", sum(is.na(M)), "NA values. ",
