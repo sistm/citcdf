@@ -48,7 +48,7 @@ Three main functions build form the `citcdf`package leverage this test statistic
 -   `cit_asymp()`: one hypothesis, asymptotic p-value
 -   `cit_perm()`: one hypothesis, permutation p-value
 -   `cit_multi()`: many outcomes at once (with a Benjamini-Hochberg adjustment), either asymptotic or permutation test
--   `cit_gsa()`: test several gene sets at once (with a Benjamini-Hochberg adjustment), either asymptotic or permutation test. See the associate vignette. 
+-   `cit_gsa()`: test several gene sets at once (with a Benjamini-Hochberg adjustment), either asymptotic or permutation test. See the associated vignette. 
 
 ## Inputs
 

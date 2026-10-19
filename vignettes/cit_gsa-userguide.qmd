@@ -112,7 +112,7 @@ Conditionning on DC subpopulation allow to reduce the number of significant gene
 
 **NB** : $Z$ must be a numeric or factor type, not a character.
 
-```{r plot_ccdf, fig.height = 6}
+```{r plot_ccdf, fig.height = 12, fig.width= 10}
 i <- which.min(res_adj$pval$adj_pval)
 
 plot(
