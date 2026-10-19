@@ -1,0 +1,156 @@
+---
+title: "User guide to the cit_gsa function"
+author: "Sara Fallet"
+date: today
+format:
+  html:
+    toc: true                      
+    number-sections: true         
+    html-math-method: mathjax
+bibliography: citcdf.bib
+link-citations: true
+vignette: >
+  %\VignetteIndexEntry{User guide to the cit_gsa function}
+  %\VignetteEngine{quarto::html}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r knitrsetup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 7,
+  fig.height = 4.5,
+  dpi = 96
+)
+# Datasets borrowed from other packages (Suggests, not hard dependencies).
+# has_bnlearn <- requireNamespace("bnlearn", quietly = TRUE)
+# has_seurat <- requireNamespace("SeuratObject", quietly = TRUE) &&
+#   utils::packageVersion("SeuratObject") >= "5.0.0"
+has_sessioninfo <- requireNamespace("sessioninfo", quietly = TRUE)
+has_reactable <- requireNamespace("reactable", quietly = TRUE)
+```
+
+![](../man/figures/logo.svg){width="139px"}
+
+# Overview of `citcdf` for gene set analysis
+
+`citcdf` performs **c**onditional **i**ndependence **t**esting through conditional **c**umulative **d**istribution **f**unctions [@gauthier2021]. In the case of gene set analysis it addresses the following null hypothesis for each gene $g$ of the gene set of size $s$: $$H_0: Y_{g} \perp\!\!\!\perp X \mid Z, \:\forall g \in [s]$$.
+
+by testing whether $F_{Y_{g} \mid X, Z}(y) = F_{Y_{g} \mid Z}(y), \: \forall g \in [s]$. The associated test statistic is computed across a grid of thresholds $\omega_1 < \dots < \omega_p$ spanning $Y$, where the indicator $\mathbb{1}_{Y_ig \le \omega_j}$ is regressed on both $X$ and $Z$ at each threshold $j$. Under $H_0$, the coefficients $\beta_jg$ carried by $X$ are all null, and thus `cit_gsa` test statistic is the sum of squares whose asymptotic distribution is then a weighted mixture of $\chi^2_1$.
+
+No distributional assumption is made on $Y$, and in that sense `cit_gsa` is *distribution-free*. It is therefore robust to zero-inflation, multi-modality and skewness that typical occur in single-cell RNA-seq data.
+
+## Function
+
+-   `cit_gsa():` many outcomes at once, can test several gene sets, either asymptotic or permutation test
+
+## Inputs
+
+`Y` is a numeric vector. `X` and `Z` are data frames, one column per variable, numeric or factor. `geneset` could be either a vector, a list, a gmt file or a BiocSet object.
+
+```{r load}
+library(citcdf)
+set.seed(20260817)
+```
+
+# Testing a gene set with `cit_gsa()`
+
+## The data
+
+```{r villani-data, include = FALSE}
+
+data_Villani <- readRDS(system.file("extdata", "data_DCMono_discovery.rds", package = "citcdf"))
+DCpop <- readRDS(system.file("extdata", "DCpop.rds", package = "citcdf"))
+BTM_geneset <- readRDS(system.file("extdata", "BTM.rds", package = "citcdf"))
+
+```
+
+We use a part of the dataset from [@villani2017single]. @villani2017single isolated DCs from Peripheral Blood Mononuclear Cells (PBMCs) in healthy donor blood, and measured gene expression through single-cell RNA-seq. They documented DC sub-populations with their own specific transcriptional signatures. The dataset originally contain 26,594 genes and 1140 cells but we only keep here `r nrow(data_Villani)` genes and `r ncol(data_Villani)` cells. We normalized the data with log-transformed transcripts per million (log(TPM+1)) as in the original paper.
+
+To perform gene set analysis we use a part of the gene sets database BTM of Stanford [@li2014molecular]. we have `r length(BTM_geneset$genesets)` gene set of sizes between `r min(lengths(BTM_geneset$genesets))` and `r max(lengths(BTM_geneset$genesets))`.
+
+## Objectives
+
+To identify which gene sets are significantly associated with the expression of the gene CD83, known to be a marker of DC activation. As CD83 expression varies across DC subset we will incorporate in our differential analysis an adjustment on the DC subpopulation.
+
+## Gene set test
+
+$M$ is the gene expression matrix, $X$ is the CD83 expression, $Z$ is the DC subpopulation and $geneset$ are the BTM of Stanford gene sets.
+
+**NB**: $M$ must be oriented *cells-by-genes*, the transpose of usual *genes-by-cells* expression matrix.
+
+```{r data_test}
+M <- data.frame(t(data_Villani))
+X <- data.frame(t(data_Villani[which(rownames(data_Villani) == "CD83"), ]))
+Z <- data.frame(DCpop)
+geneset <- BTM_geneset$genesets
+```
+
+We perform two tests: a marginal test without conditioning on DC subpopulations, and a second test conditioning on the subpopulations.
+
+```{r gs_test, warning=FALSE}
+res_unadj <- cit_gsa(M, X, Z = NULL, geneset, test = "asymptotic", parallel = FALSE)
+res_adj <-  cit_gsa(M, X, Z, geneset, test = "asymptotic", parallel = FALSE)
+
+c(unadjusted = sum(res_unadj$pvals$adj_pval < 0.05),
+  adjusted   = sum(res_adj$pvals$adj_pval < 0.05))
+
+
+```
+
+Conditionning on DC subpopulation allow to reduce the number of significant gene sets.
+
+`res_adj` is a list containing:
+
+-   `which_test` and `n_perm`, the test performed and the number of permutations (`NA` for the asymptotic test)
+-   `pvals`, the gene set raw and BH-adjusted p-values, plus the test statistics
+
+## Visualization
+
+`plot.cit_gsa()` details one gene set. **Panel A** show the CCDF for each genes of the gene sets given CD83 expression with the marginal, i.e. only given DC subsets . The thick lines are the median value across the genes of the gene set. **Panel B** show the same comparison but within DC subpopulations.
+
+**NB** : $Z$ must be a numeric or factor type, not a character.
+
+```{r plot_ccdf, fig.height = 6}
+i <- which.min(res_adj$pval$adj_pval)
+
+plot(
+  x = res_adj ,
+  M =  M,
+  X =  X,
+  Z = data.frame(factor(DCpop)),
+  geneset = geneset, 
+  which_set = i
+)
+
+
+```
+
+# Practical considerations
+
+-   [ ] **Threshold grid:** `space_y = FALSE` places a threshold at every distinct value of `Y`, while `space_y = TRUE` uses a regular grid of `number_y` points instead, at a cost independent of `n`. \
+    Defaults: `space_y = TRUE` and  `number_y = 10`
+
+-   [ ] **Parallelism.** `cit_gsa()` parallelises over the gene of the gene set and defaults to `parallel = interactive()`. Calls above set `parallel = FALSE` for reproducible builds. Drop it in real analyses, and set `n_cpus`.
+
+-   [ ] **Multiplicity.** `cit_gsa()` returns Benjamini-Hochberg adjusted p-values in `adj_pval` for FDR control across the gene sets. 
+
+-   [ ] **Design.** The asymptotic test accepts several variables of interest (`ncol(X) > 1`) and several covariates (`ncol(Z) > 1`). The permutation test is less flexible accepting at most one covariate.
+
+-   [ ] **Preprocessing.** Normalization remains the user's choice and responsibility.
+
+# Session information
+
+```{r session, eval = has_sessioninfo, echo=FALSE, collapse = FALSE, comment = ""}
+sessioninfo::session_info()
+```
+
+```{r session-base, eval = !has_sessioninfo, echo = FALSE}
+sessionInfo()
+```
+
+# References
+
+::: {#refs}
+:::

@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.25">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Boris Hejblum">
+<meta name="dcterms.date" content="2026-10-15">
+
+<title>User guide to the citcdf R package</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="citcdf-userguide_files/libs/clipboard/clipboard.min.js"></script>
+<script src="citcdf-userguide_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="citcdf-userguide_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="citcdf-userguide_files/libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="citcdf-userguide_files/libs/quarto-html/popper.min.js"></script>
+<script src="citcdf-userguide_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="citcdf-userguide_files/libs/quarto-html/anchor.min.js"></script>
+<link href="citcdf-userguide_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="citcdf-userguide_files/libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="citcdf-userguide_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="citcdf-userguide_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="citcdf-userguide_files/libs/bootstrap/bootstrap-9e3ffae467580fdb927a41352e75a2e0.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="citcdf-userguide_files/libs/core-js-2.5.3/shim.min.js"></script>
+
+<script src="citcdf-userguide_files/libs/react-18.2.0/react.min.js"></script>
+
+<script src="citcdf-userguide_files/libs/react-18.2.0/react-dom.min.js"></script>
+
+<script src="citcdf-userguide_files/libs/reactwidget-2.0.0/react-tools.js"></script>
+
+<link href="citcdf-userguide_files/libs/htmltools-fill-0.5.9/fill.css" rel="stylesheet">
+
+<script src="citcdf-userguide_files/libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+
+<link href="citcdf-userguide_files/libs/reactable-0.4.5/reactable.css" rel="stylesheet">
+
+<script src="citcdf-userguide_files/libs/reactable-binding-0.4.5/reactable.js"></script>
+
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="quarto-light">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#overview-of-citcdf" id="toc-overview-of-citcdf" class="nav-link active" data-scroll-target="#overview-of-citcdf"><span class="header-section-number">1</span> Overview of <code>citcdf</code></a>
+  <ul class="collapse">
+  <li><a href="#main-user-functions" id="toc-main-user-functions" class="nav-link" data-scroll-target="#main-user-functions"><span class="header-section-number">1.1</span> Main user functions</a></li>
+  <li><a href="#inputs" id="toc-inputs" class="nav-link" data-scroll-target="#inputs"><span class="header-section-number">1.2</span> Inputs</a></li>
+  </ul></li>
+  <li><a href="#testing-a-single-hypothesis" id="toc-testing-a-single-hypothesis" class="nav-link" data-scroll-target="#testing-a-single-hypothesis"><span class="header-section-number">2</span> Testing a single hypothesis</a>
+  <ul class="collapse">
+  <li><a href="#the-data" id="toc-the-data" class="nav-link" data-scroll-target="#the-data"><span class="header-section-number">2.1</span> The data</a></li>
+  <li><a href="#asymptotic-test-with-cit_asymp" id="toc-asymptotic-test-with-cit_asymp" class="nav-link" data-scroll-target="#asymptotic-test-with-cit_asymp"><span class="header-section-number">2.2</span> Asymptotic test with <code>cit_asymp()</code></a></li>
+  <li><a href="#permutation-test-with-cit_perm" id="toc-permutation-test-with-cit_perm" class="nav-link" data-scroll-target="#permutation-test-with-cit_perm"><span class="header-section-number">2.3</span> Permutation test with <code>cit_perm()</code></a></li>
+  <li><a href="#visualization" id="toc-visualization" class="nav-link" data-scroll-target="#visualization"><span class="header-section-number">2.4</span> Visualization</a></li>
+  </ul></li>
+  <li><a href="#testing-many-outcomes-with-cit_multi" id="toc-testing-many-outcomes-with-cit_multi" class="nav-link" data-scroll-target="#testing-many-outcomes-with-cit_multi"><span class="header-section-number">3</span> Testing many outcomes with <code>cit_multi()</code></a>
+  <ul class="collapse">
+  <li><a href="#scrna-seq-data" id="toc-scrna-seq-data" class="nav-link" data-scroll-target="#scrna-seq-data"><span class="header-section-number">3.1</span> scRNA-seq data</a></li>
+  <li><a href="#asymptotic-analysis" id="toc-asymptotic-analysis" class="nav-link" data-scroll-target="#asymptotic-analysis"><span class="header-section-number">3.2</span> Asymptotic analysis</a></li>
+  <li><a href="#visualization-1" id="toc-visualization-1" class="nav-link" data-scroll-target="#visualization-1"><span class="header-section-number">3.3</span> Visualization</a></li>
+  <li><a href="#permutation-analysis" id="toc-permutation-analysis" class="nav-link" data-scroll-target="#permutation-analysis"><span class="header-section-number">3.4</span> Permutation analysis</a></li>
+  </ul></li>
+  <li><a href="#practical-considerations" id="toc-practical-considerations" class="nav-link" data-scroll-target="#practical-considerations"><span class="header-section-number">4</span> Practical considerations</a></li>
+  <li><a href="#session-information" id="toc-session-information" class="nav-link" data-scroll-target="#session-information"><span class="header-section-number">5</span> Session information</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references"><span class="header-section-number">6</span> References</a></li>
+  </ul>
+</nav>
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">User guide to the citcdf R package</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Boris Hejblum </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">October 15, 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p><img src="../man/figures/logo.svg" class="img-fluid" width="139"></p>
+<section id="overview-of-citcdf" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Overview of <code>citcdf</code></h1>
+<p><code>citcdf</code> performs <strong>c</strong>onditional <strong>i</strong>ndependence <strong>t</strong>esting through conditional <strong>c</strong>umulative <strong>d</strong>istribution <strong>f</strong>unctions <span class="citation" data-cites="gauthier2021">(<a href="#ref-gauthier2021" role="doc-biblioref">Gauthier et al. 2021</a>)</span>. It addresses the following null hypothesis: <span class="math display">\[H_0: Y \perp\!\!\!\perp X \mid Z\]</span></p>
+<p>by testing whether <span class="math inline">\(F_{Y \mid X, Z}(y) = F_{Y \mid Z}(y)\)</span>. The associated test statistic is computed across a grid of thresholds <span class="math inline">\(\omega_1 &lt; \dots &lt; \omega_p\)</span> spanning <span class="math inline">\(Y\)</span>, where the indicator <span class="math inline">\(\mathbb{1}_{Y_i \le \omega_j}\)</span> is regressed on both <span class="math inline">\(X\)</span> and <span class="math inline">\(Z\)</span> at each threshold <span class="math inline">\(j\)</span>. Under <span class="math inline">\(H_0\)</span>, the coefficients <span class="math inline">\(\beta_j\)</span> carried by <span class="math inline">\(X\)</span> are all null, and thus <code>citcdf</code> test statistic is the sum of squares whose asymptotic distribution is then a weighted mixture of <span class="math inline">\(\chi^2_1\)</span> (whose weights are the eigenvalues of the covariance of the <span class="math inline">\(\beta_j\)</span>).</p>
+<p>No distributional assumption is made on <span class="math inline">\(Y\)</span>, and in that sense <code>citcdf</code> is <em>distribution-free</em>. It is therefore robust to zero-inflation, multi-modality and skewness that typical occur in single-cell RNA-seq data.</p>
+<section id="main-user-functions" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="main-user-functions"><span class="header-section-number">1.1</span> Main user functions</h2>
+<p>Three main functions build form the <code>citcdf</code>package leverage this test statistic:</p>
+<ul>
+<li><code>cit_asymp()</code>: one hypothesis, asymptotic p-value</li>
+<li><code>cit_perm()</code>: one hypothesis, permutation p-value</li>
+<li><code>cit_multi()</code>: many outcomes at once (with a Benjamini-Hochberg adjustment), either asymptotic or permutation test</li>
+</ul>
+</section>
+<section id="inputs" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="inputs"><span class="header-section-number">1.2</span> Inputs</h2>
+<p><code>Y</code> is a numeric vector. <code>X</code> and <code>Z</code> are data frames, one column per variable, numeric or factor. Gene set analysis is available through <code>cit_gsa()</code> and is not covered here.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(citcdf)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">20260817</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+</section>
+<section id="testing-a-single-hypothesis" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Testing a single hypothesis</h1>
+<section id="the-data" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="the-data"><span class="header-section-number">2.1</span> The data</h2>
+<p>We use the <code>marks</code>dataset, from the <code>bnlearn</code> package <span class="citation" data-cites="scutari2010">(<a href="#ref-scutari2010" role="doc-biblioref">Scutari 2010</a>)</span>. It records the exam marks of 88 students in five mathematics topics <span class="citation" data-cites="mardia1979">(<a href="#ref-mardia1979" role="doc-biblioref">Mardia, Kent, and Bibby 1979</a>)</span>. Of note, <em>mechanics</em> and <em>statistics</em> marks are <strong>correlated</strong>, but the association is mediated by the <em>algebra</em> mark (relevant to both disciplines).</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"marks"</span>, <span class="at">package =</span> <span class="st">"bnlearn"</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(marks)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 'data.frame':    88 obs. of  5 variables:</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  $ MECH: num  77 63 75 55 63 53 51 59 62 64 ...</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  $ VECT: num  82 78 73 72 63 61 67 70 60 72 ...</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  $ ALG : num  67 80 71 63 65 72 65 68 58 60 ...</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  $ ANL : num  67 70 66 70 70 64 65 62 62 62 ...</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  $ STAT: num  81 81 81 68 63 73 68 56 70 45 ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="asymptotic-test-with-cit_asymp" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="asymptotic-test-with-cit_asymp"><span class="header-section-number">2.2</span> Asymptotic test with <code>cit_asymp()</code></h2>
+<p><span class="math inline">\(Y\)</span> is the statistics mark, <span class="math inline">\(X\)</span> the mechanics mark. Without conditioning:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>Y <span class="ot">&lt;-</span> marks<span class="sc">$</span>STAT</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>X <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">MECH =</span> marks<span class="sc">$</span>MECH)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">cit_asymp</span>(Y, X)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       raw_pval test_statistic</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 7.123049e-05      0.1797552</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Conditioning on the algebra mark asks whether mechanics adds anything beyond algebra:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>Z <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">ALG =</span> marks<span class="sc">$</span>ALG)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cit_asymp</span>(Y, X, Z)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    raw_pval test_statistic</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 0.5566318     0.01850231</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>The evidence disappears.</p>
+<p><strong>NB:</strong> <code>cit_asymp()</code> assumed neither normality nor linearity.<br>
+It remains valid for skewed, zero-inflated or multi-modal outcomes.</p>
+<p>Of note, <code>bnlearn::ci.test()</code> reaches the same conclusion from a Gaussian correlation statistic:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>bnlearn<span class="sc">::</span><span class="fu">ci.test</span>(<span class="st">"STAT"</span>, <span class="st">"MECH"</span>, <span class="at">data =</span> marks, <span class="at">test =</span> <span class="st">"cor"</span>)<span class="sc">$</span>p.value</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 0.0001792015</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>bnlearn<span class="sc">::</span><span class="fu">ci.test</span>(<span class="st">"STAT"</span>, <span class="st">"MECH"</span>, <span class="st">"ALG"</span>, <span class="at">data =</span> marks, <span class="at">test =</span> <span class="st">"cor"</span>)<span class="sc">$</span>p.value</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 0.7060518</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="permutation-test-with-cit_perm" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="permutation-test-with-cit_perm"><span class="header-section-number">2.3</span> Permutation test with <code>cit_perm()</code></h2>
+<p>The asymptotic null distribution requires a reasonable sample size. For small <code>n</code> (below 30) and at most one covariate, <code>cit_perm()</code> calibrates the same observed statistic against a permutation null:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cit_perm</span>(Y, X, <span class="at">n_perm =</span> <span class="dv">1000</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   score    raw_pval test_statistic</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1     0 0.000999001      0.1797552</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><code>test_statistic</code> remains identical to the one returned by <code>cit_asymp()</code>, and <code>score</code> counts the permutations reaching the observed statistic: the (unbiased) permutation p-value is then computed as <code>(score + 1) / (n_perm + 1)</code> (so <code>n_perm</code> also fixes the smallest reachable p-value, ie. <code>1/(n_perm +1)</code>.</p>
+<p>Permuting <span class="math inline">\(X\)</span> freely would destroy its association with <span class="math inline">\(Z\)</span> and test the wrong null. <code>X_perm()</code> computes design permutations conditionally on <span class="math inline">\(Z\)</span>:</p>
+<ul>
+<li><span class="math inline">\(Z\)</span> discrete: permutes within each strata of <span class="math inline">\(Z\)</span></li>
+<li><span class="math inline">\(Z\)</span> continuous: permutes by matching observations on the fitted value of <span class="math inline">\(X\)</span> given <span class="math inline">\(Z\)</span>, following <span class="citation" data-cites="berrett2020">Berrett et al. (<a href="#ref-berrett2020" role="doc-biblioref">2020</a>)</span> (see <code>?perm_cont</code>)</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cit_perm</span>(Y, X, <span class="at">Z =</span> Z, <span class="at">n_perm =</span> <span class="dv">1000</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   score  raw_pval test_statistic</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1   504 0.5044955     0.01850231</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Both tests agree on both hypotheses.</p>
+<p><strong>NB:</strong> <code>cit_perm()</code> only accepts a single covariate column when <code>Z</code> is not <code>NULL</code>. Multiple <code>X</code> with <code>Z</code> present require the asymptotic test.</p>
+</section>
+<section id="visualization" class="level2" data-number="2.4">
+<h2 data-number="2.4" class="anchored" data-anchor-id="visualization"><span class="header-section-number">2.4</span> Visualization</h2>
+<p><code>plot_compare_ccdf()</code> displays what the statistic compares: the CCDF of <span class="math inline">\(Y\)</span> given <span class="math inline">\(X\)</span> against its marginal counterpart. The further apart the 2 are, the larger <span class="math inline">\(D\)</span>:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_compare_ccdf</span>(<span class="at">Y =</span> <span class="fu">data.frame</span>(<span class="at">STAT =</span> Y), <span class="at">X =</span> X)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="citcdf-userguide_files/figure-html/ccdf-plot-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="testing-many-outcomes-with-cit_multi" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> Testing many outcomes with <code>cit_multi()</code></h1>
+<p><code>cit_multi()</code> loops the test over the columns of a matrix <code>M</code> of <code>n</code> observations by <code>r</code> outcomes, and returns Benjamini-Hochberg adjusted p-values (alongside the raw ones).</p>
+<section id="scrna-seq-data" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="scrna-seq-data"><span class="header-section-number">3.1</span> scRNA-seq data</h2>
+<p>This vignette uses <code>pbmc_small</code>, the PBMC scRNA-seq excerpt distributed with the <code>SeuratObject</code> package <span class="citation" data-cites="satija2023">(<a href="#ref-satija2023" role="doc-biblioref">Satija et al. 2023</a>)</span> (230 genes, 80 cells).</p>
+<p><strong>NB:</strong> <code>M</code> must be oriented <em>cells-by-genes</em>, the transpose of usual genes-by-cells expression matrix. Also, <strong>outcomes with no variability must be filtered-out beforehand</strong> (otherwise an error is triggered).</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"pbmc_small"</span>, <span class="at">package =</span> <span class="st">"SeuratObject"</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>expr <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(SeuratObject<span class="sc">::</span><span class="fu">LayerData</span>(pbmc_small, <span class="at">layer =</span> <span class="st">"data"</span>))</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>cell_md <span class="ot">&lt;-</span> pbmc_small[[]]</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>expr <span class="ot">&lt;-</span> expr[<span class="fu">apply</span>(expr, <span class="dv">1</span>, <span class="cf">function</span>(g) <span class="fu">length</span>(<span class="fu">unique</span>(g)) <span class="sc">&gt;</span> <span class="dv">1</span>), ]</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>M <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">t</span>(expr))</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(M)</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1]  80 230</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>The variable of interest is the cell population (<code>letter.idents</code>, two populations). The two populations were not sequenced to comparable depth:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tapply</span>(cell_md<span class="sc">$</span>nCount_RNA, cell_md<span class="sc">$</span>letter.idents, median)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   A   B </span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 150 353</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Library size is therefore a candidate confounder. An unadjusted comparison will identify significant genes that are only associated with sequencing depth.</p>
+</section>
+<section id="asymptotic-analysis" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="asymptotic-analysis"><span class="header-section-number">3.2</span> Asymptotic analysis</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>X_pop <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">pop =</span> cell_md<span class="sc">$</span>letter.idents)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>Z_lib <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">libsize =</span> cell_md<span class="sc">$</span>nCount_RNA)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>res_unadj <span class="ot">&lt;-</span> <span class="fu">cit_multi</span>(M, <span class="at">X =</span> X_pop, <span class="at">test =</span> <span class="st">"asymptotic"</span>, <span class="at">parallel =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>res_adj <span class="ot">&lt;-</span> <span class="fu">cit_multi</span>(M, <span class="at">X =</span> X_pop, <span class="at">Z =</span> Z_lib, <span class="at">test =</span> <span class="st">"asymptotic"</span>,</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>                     <span class="at">parallel =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="at">unadjusted =</span> <span class="fu">sum</span>(res_unadj<span class="sc">$</span>pvals<span class="sc">$</span>adj_pval <span class="sc">&lt;</span> <span class="fl">0.05</span>),</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">adjusted   =</span> <span class="fu">sum</span>(res_adj<span class="sc">$</span>pvals<span class="sc">$</span>adj_pval <span class="sc">&lt;</span> <span class="fl">0.05</span>))</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; unadjusted   adjusted </span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        134         87</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Conditioning on library size withdraws a third of the hits. The strongest signals — canonical monocyte markers — survive:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(res_adj<span class="sc">$</span>pvals[<span class="fu">order</span>(res_adj<span class="sc">$</span>pvals<span class="sc">$</span>raw_pval), ], <span class="dv">5</span>)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            raw_pval     adj_pval test_statistic</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; S100A9 2.774752e-15 6.381929e-13       250.5153</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; TYMP   2.228322e-13 1.934174e-11       256.8253</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; S100A8 2.522836e-13 1.934174e-11       246.5594</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; AIF1   4.167981e-11 2.396589e-09       205.6298</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; CST3   3.651514e-10 1.599055e-08       180.3064</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><code>res_adj</code> is a list containing:</p>
+<ul>
+<li><code>which_test</code> and <code>n_perm</code>, the test performed and the number of permutations (<code>NA</code> for the asymptotic test)</li>
+<li><code>pvals</code>, the gene-wise raw and BH-adjusted p-values, plus the test statistics</li>
+</ul>
+<p>The <code>plot()</code> method sorts the raw p-values against the BH threshold and the nominal level:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(res_adj)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="citcdf-userguide_files/figure-html/pbmc-plot-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="visualization-1" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="visualization-1"><span class="header-section-number">3.3</span> Visualization</h2>
+<p><code>plot_compare_ccdf()</code> details one gene. Panel A contrasts the CCDF given the cell population with the marginal CDF. Panel B repeats the comparison within library-size quartiles.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>top_gene <span class="ot">&lt;-</span> <span class="fu">rownames</span>(res_adj<span class="sc">$</span>pvals)[<span class="fu">which.min</span>(res_adj<span class="sc">$</span>pvals<span class="sc">$</span>raw_pval)]</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_compare_ccdf</span>(<span class="at">Y =</span> M[, top_gene, <span class="at">drop =</span> <span class="cn">FALSE</span>], <span class="at">X =</span> X_pop, <span class="at">Z =</span> Z_lib,</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">space_y =</span> <span class="cn">TRUE</span>, <span class="at">number_y =</span> <span class="dv">20</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="citcdf-userguide_files/figure-html/pbmc-ccdf-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="permutation-analysis" class="level2" data-number="3.4">
+<h2 data-number="3.4" class="anchored" data-anchor-id="permutation-analysis"><span class="header-section-number">3.4</span> Permutation analysis</h2>
+<p>With 80 cells, the asymptotic approximation should work (low end of its range). <code>test = "permutation"</code> confirms a few genes. <code>adaptive = TRUE</code> (the default) spends additional computation time to increase p-value resolution where it matters (especially for FDR-adjusted p-values): all outcomes start at <code>n_perm</code>, and only those still significant proceed to the larger stages of <code>n_perm_adaptive</code>.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>res_perm <span class="ot">&lt;-</span> <span class="fu">cit_multi</span>(M, <span class="at">X =</span> X_pop, <span class="at">Z =</span> Z_lib, <span class="at">test =</span> <span class="st">"permutation"</span>,</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>                      <span class="at">n_perm =</span> <span class="dv">100</span>, <span class="at">parallel =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Computing 100 permutations...</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Computing 100 additional permutations...</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Computing 300 additional permutations...</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Computing 500 additional permutations...</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>res_perm<span class="sc">$</span>n_perm</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1]  100  200  500 1000</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>order_asymp <span class="ot">&lt;-</span> <span class="fu">rownames</span>(res_adj<span class="sc">$</span>pvals[<span class="fu">order</span>(res_adj<span class="sc">$</span>pvals<span class="sc">$</span>adj_pval),])</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>reactable<span class="sc">::</span><span class="fu">reactable</span>(<span class="fu">data.frame</span>(<span class="at">asymptotic =</span> <span class="fu">signif</span>(res_adj<span class="sc">$</span>pvals[order_asymp, <span class="st">"raw_pval"</span>], <span class="dv">3</span>),</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">permutation =</span> <span class="fu">signif</span>(res_perm<span class="sc">$</span>pvals[order_asymp, <span class="st">"raw_pval"</span>], <span class="dv">3</span>),</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">row.names =</span> order_asymp),</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">defaultPageSize=</span><span class="dv">15</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="reactable html-widget html-fill-item" id="htmlwidget-0d2cb4570cd4f04415b2" style="width:auto;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-0d2cb4570cd4f04415b2">{"x":{"tag":{"name":"Reactable","attribs":{"data":{".rownames":["S100A9","S100A8","TYMP","AIF1","CST3","FCER1G","LYZ","TYROBP","S100A11","FCN1","LGALS1","IFITM3","PSAP","CTSW","CTSS","CST7","GZMM","LST1","GZMA","CCL5","PRF1","CFD","LGALS3","SERPINA1","GNLY","LAMP1","FCGRT","RARRES3","CTSB","COTL1","SAT1","TSPO","NFKBIA","BLVRA","GZMB","CARD16","CD14","IL1B","HNRNPF","MS4A6A","KLRD1","FPR1","C12orf75","NUP214","NKG7","HLA-DRA","CLU","CD7","SMCO4","CFP","HNRNPA3","HNRNPH1","PF4","GNG11","TTC38","ALOX5AP","LGALS2","MS4A1","GZMH","KLRG1","GRN","ASGR1","NGFRAP1","SPON2","FGFBP2","RUFY1","CRBN","CCL4","SNHG7","GSTP1","GP9","CD68","HIST1H2AC","CLIC3","LCK","C5AR1","GZMK","RNF130","CA2","S1PR4","WARS","TPM4","CD8A","IFI6","PGRMC1","CD3E","AKR1C3","IL2RB","PPP3CC","TCL1A","LINC00936","XCL2","PPP1R18","BID","ITGA2B","HLA-DPA1","HLA-DPB1","CD3D","MPEG1","PTGDR","PTPN22","PMPCB","TMEM40","CXCR4","SATB1","SPARC","SDPR","TUBB1","HLA-DRB1","MAL","RBP7","XBP1","NRBP1","ASNSD1","DNAJC2","ZNF76","HLA-DQB1","PPBP","PARVB","ODC1","CCDC104","CCR7","IL32","RGS2","FCER2","CD247","PPAPDC1B","VDAC3","HCK","FCRLA","LINC00926","CD9","IFI30","RP11-290F20.3","SAFB2","RP11-693J15.5","SIT1","BANK1","DLGAP1-AS1","CLEC10A","LTB","TREML1","PTCRA","IL17RA","GYPC","MYL9","MMADHC","ACRBP","CYB561A3","LGALS9","KIAA0125","TALDO1","HLA-DQA2","VSTM1","CD180","NT5C","NRGN","LILRA3","HLA-DQA1","CD19","SCO2","LY86","GPX1","FERMT3","IGLL5","EIF4A2","ADAR","FAM96A","TSC22D1","RPL7L1","NCF1","TMEM204","CD79A","ACSM3","TMEM123","LRRC25","CD200","EIF3G","ANXA2","S100B","TAF7","LDHB","HVCN1","VPS28","NCOA4","ACAP1","TMUB1","RGS1","EPC1","GIMAP1","TAGAP","HSP90AA1","LYAR","RHOC","HLA-DRB5","DNAJB1","EAF2","CD79B","TCF7","MS4A7","TNFRSF1B","IL7R","CD1C","CD2","ZNF330","TNFAIP8","IGFBP7","NOSIP","IFITM2","BLOC1S4","MYO1G","HLA-DMA","MPHOSPH6","SP100","STX10","SSR2","HLA-DMB","FCGR3A","PCMT1","PIK3IP1","ARHGDIA","COPS6","POP7","YWHAB","SRSF7","KHDRBS1","THYN1","ZFP36L1","FUOM","FCER1A"],"asymptotic":[2.77e-15,2.52e-13,2.23e-13,4.17e-11,3.65e-10,4.17e-10,6.47e-09,9.45e-09,1.79e-08,2.15e-08,2.95e-08,1.3e-07,1.8e-07,2.1e-06,3.53e-06,3.96e-06,7.99e-06,1.09e-05,1.73e-05,2.44e-05,2.87e-05,5.63e-05,5.88e-05,5.61e-05,5.58e-05,5.89e-05,6.27e-05,6.78e-05,7.63e-05,0.000154,0.000295,0.000392,0.000452,0.000701,0.000809,0.000857,0.001,0.00101,0.00105,0.00109,0.00131,0.00185,0.0021,0.00242,0.00256,0.00329,0.0033,0.00379,0.00378,0.00382,0.00438,0.00508,0.00492,0.00476,0.00506,0.00485,0.00522,0.00588,0.00585,0.00673,0.00697,0.00709,0.00791,0.00791,0.00812,0.00833,0.00875,0.00885,0.00906,0.00921,0.00944,0.0117,0.0117,0.0116,0.0122,0.0122,0.0125,0.0129,0.0137,0.0141,0.0157,0.0156,0.0162,0.0163,0.016,0.0183,0.0181,0.0196,0.0199,0.0206,0.0214,0.0214,0.0229,0.024,0.0241,0.0254,0.0255,0.0258,0.0268,0.0267,0.028,0.0282,0.0295,0.0303,0.0314,0.0315,0.0327,0.0337,0.0351,0.0379,0.0381,0.0381,0.0426,0.0439,0.0454,0.0455,0.0459,0.0469,0.0493,0.0569,0.0577,0.0593,0.0595,0.0601,0.0615,0.0615,0.0641,0.0642,0.0649,0.0669,0.0689,0.0694,0.0716,0.0716,0.077,0.0796,0.0901,0.0955,0.0956,0.0959,0.0994,0.0996,0.102,0.106,0.113,0.113,0.12,0.12,0.125,0.128,0.131,0.132,0.133,0.139,0.142,0.144,0.148,0.151,0.153,0.16,0.159,0.159,0.159,0.161,0.164,0.168,0.169,0.173,0.174,0.175,0.19,0.189,0.194,0.2,0.201,0.202,0.217,0.216,0.216,0.216,0.223,0.226,0.246,0.257,0.257,0.26,0.268,0.277,0.285,0.286,0.323,0.324,0.343,0.353,0.376,0.389,0.399,0.41,0.412,0.432,0.44,0.451,0.45,0.457,0.469,0.472,0.481,0.512,0.541,0.545,0.573,0.589,0.595,0.601,0.609,0.61,0.613,0.622,0.631,0.655,0.656,0.667,0.703,0.701,0.78,0.786,0.798,0.849,0.846,0.984],"permutation":[0.000999,0.000999,0.000999,0.000999,0.000999,0.000999,0.000999,0.000999,0.000999,0.000999,0.000999,0.000999,0.000999,0.000999,0.000999,0.000999,0.002,0.000999,0.000999,0.000999,0.000999,0.002,0.000999,0.002,0.000999,0.004,0.000999,0.004,0.000999,0.002,0.014,0.004,0.002,0.000999,0.005,0.00699,0.000999,0.000999,0.016,0.000999,0.00899,0.000999,0.014,0.003,0.00699,0.00599,0.002,0.02,0.003,0.014,0.012,0.018,0.000999,0.000999,0.012,0.0299,0.00599,0.178,0.0339,0.114,0.004,0.005,0.02,0.02,0.016,0.016,0.0299,0.0697,0.0995,0.00699,0.00599,0.0647,0.000999,0.0597,0.149,0.002,0.317,0.004,0.005,0.02,0.014,0.012,0.465,0.00799,0.00599,0.0746,0.0399,0.0547,0.376,0.366,0.024,0.0439,0.139,0.0479,0.119,0.0279,0.014,0.208,0.018,0.0399,0.416,0.0697,0.0796,0.0319,0.574,0.016,0.014,0.016,0.114,0.515,0.000999,0.129,0.208,0.515,0.267,0.604,0.208,0.0499,0.267,0.0559,0.564,0.614,0.114,0.139,0.683,0.109,0.574,0.0796,0.139,0.703,0.673,0.149,0.0746,0.0547,0.723,0.525,0.782,0.584,0.762,0.0647,0.0547,0.188,0.018,0.004,0.168,0.238,0.317,0.012,0.851,0.446,0.782,0.208,0.317,0.0547,0.921,0.198,0.139,0.0547,0.337,0.931,0.208,0.129,0.119,0.149,0.911,0.198,0.0945,0.356,0.0559,0.495,0.208,0.871,0.475,0.891,0.386,0.356,0.901,0.287,0.317,0.277,0.356,0.347,0.594,0.297,0.208,0.347,0.366,0.297,0.337,0.327,0.386,0.594,0.495,0.426,0.792,0.634,0.693,0.545,0.495,0.703,0.545,0.554,0.723,0.515,0.455,0.653,0.455,0.624,0.614,0.554,0.475,0.525,0.634,0.703,0.713,0.584,0.713,0.743,0.762,0.941,0.703,0.634,0.901,0.792,0.871,0.861,0.97,0.96,0.99,1]},"columns":[{"id":".rownames","name":"","type":"character","sortable":false,"filterable":false,"rowHeader":true},{"id":"asymptotic","name":"asymptotic","type":"numeric"},{"id":"permutation","name":"permutation","type":"numeric"}],"defaultPageSize":15,"dataKey":"b3ff6aa5f2fda46111740074fdbb8285"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<p>The orderings largely agree, while individual p-values differ (as expected: the permutation ones carry Monte Carlo noise and cannot fall below <span class="math inline">\(\frac{1}{n_{\text{total permutations}} + 1}\)</span>).</p>
+</section>
+</section>
+<section id="practical-considerations" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> Practical considerations</h1>
+<ul class="task-list">
+<li><p><label><input type="checkbox"><strong>Threshold grid:</strong> <code>space_y = FALSE</code> places a threshold at every distinct value of <code>Y</code>, while <code>space_y = TRUE</code> uses a regular grid of <code>number_y</code> points instead, at a cost independent of <code>n</code>.<br>
+Defaults differ: <code>cit_asymp()</code> and <code>cit_perm()</code> use the exhaustive grid, <code>cit_multi()</code> uses <code>number_y = 10</code>. Expect small numerical differences between a single call and a <code>cit_multi()</code> run.</label></p></li>
+<li><p><label><input type="checkbox"><strong>Parallelism.</strong> <code>cit_multi()</code> parallelises over outcomes and defaults to <code>parallel = interactive()</code>. Calls above set <code>parallel = FALSE</code> for reproducible builds. Drop it in real analyses, and set <code>n_cpus</code>.</label></p></li>
+<li><p><label><input type="checkbox"><strong>Multiple testing</strong> <code>cit_multi()</code> returns Benjamini-Hochberg adjusted p-values in <code>adj_pval</code> for FDR control. <code>cit_asymp()</code> and <code>cit_perm()</code> are single-hypothesis functions and do not need such multiple-testing adjustment.</label></p></li>
+<li><p><label><input type="checkbox"><strong>Design.</strong> The asymptotic test accepts several variables of interest (<code>ncol(X) &gt; 1</code>) and several covariates (<code>ncol(Z) &gt; 1</code>). The permutation test is less flexible accepting at most one covariate.</label></p></li>
+<li><p><label><input type="checkbox"><strong>Asymptotic covariance estimate.</strong> The asymptotic tests use a sandwich estimator by default. <code>residuals = "restricted"</code> is more conservative and still needs a small-sample correction with many covariates (<code>d/n &gt; 0.1</code>). <code>variance = "independent"</code> neglects the impact of <span class="math inline">\(Z\)</span> on <span class="math inline">\(Y\)</span> (reproducing results from <code>citcdf</code> 1.1.0 earlier version), also leading to an overly-conservative asymptotic test.</label></p></li>
+<li><p><label><input type="checkbox"><strong>Small samples and/or many covariates.</strong> The sandwich estimator under-estimate the variance when <code>n</code> is small relative to <code>d</code>, the number of model coefficients (intercept, <code>X</code> and <code>Z</code>) that comes into the computation of the residuals, which can make the asymptotic test slightly anti-conservative. <code>small_sample_corr</code> corrects this: <code>"HC2"</code> divides each residual by <code>sqrt(1 - leverage)</code> (default in <code>cit_asymp()</code> and <code>cit_multi()</code>), <code>"HC1"</code> multiplies the estimator by <code>n/(n-d)</code> (while <code>"none"</code> does nothing). The test can still remain a bit anti-conservative when <code>n &lt; 30</code> or when a level of a factor in <code>X</code> has very few observations (less than 10), in which case <code>residuals = "restricted"</code> can help but has little power. In <code>cit_gsa()</code> these corrections are unnecessary and overly conservative, so the default is <code>"none"</code>: only use one when <code>d/n &gt; 0.1</code>. The permutation test is the right solution for small <code>n</code> (below 30), but not with many covariates.</label></p></li>
+<li><p><label><input type="checkbox"><strong>Adjustment on <code>Z</code>.</strong> The asymptotic test assumes the linear effect of <span class="math inline">\(Z\)</span> on the conditional CDF of <span class="math inline">\(Y\)</span> is well specified. That assumption can be further relaxed in practice for a continuous <span class="math inline">\(Z\)</span> by using, for instance, a cubic natural spline basis on the columns of Z with <code>splines::ns(z, df = 3)</code>.</label></p></li>
+<li><p><label><input type="checkbox"><strong>Preprocessing.</strong> Normalization remains the user’s choice and responsibility.</label></p></li>
+</ul>
+</section>
+<section id="session-information" class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> Session information</h1>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>─ Session info ───────────────────────────────────────────────────────────────
+ setting  value
+ version  R version 4.5.1 (2025-06-13 ucrt)
+ os       Windows 11 x64 (build 26200)
+ system   x86_64, mingw32
+ ui       RTerm
+ language (EN)
+ collate  French_France.utf8
+ ctype    French_France.utf8
+ tz       Europe/Paris
+ date     2026-10-15
+ pandoc   3.6.3 @ C:/Program Files/RStudio/resources/app/bin/quarto/bin/tools/ (via rmarkdown)
+ quarto   1.8.25 @ C:\\PROGRA~1\\RStudio\\RESOUR~1\\app\\bin\\quarto\\bin\\quarto.exe
+
+─ Packages ───────────────────────────────────────────────────────────────────
+ package      * version date (UTC) lib source
+ bnlearn        5.2.1   2026-07-17 [1] CRAN (R 4.5.3)
+ citcdf       * 1.2.1   2026-10-15 [1] local
+ cli            3.6.5   2025-04-23 [1] CRAN (R 4.5.1)
+ codetools      0.2-20  2024-03-31 [2] CRAN (R 4.5.1)
+ crosstalk      1.2.2   2025-08-26 [1] CRAN (R 4.5.1)
+ DBI            1.3.0   2026-02-25 [1] CRAN (R 4.5.3)
+ digest         0.6.39  2025-11-19 [1] CRAN (R 4.5.3)
+ dotCall64      1.2     2024-10-04 [1] CRAN (R 4.5.1)
+ dplyr          1.2.0   2026-02-03 [1] CRAN (R 4.5.3)
+ evaluate       1.0.5   2025-08-27 [1] CRAN (R 4.5.1)
+ farver         2.1.2   2024-05-13 [1] CRAN (R 4.5.1)
+ fastmap        1.2.0   2024-05-15 [1] CRAN (R 4.5.1)
+ future         1.76.0  2026-09-24 [1] CRAN (R 4.5.3)
+ future.apply   1.20.2  2026-02-20 [1] CRAN (R 4.5.3)
+ generics       0.1.4   2025-05-09 [1] CRAN (R 4.5.1)
+ ggplot2        4.0.3   2026-04-22 [1] CRAN (R 4.5.3)
+ globals        0.20.0  2026-10-11 [1] CRAN (R 4.5.3)
+ glue           1.8.0   2024-09-30 [1] CRAN (R 4.5.1)
+ gtable         0.3.6   2024-10-25 [1] CRAN (R 4.5.1)
+ htmltools      0.5.9   2025-12-04 [1] CRAN (R 4.5.3)
+ htmlwidgets    1.6.4   2023-12-06 [1] CRAN (R 4.5.1)
+ jsonlite       2.0.0   2025-03-27 [1] CRAN (R 4.5.1)
+ knitr          1.52    2026-09-06 [1] CRAN (R 4.5.3)
+ labeling       0.4.3   2023-08-29 [1] CRAN (R 4.5.0)
+ lattice        0.22-7  2025-04-02 [2] CRAN (R 4.5.1)
+ lifecycle      1.0.5   2026-01-08 [1] CRAN (R 4.5.3)
+ listenv        1.1.0   2026-10-04 [1] CRAN (R 4.5.3)
+ magrittr       2.0.4   2025-09-12 [1] CRAN (R 4.5.1)
+ Matrix         1.7-5   2026-03-21 [1] CRAN (R 4.5.3)
+ mitools        2.7     2026-08-31 [1] CRAN (R 4.5.3)
+ otel           0.2.0   2025-08-29 [1] CRAN (R 4.5.2)
+ parallelly     1.46.1  2026-01-08 [1] CRAN (R 4.5.3)
+ patchwork      1.3.2   2025-08-25 [1] CRAN (R 4.5.1)
+ pbapply        1.7-5   2026-09-01 [1] CRAN (R 4.5.3)
+ pillar         1.11.1  2025-09-17 [1] CRAN (R 4.5.1)
+ pkgconfig      2.0.3   2019-09-22 [1] CRAN (R 4.5.1)
+ progressr      1.0.0   2026-07-04 [1] CRAN (R 4.5.3)
+ R6             2.6.1   2025-02-15 [1] CRAN (R 4.5.1)
+ RColorBrewer   1.1-3   2022-04-03 [1] CRAN (R 4.5.0)
+ Rcpp           1.1.1   2026-01-10 [1] CRAN (R 4.5.3)
+ reactable      0.4.5   2025-12-01 [1] CRAN (R 4.5.3)
+ reactR         0.6.1   2024-09-14 [1] CRAN (R 4.5.3)
+ rlang          1.3.0   2026-07-05 [1] CRAN (R 4.5.3)
+ rmarkdown      2.32    2026-09-01 [1] CRAN (R 4.5.3)
+ rstudioapi     0.19.0  2026-06-11 [1] CRAN (R 4.5.3)
+ S7             0.2.1   2025-11-14 [1] CRAN (R 4.5.3)
+ scales         1.4.0   2025-04-24 [1] CRAN (R 4.5.1)
+ sessioninfo    1.2.4   2026-06-04 [1] CRAN (R 4.5.3)
+ SeuratObject   5.3.0   2025-12-12 [1] CRAN (R 4.5.3)
+ sp             2.2-1   2026-02-13 [1] CRAN (R 4.5.3)
+ spam           2.11-3  2026-01-08 [1] CRAN (R 4.5.3)
+ survey         4.5     2026-02-24 [1] CRAN (R 4.5.3)
+ survival       3.8-3   2024-12-17 [2] CRAN (R 4.5.1)
+ tibble         3.3.1   2026-01-11 [1] CRAN (R 4.5.3)
+ tidyselect     1.2.1   2024-03-11 [1] CRAN (R 4.5.1)
+ vctrs          0.7.2   2026-03-21 [1] CRAN (R 4.5.3)
+ viridisLite    0.4.3   2026-02-04 [1] CRAN (R 4.5.3)
+ withr          3.0.3   2026-06-19 [1] CRAN (R 4.5.3)
+ xfun           0.57    2026-03-20 [1] CRAN (R 4.5.3)
+ yaml           2.3.12  2025-12-10 [1] CRAN (R 4.5.3)
+
+ [1] C:/Users/Sara/AppData/Local/R/win-library/4.5
+ [2] C:/Program Files/R/R-4.5.1/library
+ * ── Packages attached to the search path.
+
+──────────────────────────────────────────────────────────────────────────────</code></pre>
+</div>
+</div>
+</section>
+<section id="references" class="level1" data-number="6">
+<h1 data-number="6"><span class="header-section-number">6</span> References</h1>
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-berrett2020" class="csl-entry" role="listitem">
+Berrett, TB, Y Wang, RF Barber, and RJ Samworth. 2020. <span>“The Conditional Permutation Test for Independence While Controlling for Confounders.”</span> <em>Journal of the Royal Statistical Society Series B: Statistical Methodology</em> 82 (1): 175–97. <a href="https://doi.org/10.1111/rssb.12340">https://doi.org/10.1111/rssb.12340</a>.
+</div>
+<div id="ref-gauthier2021" class="csl-entry" role="listitem">
+Gauthier, M, D Agniel, R Thiébaut, and BP Hejblum. 2021. <span>“Distribution-Free Complex Hypothesis Testing for Single-Cell <span>RNA</span>-Seq Differential Expression Analysis.”</span> <em>bioRxiv</em>, 445165. <a href="https://doi.org/10.1101/2021.05.21.445165">https://doi.org/10.1101/2021.05.21.445165</a>.
+</div>
+<div id="ref-mardia1979" class="csl-entry" role="listitem">
+Mardia, KV, JT Kent, and JM Bibby. 1979. <em>Multivariate Analysis</em>. London: Academic Press.
+</div>
+<div id="ref-satija2023" class="csl-entry" role="listitem">
+Satija, R, P Hoffman, Y Hao, A Hartman, G Molla, A Butler, and T Stuart. 2023. <em>SeuratObject: Data Structures for Single Cell Data</em>. <a href="https://CRAN.R-project.org/package=SeuratObject">https://CRAN.R-project.org/package=SeuratObject</a>.
+</div>
+<div id="ref-scutari2010" class="csl-entry" role="listitem">
+Scutari, M. 2010. <span>“Learning <span>B</span>ayesian Networks with the <span class="nocase">bnlearn</span> <span>R</span> Package.”</span> <em>Journal of Statistical Software</em> 35 (3): 1–22. <a href="https://doi.org/10.18637/jss.v035.i03">https://doi.org/10.18637/jss.v035.i03</a>.
+</div>
+</div>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
