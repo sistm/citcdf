@@ -14,6 +14,7 @@ cit_multi(
   thresholds = c(0.1, 0.05, 0.01),
   parallel = interactive(),
   n_cpus = max(1L, detectCores(logical = FALSE) - 1L, na.rm = TRUE),
+  progressbar = TRUE,
   adaptive = TRUE,
   space_y = TRUE,
   number_y = 10,
@@ -65,6 +66,11 @@ computations. Default is
 \code{max(1L, parallel::detectCores(logical = FALSE) - 1L, na.rm = TRUE)}.
 If \code{n_cpus = 1}, then sequential computations are used without any
 parallelization.}
+
+\item{progressbar}{a logical flag indicating whether a \code{"timer"}
+progress bar from [pbapply::pboptions] should be displayed. Default is
+\code{TRUE}. \code{FALSE} can be useful for speeding up the computations when
+\code{parallel} is \code{TRUE} and \code{n_cpus} > 1.}
 
 \item{adaptive}{a logical flag indicating whether adaptive additional permutations
 should be performed. Default is \code{TRUE}. Only used if

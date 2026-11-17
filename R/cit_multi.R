@@ -39,7 +39,6 @@
 #' \code{length(thresholds)} should be equal to \code{length(n_perm_adaptive)-1}.
 #' Default is \code{c(0.1, 0.05, 0.01)}.
 #'
-#'
 #' @param parallel a logical flag indicating whether parallel computation
 #' should be enabled. Default is \code{TRUE} if \code{interactive()} is
 #' \code{TRUE}, else is \code{FALSE}.
@@ -49,6 +48,11 @@
 #' \code{max(1L, parallel::detectCores(logical = FALSE) - 1L, na.rm = TRUE)}.
 #' If \code{n_cpus = 1}, then sequential computations are used without any
 #' parallelization.
+#'
+#' @param progressbar a logical flag indicating whether a \code{"timer"}
+#' progress bar from [pbapply::pboptions] should be displayed. Default is
+#' \code{TRUE}. \code{FALSE} can be useful for speeding up the computations when
+#' \code{parallel} is \code{TRUE} and \code{n_cpus} > 1.
 #'
 #' @param space_y a logical flag indicating whether the y thresholds are spaced out.
 #' When \code{space_y} is \code{TRUE}, a regular sequence between the minimum and
@@ -223,6 +227,7 @@ cit_multi <- function(M,
                       thresholds = c(0.1, 0.05, 0.01),
                       parallel = interactive(),
                       n_cpus = max(1L, detectCores(logical = FALSE) - 1L, na.rm = TRUE),
+                      progressbar = TRUE,
                       adaptive = TRUE,
                       space_y = TRUE,
                       number_y = 10,
@@ -301,8 +306,19 @@ cit_multi <- function(M,
       par_clust <- parallel::makeCluster(n_cpus)
     }
 
+    if (progressbar) {
+      op <- pbapply::pboptions(nout = 10)
+      on.exit(pbapply::pboptions(op), add = TRUE)
+    }
+
   } else {
     par_clust <- 1L
+  }
+
+  # progress bar
+  if (!progressbar) {
+    op <- pbapply::pboptions(type = "none")
+    on.exit(pbapply::pboptions(op), add = TRUE)
   }
 
 
@@ -450,6 +466,8 @@ cit_multi <- function(M,
       .cit_warn_independent()
     } else {
       .cit_check_sandwich(n, design, X, residuals, small_sample_corr)
+      # gene-independent parts of the sandwich, used by cit_asymp()
+      design$prep <- .cit_sandwich_prep(design, residuals, small_sample_corr)
     }
     res <- do.call("rbind", pbapply::pblapply(seq_len(r),
       function(j) {
