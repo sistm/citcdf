@@ -466,8 +466,6 @@ cit_multi <- function(M,
       .cit_warn_independent()
     } else {
       .cit_check_sandwich(n, design, X, residuals, small_sample_corr)
-      # gene-independent parts of the sandwich, used by cit_asymp()
-      design$prep <- .cit_sandwich_prep(design, residuals, small_sample_corr)
     }
     res <- do.call("rbind", pbapply::pblapply(seq_len(r),
       function(j) {
