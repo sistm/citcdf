@@ -15,6 +15,7 @@ cit_multi(
   thresholds = c(0.1, 0.05, 0.01),
   parallel = interactive(),
   n_cpus = max(1L, detectCores(logical = FALSE) - 1L, na.rm = TRUE),
+  progressbar = TRUE,
   adaptive = TRUE,
   space_y = TRUE,
   number_y = 10,
@@ -83,6 +84,13 @@ cit_multi(
   `max(1L, parallel::detectCores(logical = FALSE) - 1L, na.rm = TRUE)`.
   If `n_cpus = 1`, then sequential computations are used without any
   parallelization.
+
+- progressbar:
+
+  a logical flag indicating whether a `"timer"` progress bar from
+  \[pbapply::pboptions\] should be displayed. Default is `TRUE`. `FALSE`
+  can be useful for speeding up the computations when `parallel` is
+  `TRUE` and `n_cpus` \> 1.
 
 - adaptive:
 

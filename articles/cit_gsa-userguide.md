@@ -162,21 +162,21 @@ responsibility.
 
     ─ Session info ───────────────────────────────────────────────────────────────
      setting  value
-     version  R version 4.6.1 (2026-06-24)
-     os       Ubuntu 24.04.5 LTS
+     version  R version 4.6.2 (2026-10-29)
+     os       Ubuntu 26.04.1 LTS
      system   x86_64, linux-gnu
      ui       X11
      language en-US
      collate  C.UTF-8
      ctype    C.UTF-8
      tz       UTC
-     date     2026-10-19
+     date     2026-11-18
      pandoc   3.8.3 @ /opt/hostedtoolcache/pandoc/3.8.3/x64/ (via rmarkdown)
-     quarto   1.10.19 @ /usr/local/bin/quarto
+     quarto   1.11.9 @ /usr/local/bin/quarto
 
     ─ Packages ───────────────────────────────────────────────────────────────────
      package      * version date (UTC) lib source
-     citcdf       * 1.2.1   2026-10-19 [1] local
+     citcdf       * 1.2.1   2026-11-18 [1] local
      cli            3.6.6   2026-04-09 [1] RSPM
      DBI            1.3.0   2026-02-25 [1] RSPM
      digest         0.6.39  2025-11-19 [1] RSPM
@@ -185,7 +185,7 @@ responsibility.
      farver         2.1.2   2024-05-13 [1] RSPM
      fastmap        1.2.0   2024-05-15 [1] RSPM
      generics       0.1.4   2025-05-09 [1] RSPM
-     ggplot2        4.0.3   2026-04-22 [1] RSPM
+     ggplot2        4.0.4   2026-11-14 [1] RSPM
      glue           1.8.1   2026-04-17 [1] RSPM
      gtable         0.3.6   2024-10-25 [1] RSPM
      htmltools      0.5.9   2025-12-04 [1] RSPM
@@ -193,12 +193,12 @@ responsibility.
      jsonlite       2.0.0   2025-03-27 [1] RSPM
      knitr          1.52    2026-09-06 [1] RSPM
      labeling       0.4.3   2023-08-29 [1] RSPM
-     lattice        0.22-9  2026-02-09 [3] CRAN (R 4.6.1)
+     lattice        0.23-1  2026-08-12 [3] CRAN (R 4.6.2)
      lifecycle      1.0.5   2026-01-08 [1] RSPM
      magrittr       2.0.5   2026-04-04 [1] RSPM
-     Matrix         1.7-5   2026-03-21 [3] CRAN (R 4.6.1)
+     Matrix         1.7-6   2026-07-25 [3] CRAN (R 4.6.2)
      mitools        2.7     2026-08-31 [1] RSPM
-     otel           0.2.0   2025-08-29 [1] RSPM
+     otel           0.3.0   2026-11-07 [1] RSPM
      patchwork      1.3.2   2025-08-25 [1] RSPM
      pbapply        1.7-5   2026-09-01 [1] RSPM
      pillar         1.11.1  2025-09-17 [1] RSPM
@@ -213,7 +213,7 @@ responsibility.
      scales         1.4.0   2025-04-24 [1] RSPM
      sessioninfo    1.2.4   2026-06-04 [1] RSPM
      survey         4.5     2026-02-24 [1] RSPM
-     survival       3.8-6   2026-01-16 [3] CRAN (R 4.6.1)
+     survival       3.8-12  2026-09-09 [3] CRAN (R 4.6.2)
      tibble         3.3.1   2026-01-11 [1] RSPM
      tidyselect     1.2.1   2024-03-11 [1] RSPM
      vctrs          0.7.3   2026-04-11 [1] RSPM
@@ -223,8 +223,8 @@ responsibility.
      yaml           2.3.12  2025-12-10 [1] RSPM
 
      [1] /home/runner/work/_temp/Library
-     [2] /opt/R/4.6.1/lib/R/site-library
-     [3] /opt/R/4.6.1/lib/R/library
+     [2] /opt/R/4.6.2/lib/R/site-library
+     [3] /opt/R/4.6.2/lib/R/library
      * ── Packages attached to the search path.
 
     ──────────────────────────────────────────────────────────────────────────────
