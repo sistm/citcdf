@@ -59,10 +59,9 @@ set.seed(20260817)
 ## The data
 
 ```{r villani-data, include = FALSE}
-
-data_Villani <- readRDS(system.file("extdata", "data_DCMono_discovery.rds", package = "citcdf"))
-DCpop <- readRDS(system.file("extdata", "DCpop.rds", package = "citcdf"))
-BTM_geneset <- readRDS(system.file("extdata", "BTM.rds", package = "citcdf"))
+data_Villani <- citcdf::data_DCMono_discovery
+DCpop <- citcdf::DCpop
+BTM_geneset <- citcdf::BTM
 
 ```
 

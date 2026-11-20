@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Sara Fallet">
-<meta name="dcterms.date" content="2026-10-16">
+<meta name="dcterms.date" content="2026-10-19">
 
 <title>User guide to the cit_gsa function</title>
 <style>
@@ -141,8 +141,9 @@ window.Quarto = {
   <li><a href="#testing-a-gene-set-with-cit_gsa" id="toc-testing-a-gene-set-with-cit_gsa" class="nav-link" data-scroll-target="#testing-a-gene-set-with-cit_gsa"><span class="header-section-number">2</span> Testing a gene set with <code>cit_gsa()</code></a>
   <ul class="collapse">
   <li><a href="#the-data" id="toc-the-data" class="nav-link" data-scroll-target="#the-data"><span class="header-section-number">2.1</span> The data</a></li>
-  <li><a href="#gene-set-test" id="toc-gene-set-test" class="nav-link" data-scroll-target="#gene-set-test"><span class="header-section-number">2.2</span> Gene set test</a></li>
-  <li><a href="#visualization" id="toc-visualization" class="nav-link" data-scroll-target="#visualization"><span class="header-section-number">2.3</span> Visualization</a></li>
+  <li><a href="#objectives" id="toc-objectives" class="nav-link" data-scroll-target="#objectives"><span class="header-section-number">2.2</span> Objectives</a></li>
+  <li><a href="#gene-set-test" id="toc-gene-set-test" class="nav-link" data-scroll-target="#gene-set-test"><span class="header-section-number">2.3</span> Gene set test</a></li>
+  <li><a href="#visualization" id="toc-visualization" class="nav-link" data-scroll-target="#visualization"><span class="header-section-number">2.4</span> Visualization</a></li>
   </ul></li>
   <li><a href="#practical-considerations" id="toc-practical-considerations" class="nav-link" data-scroll-target="#practical-considerations"><span class="header-section-number">3</span> Practical considerations</a></li>
   <li><a href="#session-information" id="toc-session-information" class="nav-link" data-scroll-target="#session-information"><span class="header-section-number">4</span> Session information</a></li>
@@ -171,7 +172,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">October 16, 2026</p>
+      <p class="date">October 19, 2026</p>
     </div>
   </div>
   
@@ -208,24 +209,72 @@ window.Quarto = {
 <h1 data-number="2"><span class="header-section-number">2</span> Testing a gene set with <code>cit_gsa()</code></h1>
 <section id="the-data" class="level2" data-number="2.1">
 <h2 data-number="2.1" class="anchored" data-anchor-id="the-data"><span class="header-section-number">2.1</span> The data</h2>
-<p>We use a part of the dataset from <span class="citation" data-cites="villani2017single">(<a href="#ref-villani2017single" role="doc-biblioref">Villani et al. 2017</a>)</span>. <span class="citation" data-cites="villani2017single">Villani et al. (<a href="#ref-villani2017single" role="doc-biblioref">2017</a>)</span> isolated DCs from Peripheral Blood Mononuclear Cells (PBMCs) in healthy donor blood, and measured gene expression through single-cell RNA-seq. They documented DC sub-populations with their own specific transcriptional signatures. The dataset originally contain 26,594 genes and 1140 cells but we only keep here 440 genes and 539 cells. We normalized the data with log-transformed transcripts per million (log(TPM+1)) as in the original paper.</p>
-<p>To perform a gene set analysis we use here a part of the gene sets from BTM of Stanford <span class="citation" data-cites="li2014molecular">(<a href="#ref-li2014molecular" role="doc-biblioref">Li et al. 2014</a>)</span>. There is 48 gene set of sizes between 1 and 1</p>
+<p>We use a part of the dataset from <span class="citation" data-cites="villani2017single">(<a href="#ref-villani2017single" role="doc-biblioref">Villani et al. 2017</a>)</span>. <span class="citation" data-cites="villani2017single">Villani et al. (<a href="#ref-villani2017single" role="doc-biblioref">2017</a>)</span> isolated DCs from Peripheral Blood Mononuclear Cells (PBMCs) in healthy donor blood, and measured gene expression through single-cell RNA-seq. They documented DC sub-populations with their own specific transcriptional signatures. The dataset originally contain 26,594 genes and 1140 cells but we only keep here 458 genes and 539 cells. We normalized the data with log-transformed transcripts per million (log(TPM+1)) as in the original paper.</p>
+<p>To perform gene set analysis we use a part of the gene sets database BTM of Stanford <span class="citation" data-cites="li2014molecular">(<a href="#ref-li2014molecular" role="doc-biblioref">Li et al. 2014</a>)</span>. we have 48 gene set of sizes between 10 and 82.</p>
 </section>
-<section id="gene-set-test" class="level2" data-number="2.2">
-<h2 data-number="2.2" class="anchored" data-anchor-id="gene-set-test"><span class="header-section-number">2.2</span> Gene set test</h2>
+<section id="objectives" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="objectives"><span class="header-section-number">2.2</span> Objectives</h2>
+<p>To identify which gene sets are significantly associated with the expression of the gene CD83, known to be a marker of DC activation. As CD83 expression varies across DC subset we will incorporate in our differential analysis an adjustment on the DC subpopulation.</p>
 </section>
-<section id="visualization" class="level2" data-number="2.3">
-<h2 data-number="2.3" class="anchored" data-anchor-id="visualization"><span class="header-section-number">2.3</span> Visualization</h2>
-<p><code>plot.cit_gsa()</code> displays what the statistic compares: the CCDF of <span class="math inline">\(Y\)</span> given <span class="math inline">\(X\)</span> against its marginal counterpart. The further apart the 2 are, the larger <span class="math inline">\(D\)</span>:</p>
+<section id="gene-set-test" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="gene-set-test"><span class="header-section-number">2.3</span> Gene set test</h2>
+<p><span class="math inline">\(M\)</span> is the gene expression matrix, <span class="math inline">\(X\)</span> is the CD83 expression, <span class="math inline">\(Z\)</span> is the DC subpopulation and <span class="math inline">\(geneset\)</span> are the BTM of Stanford gene sets.</p>
+<p><strong>NB</strong>: <span class="math inline">\(M\)</span> must be oriented <em>cells-by-genes</em>, the transpose of usual <em>genes-by-cells</em> expression matrix.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>M <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">t</span>(data_Villani))</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>X <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">t</span>(data_Villani[<span class="fu">which</span>(<span class="fu">rownames</span>(data_Villani) <span class="sc">==</span> <span class="st">"CD83"</span>), ]))</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>Z <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(DCpop)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>geneset <span class="ot">&lt;-</span> BTM_geneset<span class="sc">$</span>genesets</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>We perform two tests: a marginal test without conditioning on DC subpopulations, and a second test conditioning on the subpopulations.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>res_unadj <span class="ot">&lt;-</span> <span class="fu">cit_gsa</span>(M, X, <span class="at">Z =</span> <span class="cn">NULL</span>, geneset, <span class="at">test =</span> <span class="st">"asymptotic"</span>, <span class="at">parallel =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>res_adj <span class="ot">&lt;-</span>  <span class="fu">cit_gsa</span>(M, X, Z, geneset, <span class="at">test =</span> <span class="st">"asymptotic"</span>, <span class="at">parallel =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="at">unadjusted =</span> <span class="fu">sum</span>(res_unadj<span class="sc">$</span>pvals<span class="sc">$</span>adj_pval <span class="sc">&lt;</span> <span class="fl">0.05</span>),</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">adjusted   =</span> <span class="fu">sum</span>(res_adj<span class="sc">$</span>pvals<span class="sc">$</span>adj_pval <span class="sc">&lt;</span> <span class="fl">0.05</span>))</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; unadjusted   adjusted </span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;         25         15</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Conditionning on DC subpopulation allow to reduce the number of significant gene sets.</p>
+<p><code>res_adj</code> is a list containing:</p>
+<ul>
+<li><code>which_test</code> and <code>n_perm</code>, the test performed and the number of permutations (<code>NA</code> for the asymptotic test)</li>
+<li><code>pvals</code>, the gene set raw and BH-adjusted p-values, plus the test statistics</li>
+</ul>
+</section>
+<section id="visualization" class="level2" data-number="2.4">
+<h2 data-number="2.4" class="anchored" data-anchor-id="visualization"><span class="header-section-number">2.4</span> Visualization</h2>
+<p><code>plot.cit_gsa()</code> details one gene set. <strong>Panel A</strong> show the CCDF for each genes of the gene sets given CD83 expression with the marginal, i.e.&nbsp;only given DC subsets . The thick lines are the median value across the genes of the gene set. <strong>Panel B</strong> show the same comparison but within DC subpopulations.</p>
+<p><strong>NB</strong> : <span class="math inline">\(Z\)</span> must be a numeric or factor type, not a character.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>i <span class="ot">&lt;-</span> <span class="fu">which.min</span>(res_adj<span class="sc">$</span>pval<span class="sc">$</span>adj_pval)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> res_adj ,</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">M =</span>  M,</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">X =</span>  X,</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">Z =</span> <span class="fu">data.frame</span>(<span class="fu">factor</span>(DCpop)),</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">geneset =</span> geneset, </span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">which_set =</span> i</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="cit_gsa-userguide_files/figure-html/plot_ccdf-1.png" class="img-fluid figure-img" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
 </section>
 </section>
 <section id="practical-considerations" class="level1" data-number="3">
 <h1 data-number="3"><span class="header-section-number">3</span> Practical considerations</h1>
 <ul class="task-list">
 <li><p><label><input type="checkbox"><strong>Threshold grid:</strong> <code>space_y = FALSE</code> places a threshold at every distinct value of <code>Y</code>, while <code>space_y = TRUE</code> uses a regular grid of <code>number_y</code> points instead, at a cost independent of <code>n</code>.<br>
-Defaults differ: <code>cit_asymp()</code> and <code>cit_perm()</code> use the exhaustive grid, <code>cit_multi()</code> uses <code>number_y = 10</code>. Expect small numerical differences between a single call and a <code>cit_multi()</code> run.</label></p></li>
-<li><p><label><input type="checkbox"><strong>Parallelism.</strong> <code>cit_multi()</code> parallelises over outcomes and defaults to <code>parallel = interactive()</code>. Calls above set <code>parallel = FALSE</code> for reproducible builds. Drop it in real analyses, and set <code>n_cpus</code>.</label></p></li>
-<li><p><label><input type="checkbox"><strong>Multiplicity.</strong> <code>cit_multi()</code> returns Benjamini-Hochberg adjusted p-values in <code>adj_pval</code> for FDR control. <code>cit_asymp()</code> and <code>cit_perm()</code> are single-hypothesis functions and do not need such multiple-testing adjustment.</label></p></li>
+Defaults: <code>space_y = TRUE</code> and <code>number_y = 10</code></label></p></li>
+<li><p><label><input type="checkbox"><strong>Parallelism.</strong> <code>cit_gsa()</code> parallelises over the gene of the gene set and defaults to <code>parallel = interactive()</code>. Calls above set <code>parallel = FALSE</code> for reproducible builds. Drop it in real analyses, and set <code>n_cpus</code>.</label></p></li>
+<li><p><label><input type="checkbox"><strong>Multiplicity.</strong> <code>cit_gsa()</code> returns Benjamini-Hochberg adjusted p-values in <code>adj_pval</code> for FDR control across the gene sets.</label></p></li>
 <li><p><label><input type="checkbox"><strong>Design.</strong> The asymptotic test accepts several variables of interest (<code>ncol(X) &gt; 1</code>) and several covariates (<code>ncol(Z) &gt; 1</code>). The permutation test is less flexible accepting at most one covariate.</label></p></li>
 <li><p><label><input type="checkbox"><strong>Preprocessing.</strong> Normalization remains the user’s choice and responsibility.</label></p></li>
 </ul>
@@ -244,47 +293,39 @@ Defaults differ: <code>cit_asymp()</code> and <code>cit_perm()</code> use the ex
  collate  French_France.utf8
  ctype    French_France.utf8
  tz       Europe/Paris
- date     2026-10-16
+ date     2026-10-19
  pandoc   3.6.3 @ C:/Program Files/RStudio/resources/app/bin/quarto/bin/tools/ (via rmarkdown)
  quarto   1.8.25 @ C:\\PROGRA~1\\RStudio\\RESOUR~1\\app\\bin\\quarto\\bin\\quarto.exe
 
 ─ Packages ───────────────────────────────────────────────────────────────────
  package      * version date (UTC) lib source
- bnlearn        5.2.1   2026-07-17 [1] CRAN (R 4.5.3)
- citcdf       * 1.2.1   2026-10-15 [1] local
+ citcdf       * 1.2.1   2026-10-19 [1] local
  cli            3.6.5   2025-04-23 [1] CRAN (R 4.5.1)
- codetools      0.2-20  2024-03-31 [2] CRAN (R 4.5.1)
  DBI            1.3.0   2026-02-25 [1] CRAN (R 4.5.3)
  digest         0.6.39  2025-11-19 [1] CRAN (R 4.5.3)
- dotCall64      1.2     2024-10-04 [1] CRAN (R 4.5.1)
  dplyr          1.2.0   2026-02-03 [1] CRAN (R 4.5.3)
  evaluate       1.0.5   2025-08-27 [1] CRAN (R 4.5.1)
  farver         2.1.2   2024-05-13 [1] CRAN (R 4.5.1)
  fastmap        1.2.0   2024-05-15 [1] CRAN (R 4.5.1)
- future         1.76.0  2026-09-24 [1] CRAN (R 4.5.3)
- future.apply   1.20.2  2026-02-20 [1] CRAN (R 4.5.3)
  generics       0.1.4   2025-05-09 [1] CRAN (R 4.5.1)
  ggplot2        4.0.3   2026-04-22 [1] CRAN (R 4.5.3)
- globals        0.20.0  2026-10-11 [1] CRAN (R 4.5.3)
  glue           1.8.0   2024-09-30 [1] CRAN (R 4.5.1)
  gtable         0.3.6   2024-10-25 [1] CRAN (R 4.5.1)
  htmltools      0.5.9   2025-12-04 [1] CRAN (R 4.5.3)
  htmlwidgets    1.6.4   2023-12-06 [1] CRAN (R 4.5.1)
  jsonlite       2.0.0   2025-03-27 [1] CRAN (R 4.5.1)
  knitr          1.52    2026-09-06 [1] CRAN (R 4.5.3)
+ labeling       0.4.3   2023-08-29 [1] CRAN (R 4.5.0)
  lattice        0.22-7  2025-04-02 [2] CRAN (R 4.5.1)
  lifecycle      1.0.5   2026-01-08 [1] CRAN (R 4.5.3)
- listenv        1.1.0   2026-10-04 [1] CRAN (R 4.5.3)
  magrittr       2.0.4   2025-09-12 [1] CRAN (R 4.5.1)
  Matrix         1.7-5   2026-03-21 [1] CRAN (R 4.5.3)
  mitools        2.7     2026-08-31 [1] CRAN (R 4.5.3)
  otel           0.2.0   2025-08-29 [1] CRAN (R 4.5.2)
- parallelly     1.46.1  2026-01-08 [1] CRAN (R 4.5.3)
  patchwork      1.3.2   2025-08-25 [1] CRAN (R 4.5.1)
  pbapply        1.7-5   2026-09-01 [1] CRAN (R 4.5.3)
  pillar         1.11.1  2025-09-17 [1] CRAN (R 4.5.1)
  pkgconfig      2.0.3   2019-09-22 [1] CRAN (R 4.5.1)
- progressr      1.0.0   2026-07-04 [1] CRAN (R 4.5.3)
  R6             2.6.1   2025-02-15 [1] CRAN (R 4.5.1)
  RColorBrewer   1.1-3   2022-04-03 [1] CRAN (R 4.5.0)
  Rcpp           1.1.1   2026-01-10 [1] CRAN (R 4.5.3)
@@ -295,15 +336,13 @@ Defaults differ: <code>cit_asymp()</code> and <code>cit_perm()</code> use the ex
  S7             0.2.1   2025-11-14 [1] CRAN (R 4.5.3)
  scales         1.4.0   2025-04-24 [1] CRAN (R 4.5.1)
  sessioninfo    1.2.4   2026-06-04 [1] CRAN (R 4.5.3)
- SeuratObject   5.3.0   2025-12-12 [1] CRAN (R 4.5.3)
- sp             2.2-1   2026-02-13 [1] CRAN (R 4.5.3)
- spam           2.11-3  2026-01-08 [1] CRAN (R 4.5.3)
  survey         4.5     2026-02-24 [1] CRAN (R 4.5.3)
  survival       3.8-3   2024-12-17 [2] CRAN (R 4.5.1)
  tibble         3.3.1   2026-01-11 [1] CRAN (R 4.5.3)
  tidyselect     1.2.1   2024-03-11 [1] CRAN (R 4.5.1)
  vctrs          0.7.2   2026-03-21 [1] CRAN (R 4.5.3)
  viridisLite    0.4.3   2026-02-04 [1] CRAN (R 4.5.3)
+ withr          3.0.3   2026-06-19 [1] CRAN (R 4.5.3)
  xfun           0.57    2026-03-20 [1] CRAN (R 4.5.3)
  yaml           2.3.12  2025-12-10 [1] CRAN (R 4.5.3)
 
