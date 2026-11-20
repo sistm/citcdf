@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Boris Hejblum">
-<meta name="dcterms.date" content="2026-10-15">
+<meta name="dcterms.date" content="2026-10-19">
 
 <title>User guide to the citcdf R package</title>
 <style>
@@ -195,7 +195,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">October 15, 2026</p>
+      <p class="date">October 19, 2026</p>
     </div>
   </div>
   
@@ -220,6 +220,7 @@ window.Quarto = {
 <li><code>cit_asymp()</code>: one hypothesis, asymptotic p-value</li>
 <li><code>cit_perm()</code>: one hypothesis, permutation p-value</li>
 <li><code>cit_multi()</code>: many outcomes at once (with a Benjamini-Hochberg adjustment), either asymptotic or permutation test</li>
+<li><code>cit_gsa()</code>: test several gene sets at once (with a Benjamini-Hochberg adjustment), either asymptotic or permutation test. See the associate vignette.</li>
 </ul>
 </section>
 <section id="inputs" class="level2" data-number="1.2">
@@ -453,14 +454,14 @@ Defaults differ: <code>cit_asymp()</code> and <code>cit_perm()</code> use the ex
  collate  French_France.utf8
  ctype    French_France.utf8
  tz       Europe/Paris
- date     2026-10-15
+ date     2026-10-19
  pandoc   3.6.3 @ C:/Program Files/RStudio/resources/app/bin/quarto/bin/tools/ (via rmarkdown)
  quarto   1.8.25 @ C:\\PROGRA~1\\RStudio\\RESOUR~1\\app\\bin\\quarto\\bin\\quarto.exe
 
 ─ Packages ───────────────────────────────────────────────────────────────────
  package      * version date (UTC) lib source
  bnlearn        5.2.1   2026-07-17 [1] CRAN (R 4.5.3)
- citcdf       * 1.2.1   2026-10-15 [1] local
+ citcdf       * 1.2.1   2026-10-19 [1] local
  cli            3.6.5   2025-04-23 [1] CRAN (R 4.5.1)
  codetools      0.2-20  2024-03-31 [2] CRAN (R 4.5.1)
  crosstalk      1.2.2   2025-08-26 [1] CRAN (R 4.5.1)
