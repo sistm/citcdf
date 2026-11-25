@@ -170,13 +170,13 @@ responsibility.
      collate  C.UTF-8
      ctype    C.UTF-8
      tz       UTC
-     date     2026-11-20
+     date     2026-11-25
      pandoc   3.8.3 @ /opt/hostedtoolcache/pandoc/3.8.3/x64/ (via rmarkdown)
      quarto   1.11.9 @ /usr/local/bin/quarto
 
     ─ Packages ───────────────────────────────────────────────────────────────────
      package      * version date (UTC) lib source
-     citcdf       * 1.2.1   2026-11-20 [1] local
+     citcdf       * 1.2.1   2026-11-25 [1] local
      cli            3.6.6   2026-04-09 [1] RSPM
      DBI            1.3.0   2026-02-25 [1] RSPM
      digest         0.6.39  2025-11-19 [1] RSPM

@@ -111,6 +111,10 @@ Thiébaut & Boris Hejblum
 
 ## All functions
 
+- [`BTM`](https://sistm.github.io/citcdf/reference/BTM.md) : Gene set
+  data base
+- [`DCpop`](https://sistm.github.io/citcdf/reference/DCpop.md) : DC
+  subpopulation
 - [`X_perm()`](https://sistm.github.io/citcdf/reference/X_perm.md) :
   Compute the conditional permutations
 - [`ccdf()`](https://sistm.github.io/citcdf/reference/ccdf.md) :
@@ -123,6 +127,8 @@ Thiébaut & Boris Hejblum
   : Multiple conditional independence testing
 - [`cit_perm()`](https://sistm.github.io/citcdf/reference/cit_perm.md) :
   Permutation test for conditional independence
+- [`data_DCMono_discovery`](https://sistm.github.io/citcdf/reference/data_DCMono_discovery.md)
+  : Gene expression matrix
 - [`perm_cont()`](https://sistm.github.io/citcdf/reference/perm_cont.md)
   : Permutation procedure when Z is continuous
 - [`plot(`*`<cit_gsa>`*`)`](https://sistm.github.io/citcdf/reference/plot.cit_gsa.md)
